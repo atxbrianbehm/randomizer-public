@@ -1,0 +1,39 @@
+name: Node CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies if package.json exists
+        run: |
+          if [ -f package.json ]; then
+            npm ci --ignore-scripts
+          else
+            echo "No package.json – skipping npm install"
+          fi
+
+      - name: Lint (eslint) if config exists
+        run: |
+          if [ -f package.json ] && npx --yes eslint --version > /dev/null 2>&1; then
+            npx eslint . || true
+          else
+            echo "ESLint not configured – skipping lint"
+          fi
+
+      - name: Build step placeholder
+        run: echo "No build step defined"
