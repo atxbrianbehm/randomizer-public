@@ -1,0 +1,26 @@
+# Node / general build artifacts
+node_modules/
+.DS_Store
+.env
+npm-debug.log*
+/dist
+/out
+# Mac
+.AppleDouble
+.LSOverride
+# Logs
+logs
+*.log
+
+# VSCode
+.vscode/
+
+# Parcel / Webpack cache
+.cache
+
+# Netlify
+.netlify
+
+# Others
+.idea/
+*.swp
