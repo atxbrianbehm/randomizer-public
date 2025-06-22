@@ -1,0 +1,354 @@
+
+class RandomizerEngine {
+    constructor() {
+        this.loadedGenerators = new Map();
+        this.variables = new Map();
+        this.assets = new Map();
+        this._seed = null;
+        this._prng = null;
+        this.currentGenerator = null; // Track the current generator name
+    }
+
+    /**
+     * Select the current generator by name.
+     * @param {string} name
+     */
+    selectGenerator(name) {
+        if (!this.loadedGenerators.has(name)) {
+            console.warn(`Generator '${name}' not found.`);
+            this.currentGenerator = null;
+        } else {
+            this.currentGenerator = name;
+            // Optionally log for debugging
+            console.log(`Current generator set to '${name}'`);
+        }
+    }
+
+    // Set the random seed (for reproducible generations)
+    setSeed(seed) {
+        this._seed = seed;
+        this._prng = this._mulberry32(this._xfnv1a(seed));
+    }
+
+    // Get the current seed
+    getSeed() {
+        return this._seed;
+    }
+
+    // Mulberry32 PRNG (fast, good for UI)
+    _mulberry32(a) {
+        return function() {
+            var t = a += 0x6D2B79F5;
+            t = Math.imul(t ^ t >>> 15, t | 1);
+            t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+    }
+
+    // xfnv1a hash (string to 32-bit int)
+    _xfnv1a(str) {
+        for(var i = 0, h = 2166136261 >>> 0; i < str.length; i++)
+            h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+        return h >>> 0;
+    }
+
+    // Load a generator bundle from JSON
+    async loadGenerator(generatorData, bundleName = null) {
+        try {
+            const generator = typeof generatorData === 'string' 
+                ? JSON.parse(generatorData) 
+                : generatorData;
+
+            // Validate the generator structure
+            this.validateGenerator(generator);
+
+            const name = bundleName || generator.metadata.name;
+
+            // Initialize variables
+            if (generator.variables) {
+                for (const [varName, varDef] of Object.entries(generator.variables)) {
+                    this.variables.set(`${name}.${varName}`, varDef.default);
+                }
+            }
+
+            // Load assets
+            if (generator.assets) {
+                this.assets.set(name, generator.assets);
+            }
+
+            // Store the generator
+            this.loadedGenerators.set(name, generator);
+
+            console.log(`Successfully loaded generator: ${name}`);
+            return name;
+        } catch (error) {
+            console.error('Failed to load generator:', error);
+            throw error;
+        }
+    }
+
+    // Validate generator structure
+    validateGenerator(generator) {
+        if (!generator.metadata || !generator.metadata.name) {
+            throw new Error('Generator must have metadata with name');
+        }
+        if (!generator.grammar) {
+            throw new Error('Generator must have grammar rules');
+        }
+        if (!generator.entry_points || !generator.entry_points.default) {
+            throw new Error('Generator must have entry_points with default');
+        }
+    }
+
+    // Generate text from a loaded generator
+    // If generatorName not provided, use currentGenerator if set
+    generate(generatorName = null, entryPoint = null, context = {}) {
+        const nameToUse = generatorName || this.currentGenerator;
+        if (!nameToUse) {
+            throw new Error('No generator selected.');
+        }
+        const generator = this.loadedGenerators.get(nameToUse);
+        if (!generator) {
+            throw new Error(`Generator '${nameToUse}' not found`);
+        }
+
+        const startRule = entryPoint || generator.entry_points.default;
+        const generationContext = {
+            ...context,
+            generatorName: nameToUse,
+            variables: this.getVariablesForGenerator(nameToUse)
+        };
+
+        return this.expandRule(generator, startRule, generationContext);
+    }
+
+    // Core rule expansion logic
+    expandRule(generator, ruleName, context) {
+        const rule = generator.grammar[ruleName];
+        if (!rule) {
+            return `[MISSING RULE: ${ruleName}]`;
+        }
+
+        if (Array.isArray(rule)) {
+            // Simple array of options
+            return this.selectFromArray(rule, context);
+        } else if (rule.type) {
+            // Complex rule with type
+            return this.processComplexRule(generator, rule, context);
+        }
+
+        return '[INVALID RULE FORMAT]';
+    }
+
+    // Select from array (with optional weights)
+    selectFromArray(options, context) {
+        const weightedOptions = [];
+        let totalWeight = 0;
+
+        for (const option of options) {
+            if (typeof option === 'string') {
+                weightedOptions.push({ text: option, weight: 1 });
+                totalWeight += 1;
+            } else if (option.text) {
+                const weight = option.weight || 1;
+                if (this.checkConditions(option.conditions, context)) {
+                    weightedOptions.push({ ...option, weight });
+                    totalWeight += weight;
+                }
+            }
+        }
+
+        if (weightedOptions.length === 0) {
+            return '[NO VALID OPTIONS]';
+        }
+
+        // Weighted random selection
+        let random = this._prng ? this._prng() * totalWeight : Math.random() * totalWeight;
+        for (const option of weightedOptions) {
+            random -= option.weight;
+            if (random <= 0) {
+                this.executeActions(option.actions, context);
+                return this.processText(option.text, context);
+            }
+        }
+
+        return weightedOptions[0].text;
+    }
+
+    // Process complex rules
+    processComplexRule(generator, rule, context) {
+        switch (rule.type) {
+            case 'weighted':
+                return this.processWeightedRule(generator, rule, context);
+            case 'conditional':
+                return this.processConditionalRule(generator, rule, context);
+            case 'sequential':
+                return this.processSequentialRule(generator, rule, context);
+            case 'markov':
+                return this.processMarkovRule(generator, rule, context);
+            default:
+                return `[UNKNOWN RULE TYPE: ${rule.type}]`;
+        }
+    }
+
+    // Process weighted rules
+    processWeightedRule(generator, rule, context) {
+        const options = rule.options;
+        const weights = rule.weights || options.map(() => 1);
+
+        let totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+        let random = this._prng ? this._prng() * totalWeight : Math.random() * totalWeight;
+
+        for (let i = 0; i < options.length; i++) {
+            random -= weights[i];
+            if (random <= 0) {
+                return this.processText(options[i], context);
+            }
+        }
+
+        return this.processText(options[0], context);
+    }
+
+    // Process conditional rules
+    processConditionalRule(generator, rule, context) {
+        for (const option of rule.options) {
+            if (this.checkConditions(option.conditions, context)) {
+                this.executeActions(option.actions, context);
+                return this.processText(option.text, context);
+            }
+        }
+
+        return rule.fallback ? this.processText(rule.fallback, context) : '[NO CONDITIONS MET]';
+    }
+
+    // Process sequential rules
+    processSequentialRule(generator, rule, context) {
+        const results = [];
+        for (const option of rule.options) {
+            results.push(this.processText(option, context));
+        }
+        return results.join(' ');
+    }
+
+    // Process Markov chain rules
+    processMarkovRule(generator, rule, context) {
+        // Simplified Markov implementation
+        return this.selectFromArray(rule.options, context);
+    }
+
+    // Process text with variable substitution and rule expansion
+    processText(text, context) {
+        if (!text) return '';
+
+        // Variable substitution
+        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
+            const fullVarName = `${context.generatorName}.${varName}`;
+            const value = context.variables[varName] || this.variables.get(fullVarName);
+            return value !== undefined ? value : match;
+        });
+
+        // Rule expansion
+        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, ruleName) => {
+            const generator = this.loadedGenerators.get(context.generatorName);
+            if (generator && generator.grammar[ruleName]) {
+                return this.expandRule(generator, ruleName, context);
+            }
+            return match;
+        });
+
+        return text;
+    }
+
+    // Check conditions
+    checkConditions(conditions, context) {
+        if (!conditions) return true;
+
+        for (const [varName, condition] of Object.entries(conditions)) {
+            const value = context.variables[varName] || this.variables.get(`${context.generatorName}.${varName}`);
+
+            if (condition.$lt !== undefined && value >= condition.$lt) return false;
+            if (condition.$gt !== undefined && value <= condition.$gt) return false;
+            if (condition.$eq !== undefined && value !== condition.$eq) return false;
+            if (condition.$gte !== undefined && value < condition.$gte) return false;
+            if (condition.$lte !== undefined && value > condition.$lte) return false;
+        }
+
+        return true;
+    }
+
+    // Execute actions
+    executeActions(actions, context) {
+        if (!actions) return;
+
+        if (actions.set) {
+            for (const [varName, value] of Object.entries(actions.set)) {
+                if (typeof value === 'object' && value.$multiply) {
+                    const currentValue = context.variables[varName] || this.variables.get(`${context.generatorName}.${varName}`) || 0;
+                    this.variables.set(`${context.generatorName}.${varName}`, currentValue * value.$multiply);
+                } else {
+                    this.variables.set(`${context.generatorName}.${varName}`, value);
+                }
+            }
+        }
+
+        if (actions.increment) {
+            for (const [varName, amount] of Object.entries(actions.increment)) {
+                const currentValue = context.variables[varName] || this.variables.get(`${context.generatorName}.${varName}`) || 0;
+                this.variables.set(`${context.generatorName}.${varName}`, currentValue + amount);
+            }
+        }
+    }
+
+    // Get variables for a specific generator
+    getVariablesForGenerator(generatorName) {
+        const result = {};
+        for (const [fullName, value] of this.variables.entries()) {
+            if (fullName.startsWith(`${generatorName}.`)) {
+                const varName = fullName.substring(generatorName.length + 1);
+                result[varName] = value;
+            }
+        }
+        return result;
+    }
+
+    // List all loaded generators
+    listGenerators() {
+        return Array.from(this.loadedGenerators.keys());
+    }
+    
+    // Get all variables for the current generator
+    getCurrentVariables() {
+        if (!this.currentGenerator) {
+            return {};
+        }
+        return this.getVariablesForGenerator(this.currentGenerator);
+    }
+
+    // Get generator metadata
+    getGeneratorInfo(generatorName) {
+        const generator = this.loadedGenerators.get(generatorName);
+        return generator ? generator.metadata : null;
+    }
+
+    // Remove a generator
+    unloadGenerator(generatorName) {
+        this.loadedGenerators.delete(generatorName);
+
+        // Clean up variables
+        for (const [fullName] of this.variables.entries()) {
+            if (fullName.startsWith(`${generatorName}.`)) {
+                this.variables.delete(fullName);
+            }
+        }
+
+        // Clean up assets
+        this.assets.delete(generatorName);
+    }
+}
+
+// Export for use in different environments
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = RandomizerEngine;
+} else if (typeof window !== 'undefined') {
+    window.RandomizerEngine = RandomizerEngine;
+}

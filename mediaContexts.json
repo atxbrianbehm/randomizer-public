@@ -1,0 +1,14 @@
+[
+  {
+    "label": "Infomercial",
+    "desc": "Late-night TV infomercial",
+    "eras": ["1980s TV era", "1990s cable boom"],
+    "snafus": ["microphone fails", "product malfunction"]
+  },
+  {
+    "label": "Reality TV",
+    "desc": "Unscripted chaos",
+    "eras": ["2000s internet awakening", "2020s social media age"],
+    "snafus": ["unexpected guest", "live meltdown"]
+  }
+]

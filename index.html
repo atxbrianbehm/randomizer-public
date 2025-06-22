@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-color-scheme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randomizer Engine Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1>Randomizer Engine Demo</h1>
+            <p class="subtitle">A system for loading JSON-based text generators with complex randomization logic</p>
+            <p class="description">Load custom generator bundles with weighted probabilities, conditional branching, and variable substitution to create dynamic, randomized text content. Perfect for creating comedy generators, story prompts, or any procedural text generation.</p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="main-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Generator Selection Panel -->
+                <section class="card generator-selection">
+                    <div class="card__header">
+                        <h2>Generator Selection</h2>
+                    </div>
+                    <div class="card__body">
+                        <div id="generator-preview-list" class="generator-preview-list"></div>
+                        <div class="form-group">
+                            <label for="generator-select" class="form-label">Choose Generator:</label>
+                            <select id="generator-select" class="form-control">
+                                <option value="">Select a generator...</option>
+                            </select>
+                        </div>
+                        <div id="current-generator-info" class="generator-info hidden">
+                            <h3 id="generator-name"></h3>
+                            <p id="generator-description"></p>
+                            <div class="generator-meta">
+                                <span class="status status--info" id="generator-version"></span>
+                                <span class="status status--success" id="generator-category"></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Generation Controls -->
+                <section class="card generation-controls">
+                    <div class="card__header">
+                        <h2>Generation Controls</h2>
+                    </div>
+                    <div class="card__body">
+                        <div class="controls-grid">
+                            <div class="form-group">
+                                <label for="generation-count" class="form-label">Number of Generations:</label>
+                                <input type="number" id="generation-count" class="form-control" min="1" max="10" value="3">
+                            </div>
+                            <div class="form-group">
+                                <label for="entry-point" class="form-label">Entry Point:</label>
+                                <select id="entry-point" class="form-control">
+                                    <option value="default">Default</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="controls-group">
+                            <button id="generate-btn" class="btn btn--primary btn--full-width" disabled>
+                                Generate Text
+                            </button>
+                            <button id="advanced-btn" class="btn btn--secondary btn--sm" style="margin-top: 10px;">
+                                Advanced Options
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Variable Monitor -->
+                <section class="card variable-monitor">
+                    <div class="card__header">
+                        <h2>Variable Monitor</h2>
+                    </div>
+                    <div class="card__body">
+                        <div id="variables-table" class="variables-display">
+                            <p class="text-secondary">Select a generator to view variables</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Output Display -->
+                <section class="card output-display">
+                    <div class="card__header">
+                        <h2>Generated Output</h2>
+                        <button id="clear-output" class="btn btn--secondary btn--sm">Clear</button>
+                    </div>
+                    <div class="card__body">
+                        <div id="output-area" class="output-content">
+                            <p class="text-secondary">Click "Generate Text" to see results...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Generator Info Panel -->
+                <section class="card generator-info-panel">
+                    <div class="card__header">
+                        <h2>Generator Structure</h2>
+                    </div>
+                    <div class="card__body">
+                        <div id="generator-structure" class="structure-display">
+                            <p class="text-secondary">Select a generator to view its structure</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+            <!-- JSON Viewer -->
+            <section class="card json-viewer">
+                <div class="card__header">
+                    <h2>JSON Viewer</h2>
+                    <div class="json-controls">
+                        <button id="toggle-json" class="btn btn--secondary btn--sm">Show JSON</button>
+                        <button id="pretty-print" class="btn btn--outline btn--sm">Pretty Print</button>
+                    </div>
+                </div>
+                <div class="card__body">
+                    <div id="json-content" class="json-display hidden">
+                        <pre><code id="json-code"></code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Architecture -->
+            <section class="card system-architecture">
+                <div class="card__header">
+                    <h2>System Architecture</h2>
+                </div>
+                <div class="card__body">
+                    <div class="architecture-content">
+                        <img src="https://pplx-res.cloudinary.com/image/upload/v1750561193/pplx_code_interpreter/a55042fa_z0jka1.jpg" alt="Randomizer Engine Architecture" class="architecture-diagram">
+                        <div class="architecture-description">
+                            <h3>How It Works</h3>
+                            <ul>
+                                <li><strong>Generator Bundles:</strong> JSON files containing grammar rules, variables, assets, and metadata</li>
+                                <li><strong>Rule Processing:</strong> Weighted selection, conditional logic, and variable substitution</li>
+                                <li><strong>Output Generation:</strong> Dynamic text creation with asset integration capabilities</li>
+                            </ul>
+                            <h3>Key Features</h3>
+                            <ul>
+                                <li>Weighted probability selections for varied output</li>
+                                <li>Conditional branching based on variable states</li>
+                                <li>Variable manipulation and persistence</li>
+                                <li>Asset bundling for multimedia generators</li>
+                                <li>Extensible grammar rule system</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Advanced Modal -->
+    <div id="advanced-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Advanced Options</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="adv-preacher-name">Preacher Name:</label>
+                    <div class="control-with-lock">
+                        <select id="adv-preacher-name" class="form-control" disabled></select>
+                        <button id="lock-preacher_name" class="lock-toggle">🔓</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="adv-divine-title">Divine Title:</label>
+                    <div class="control-with-lock">
+                        <select id="adv-divine-title" class="form-control" disabled></select>
+                        <button id="lock-divine_title" class="lock-toggle">🔓</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="adv-platforms">Platforms:</label>
+                    <div class="control-with-lock">
+                        <select id="adv-platforms" class="form-control" disabled></select>
+                        <button id="lock-platforms" class="lock-toggle">🔓</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="adv-media-contexts">Media Contexts:</label>
+                    <div class="control-with-lock">
+                        <select id="adv-media-contexts" class="form-control" disabled></select>
+                        <button id="lock-mediaContexts" class="lock-toggle">🔓</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="apply-advanced" class="btn btn--primary">Apply</button>
+                <button id="cancel-advanced" class="btn btn--secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="RandomizerEngine.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

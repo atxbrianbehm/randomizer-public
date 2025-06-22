@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "name": "Televangelist Generator",
+    "version": "2.0.0",
+    "description": "Generates elaborate, humorous televangelist scenarios with modular content.",
+    "author": "Comedy Content Creator",
+    "created": "2025-06-21",
+    "category": "comedy",
+    "tags": [
+      "humor",
+      "satire",
+      "television",
+      "religion"
+    ],
+    "previewImage": "televangelistPackThumb.png"
+  },
+  "assets": {
+    "images": [
+      "golden_throne.jpg",
+      "money_pile.png",
+      "holy_light.gif"
+    ],
+    "audio": [
+      "hallelujah.mp3",
+      "organ_music.wav"
+    ],
+    "fonts": [
+      "biblical_serif.ttf"
+    ],
+    "styles": {
+      "background": "linear-gradient(gold, white)",
+      "text_color": "#8B4513",
+      "highlight_color": "#FFD700"
+    }
+  },
+  "variables": {
+    "donation_amount": {
+      "type": "number",
+      "default": 100,
+      "description": "Current donation amount being requested"
+    },
+    "viewer_count": {
+      "type": "number",
+      "default": 1000,
+      "description": "Number of viewers watching"
+    },
+    "miracle_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of miracles performed this session"
+    }
+  },
+  "grammar": {
+    "greeting": [
+      "Blessed viewers!",
+      "Children of the light!",
+      "Faithful flock!",
+      "Beloved congregation!"
+    ],
+    "platforms": { "$include": "platforms.json" },
+    "mediaContexts": { "$include": "mediaContexts.json" },
+    "downfalls": { "$include": "downfalls.json" },
+    "taglines": { "$include": "taglines.json" },
+    "divine_title": [
+      {
+        "text": "Reverend",
+        "weight": 3
+      },
+      {
+        "text": "Pastor",
+        "weight": 3
+      },
+      {
+        "text": "Minister",
+        "weight": 2
+      },
+      {
+        "text": "Prophet",
+        "weight": 1
+      },
+      {
+        "text": "Archbishop",
+        "weight": 1
+      }
+    ],
+    "preacher_name": [
+      "Blessington",
+      "Prosperity",
+      "Goldenshower",
+      "Moneybags",
+      "Wealthworth",
+      "Cashmere"
+    ],
+    "urgent_need": [
+      {
+        "text": "the Lord's private jet",
+        "weight": 5
+      },
+      {
+        "text": "a new crystal cathedral",
+        "weight": 4
+      },
+      {
+        "text": "holy water imported from Jordan",
+        "weight": 3
+      },
+      {
+        "text": "diamond-encrusted prayer wheels",
+        "weight": 2
+      },
+      {
+        "text": "a solid gold pulpit",
+        "weight": 1
+      }
+    ],
+    "divine_consequence": [
+      "your crops will flourish",
+      "wealth will rain upon you",
+      "angels will guard your wallet",
+      "prosperity will multiply tenfold",
+      "divine financial blessings will overflow"
+    ],
+    "negative_consequence": [
+      {
+        "text": "financial drought",
+        "weight": 3
+      },
+      {
+        "text": "spiritual bankruptcy",
+        "weight": 3
+      },
+      {
+        "text": "cursed credit score",
+        "weight": 2
+      },
+      {
+        "text": "heavenly audit",
+        "weight": 1
+      }
+    ],
+    "money_request": {
+      "type": "conditional",
+      "options": [
+        {
+          "text": "Send just $#donation_amount# and #divine_consequence#!",
+          "conditions": {
+            "donation_amount": {
+              "$lt": 200
+            }
+          },
+          "actions": {
+            "set": {
+              "donation_amount": {
+                "$multiply": 2
+              }
+            }
+          }
+        },
+        {
+          "text": "The Lord requires $#donation_amount# for #urgent_need#!",
+          "conditions": {
+            "donation_amount": {
+              "$gte": 200
+            }
+          },
+          "actions": {
+            "increment": {
+              "miracle_count": 1
+            }
+          }
+        }
+      ],
+      "fallback": "Donations of any amount are blessed!"
+    },
+    "main_sermon": [
+      "#greeting# I am #divine_title# #preacher_name#, and the Lord has spoken to me! #money_request# But if you delay, beware of #negative_consequence#! Call now!"
+    ]
+  },
+  "entry_points": {
+    "default": "main_sermon",
+    "alternatives": [
+      "greeting",
+      "money_request"
+    ]
+  }
+}
