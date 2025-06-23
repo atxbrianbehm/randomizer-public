@@ -372,6 +372,14 @@ class RandomizerApp {
             console.warn('advanced-btn not found');
         }
         
+        const darkToggle = document.getElementById('dark-mode-toggle');
+        if (darkToggle) {
+            darkToggle.onclick = () => {
+                const html = document.documentElement;
+                const current = html.getAttribute('data-color-scheme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-color-scheme', current);
+            };
+        }
         // Setup advanced modal buttons
         this.setupAdvancedModal();
     }
@@ -602,6 +610,13 @@ class RandomizerApp {
                 if (outputDiv) {
                     const p = document.createElement('p');
                     p.textContent = result;
+                    p.className = 'generated-text';
+                    // Copy to clipboard on click
+                    p.onclick = () => {
+                        navigator.clipboard.writeText(p.textContent).then(() => {
+                            this.showSuccess('Copied to clipboard');
+                        });
+                    };
                     outputDiv.insertBefore(p, outputDiv.firstChild);
                 }
             }
