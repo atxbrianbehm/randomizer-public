@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "lint": "eslint . --ext .js"
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,13 @@
   },
   "homepage": "https://github.com/atxbrianbehm/randomizer-public#readme",
   "devDependencies": {
-    "vite": "^6.3.5",
-    "vitest": "^1.5.0",
     "@testing-library/dom": "^9.3.0",
-    "jsdom": "^24.0.0"
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "jsdom": "^24.0.0",
+    "prettier": "^3.3.2",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
   }
 }
