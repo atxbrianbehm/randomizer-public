@@ -346,9 +346,8 @@ class RandomizerEngine {
     }
 }
 
-// Export for use in different environments
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = RandomizerEngine;
-} else if (typeof window !== 'undefined') {
+// Export for ES modules and browser
+if (typeof window !== 'undefined') {
     window.RandomizerEngine = RandomizerEngine;
 }
+export default RandomizerEngine;

@@ -1,0 +1,26 @@
+{
+  "name": "randomizer",
+  "version": "1.0.0",
+  "description": "A flexible, modular system for creating and executing probabilistic text generation based on JSON-defined decision trees. Build your own comedy generators, story prompters, or any procedural text content with sophisticated randomization logic.",
+  "main": "RandomizerEngine.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atxbrianbehm/randomizer-public.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atxbrianbehm/randomizer-public/issues"
+  },
+  "homepage": "https://github.com/atxbrianbehm/randomizer-public#readme",
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

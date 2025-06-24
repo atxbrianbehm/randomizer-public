@@ -1,9 +1,11 @@
-// Use the RandomizerEngine from RandomizerEngine.js
-// Assume it is available globally as window.RandomizerEngine
+import RandomizerEngine from '../RandomizerEngine.js';
+import bindEvents from './ui/events.js';
+import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from './ui/state.js';
+// Main entry for Vite – initializes the Randomizer application
 
 class RandomizerApp {
     constructor() {
-        this.engine = new window.RandomizerEngine();
+        this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
         this.isPrettyPrint = true;
         this.advancedLocked = {
@@ -18,7 +20,7 @@ class RandomizerApp {
             platforms: false,
             mediaContexts: false
         };
-        this.bindEvents();
+        bindEvents(this);
         this.initializeGenerators();
         // Don't call setupAdvancedModal here - it will be called when needed
     }
@@ -26,8 +28,8 @@ class RandomizerApp {
     async initializeGenerators() {
         // Find all .json generator files in the project directory
         const generatorFiles = [
-            'televangelist_generator.json',
-            'satanic_panic_generator.json'
+            '/televangelist_generator.json',
+            '/satanic_panic_generator.json'
         ];
         this.generatorNames = [];
         for (const file of generatorFiles) {
@@ -71,7 +73,7 @@ class RandomizerApp {
     selectGenerator(name) {
         this.engine.selectGenerator(name);
         this.currentGeneratorId = name;
-        this.updateEntryPoints();
+        uiUpdateEntryPoints(this);
         this.updateVariablesDisplay();
         this.updateGenerateButton();
         // Update other UI as needed
@@ -337,6 +339,9 @@ class RandomizerApp {
         // ... (rest of the code remains the same)
 
     bindEvents() {
+        // Delegated to external module for modularity
+        return bindEvents(this);
+    /*
         const generateBtn = document.getElementById('generate-btn');
         if (generateBtn) {
             generateBtn.onclick = () => this.generateText();
@@ -380,7 +385,7 @@ class RandomizerApp {
                 html.setAttribute('data-color-scheme', current);
             };
         }
-        // Setup advanced modal buttons
+        // Setup advanced modal buttons*/
         this.setupAdvancedModal();
     }
     
@@ -408,181 +413,19 @@ class RandomizerApp {
     }
 
     updateEntryPoints() {
-        const select = document.getElementById('entry-point');
-        select.innerHTML = '<option value="default">Default</option>';
-        
-        if (this.currentGeneratorId) {
-            const generatorName = this.engine.currentGenerator;
-            if (!generatorName) return;
-            
-            const generator = this.engine.loadedGenerators.get(generatorName);
-            if (!generator || !generator.entry_points) return;
-            
-            const entryPoints = generator.entry_points;
-            
-            if (entryPoints.alternatives) {
-                entryPoints.alternatives.forEach(point => {
-                    const option = document.createElement('option');
-                    option.value = point;
-                    option.textContent = point.charAt(0).toUpperCase() + point.slice(1).replace('_', ' ');
-                    select.appendChild(option);
-                });
-            }
-        }
+        return uiUpdateEntryPoints(this);
     }
+            
 
     updateVariablesDisplay() {
-        // Also update advanced modal if open
-        const advModal = document.getElementById('advanced-modal');
-        if (advModal && advModal.style.display !== 'none') {
-            this.syncAdvancedModal();
-        }
-
-        const container = document.getElementById('variables-table');
-        
-        if (!this.currentGeneratorId) {
-            container.innerHTML = '<p class="text-secondary">Select a generator to view variables</p>';
-            return;
-        }
-        
-        // Get the actual generator object
-        const generatorName = this.engine.currentGenerator;
-        if (!generatorName) {
-            container.innerHTML = '<p class="text-secondary">No generator selected</p>';
-            return;
-        }
-        
-        const generator = this.engine.loadedGenerators.get(generatorName);
-        if (!generator) {
-            container.innerHTML = '<p class="text-secondary">Generator not found</p>';
-            return;
-        }
-        
-        const variables = this.engine.getCurrentVariables();
-        const variableConfigs = generator.variables || {};
-        const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        this.engine.lockedValues = this.engine.lockedValues || {};
-        
-        if (Object.keys(variables).length === 0) {
-            container.innerHTML = '<p class="text-secondary">No variables in this generator</p>';
-            return;
-        }
-        
-        let html = `
-            <table class="variables-table">
-                <thead>
-                    <tr>
-                        <th>Variable</th>
-                        <th>Type</th>
-                        <th>Value</th>
-                        <th>Description</th>
-                        <th>Lock</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        for (const [name, value] of Object.entries(variables)) {
-            const config = variableConfigs[name] || {};
-            const isLockable = lockable.includes(name);
-            const locked = this.engine.lockedValues[name] !== undefined;
-            html += `
-                <tr>
-                    <td class="variable-name">${name}</td>
-                    <td class="variable-type">${config.type || 'unknown'}</td>
-                    <td class="variable-value">${locked ? this.engine.lockedValues[name] : value}</td>
-                    <td>${config.description || 'No description'}</td>
-                    <td>${isLockable ? `<button class="lock-btn" data-var="${name}">${locked ? '🔒' : '🔓'}</button>` : ''}</td>
-                </tr>
-            `;
-        }
-        
-        html += '</tbody></table>';
-        container.innerHTML = html;
-
-        // Attach lock button listeners
-        container.querySelectorAll('.lock-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                const varName = btn.getAttribute('data-var');
-                if (this.engine.lockedValues[varName] !== undefined) {
-                    delete this.engine.lockedValues[varName];
-                } else {
-                    this.engine.lockedValues[varName] = variables[varName];
-                }
-                this.updateVariablesDisplay();
-            };
-        });
+        return uiUpdateVariablesDisplay(this);
     }
 
     updateGeneratorStructure() {
-        const container = document.getElementById('generator-structure');
-        
-        if (!this.currentGeneratorId) {
-            container.innerHTML = '<p class="text-secondary">Select a generator to view its structure</p>';
-            return;
-        }
-
-        const generator = this.engine.loadedGenerators.get(this.currentGeneratorId);
-        if (!generator) return;
-        
-        const grammar = generator.grammar || {};
-        const entryPoints = generator.entry_points || {};
-
-        let html = '<div class="structure-section">';
-        html += '<h4>Grammar Rules</h4>';
-        html += '<ul class="structure-list">';
-        
-        for (const ruleName of Object.keys(grammar)) {
-            html += `<li>${ruleName}</li>`;
-        }
-        
-        html += '</ul></div>';
-
-        html += '<div class="structure-section">';
-        html += '<h4>Entry Points</h4>';
-        html += '<div class="entry-points">';
-        
-        if (entryPoints.default) {
-            html += `<span class="entry-point-tag">default: ${entryPoints.default}</span>`;
-        }
-        
-        if (entryPoints.alternatives) {
-            entryPoints.alternatives.forEach(point => {
-                html += `<span class="entry-point-tag">${point}</span>`;
-            });
-        }
-        
-        html += '</div></div>';
-        container.innerHTML = html;
+        return uiUpdateGeneratorStructure(this);
     }
 
-    updateVariablesDisplay() {
-        // Also update advanced modal if open
-        const advModal = document.getElementById('advanced-modal');
-        if (advModal && advModal.style.display !== 'none') {
-            this.syncAdvancedModal();
-        }
 
-        const container = document.getElementById('variables-table');
-        
-        if (!this.currentGeneratorId) {
-            container.innerHTML = '<p class="text-secondary">Select a generator to view variables</p>';
-            return;
-        }
-        
-        // Get variables from the engine and display them
-        const variables = this.engine.getCurrentVariables();
-        let html = '<table class="table table-striped">';
-        html += '<thead><tr><th>Variable</th><th>Value</th></tr></thead>';
-        html += '<tbody>';
-        
-        for (const [key, value] of Object.entries(variables)) {
-            html += `<tr><td>${key}</td><td>${value}</td></tr>`;
-        }
-        
-        html += '</tbody></table>';
-        container.innerHTML = html;
-    }
     
     generateText() {
         console.log('Generate text called');
@@ -625,7 +468,7 @@ class RandomizerApp {
             this.showSuccess(`Generated ${count} text snippet${count > 1 ? 's' : ''} successfully`);
             
             // Update the JSON viewer if it's open
-            this.updateGeneratorStructure();
+            uiUpdateGeneratorStructure(this);
         } catch (error) {
             console.error('Error generating text:', error);
             this.showError('Error generating text: ' + error.message);
