@@ -3,7 +3,7 @@ import bindEvents from './ui/events.js';
 import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from './ui/state.js';
 // Main entry for Vite – initializes the Randomizer application
 
-class RandomizerApp {
+export class RandomizerApp {
     constructor() {
         this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
@@ -545,3 +545,6 @@ class RandomizerApp {
 document.addEventListener('DOMContentLoaded', () => {
     new RandomizerApp();
 });
+
+// Export for testing
+export default RandomizerApp;
