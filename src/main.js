@@ -8,13 +8,13 @@ export class RandomizerApp {
         this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
         this.isPrettyPrint = true;
-        this.advancedLocked = {
+        this.Locked = {
             preacher_name: undefined,
             divine_title: undefined,
             platforms: undefined,
             mediaContexts: undefined
         };
-        this.advancedLockState = {
+        this.LockState = {
             preacher_name: false,
             divine_title: false,
             platforms: false,
@@ -93,8 +93,8 @@ export class RandomizerApp {
     processRuleContent(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
         const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.lockedValues && this.lockedValues[ruleName] !== undefined) {
-            return this.lockedValues[ruleName];
+        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+            return this.Locked[ruleName];
         }
         if (typeof rule === 'string') {
             return this.substituteVariables(rule);
@@ -111,8 +111,8 @@ export class RandomizerApp {
     processArrayRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
         const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.lockedValues && this.lockedValues[ruleName] !== undefined) {
-            return this.lockedValues[ruleName];
+        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+            return this.Locked[ruleName];
         }
         // Randomly select one item from the array
         const idx = Math.floor(Math.random() * rule.length);
@@ -152,10 +152,9 @@ export class RandomizerApp {
     processWeightedRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
         const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.lockedValues && this.lockedValues[ruleName] !== undefined) {
-            return this.lockedValues[ruleName];
+        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+            return this.Locked[ruleName];
         }
-        // Weighted random selection for array of options
         const options = rule.options || [];
         const weights = rule.weights || options.map(() => 1);
         const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
@@ -212,7 +211,7 @@ export class RandomizerApp {
 
     substituteVariables(text) {
         return text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
-            if (this.variables.hasOwnProperty(varName)) {
+            if (Object.prototype.hasOwnProperty.call(this.variables, varName)) {
                 return this.variables[varName];
             }
             
@@ -275,13 +274,13 @@ export class RandomizerApp {
             return [];
         };
         // Preacher Name
-        fillSelect('adv-preacher-name', extractVals(grammar.preacher_name), this.advancedLocked.preacher_name);
+        fillSelect('adv-preacher-name', extractVals(grammar.preacher_name), this.Locked.preacher_name);
         // Divine Title
-        fillSelect('adv-divine-title', extractVals(grammar.divine_title), this.advancedLocked.divine_title);
+        fillSelect('adv-divine-title', extractVals(grammar.divine_title), this.Locked.divine_title);
         // Platforms
-        fillSelect('adv-platforms', extractVals(grammar.platforms), this.advancedLocked.platforms);
+        fillSelect('adv-platforms', extractVals(grammar.platforms), this.Locked.platforms);
         // Media Contexts
-        fillSelect('adv-media-contexts', extractVals(grammar.mediaContexts), this.advancedLocked.mediaContexts);
+        fillSelect('adv-media-contexts', extractVals(grammar.mediaContexts), this.Locked.mediaContexts);
         
         // Add change event listeners to automatically lock when a value is selected
         const mapIdToField = {
@@ -296,8 +295,8 @@ export class RandomizerApp {
             select.onchange = () => {
                 const selectedValue = select.value;
                 if (selectedValue) {
-                    this.advancedLocked[fieldName] = selectedValue;
-                    this.advancedLockState[fieldName] = true;
+                    this.Locked[fieldName] = selectedValue;
+                    this.LockState[fieldName] = true;
                     // Update the lock button appearance
                     const lockBtn = document.getElementById('lock-' + fieldName);
                     lockBtn.textContent = '🔒';
@@ -309,15 +308,15 @@ export class RandomizerApp {
         // Lock toggles
         ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
             const btn = document.getElementById('lock-' + cat);
-            btn.textContent = this.advancedLockState[cat] ? '🔒' : '🔓';
-            btn.className = 'lock-toggle' + (this.advancedLockState[cat] ? ' locked' : '');
+            btn.textContent = this.LockState[cat] ? '🔒' : '🔓';
+            btn.className = 'lock-toggle' + (this.LockState[cat] ? ' locked' : '');
             btn.onclick = () => {
-                this.advancedLockState[cat] = !this.advancedLockState[cat];
+                this.LockState[cat] = !this.LockState[cat];
                 this.syncAdvancedModal();
             };
             // Dropdown enable/disable
             const sel = document.getElementById('adv-' + (cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_','-')));
-            sel.disabled = !this.advancedLockState[cat];
+            sel.disabled = !this.LockState[cat];
         });
     }
 
@@ -326,7 +325,7 @@ export class RandomizerApp {
         this.engine.lockedValues = this.engine.lockedValues || {};
         ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
             const sel = document.getElementById('adv-' + (cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_','-')));
-            if (this.advancedLockState[cat]) {
+            if (this.LockState[cat]) {
                 this.engine.lockedValues[cat] = sel.value;
             } else {
                 delete this.engine.lockedValues[cat];
@@ -336,59 +335,6 @@ export class RandomizerApp {
         this.updateVariablesDisplay();
     }
 
-        // ... (rest of the code remains the same)
-
-    bindEvents() {
-        // Delegated to external module for modularity
-        return bindEvents(this);
-    /*
-        const generateBtn = document.getElementById('generate-btn');
-        if (generateBtn) {
-            generateBtn.onclick = () => this.generateText();
-        } else {
-            console.warn('generate-btn not found');
-        }
-
-        const clearBtn = document.getElementById('clear-output');
-        if (clearBtn) {
-            clearBtn.onclick = () => this.clearOutput();
-        } else {
-            console.warn('clear-output not found');
-        }
-
-        const jsonToggleBtn = document.getElementById('toggle-json');
-        if (jsonToggleBtn) {
-            jsonToggleBtn.onclick = () => this.toggleJsonViewer();
-        } else {
-            console.warn('toggle-json not found');
-        }
-
-        const generatorSelect = document.getElementById('generator-select');
-        if (generatorSelect) {
-            generatorSelect.onchange = (e) => this.selectGenerator(e.target.value);
-        } else {
-            console.warn('generator-select not found');
-        }
-
-        const advancedBtn = document.getElementById('advanced-btn');
-        if (advancedBtn) {
-            advancedBtn.onclick = () => this.showAdvancedModal();
-        } else {
-            console.warn('advanced-btn not found');
-        }
-        
-        const darkToggle = document.getElementById('dark-mode-toggle');
-        if (darkToggle) {
-            darkToggle.onclick = () => {
-                const html = document.documentElement;
-                const current = html.getAttribute('data-color-scheme') === 'dark' ? 'light' : 'dark';
-                html.setAttribute('data-color-scheme', current);
-            };
-        }
-        // Setup advanced modal buttons*/
-        this.setupAdvancedModal();
-    }
-    
     setupAdvancedModal() {
         const applyBtn = document.getElementById('apply-advanced');
         if (applyBtn) {

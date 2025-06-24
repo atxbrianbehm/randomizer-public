@@ -16,6 +16,24 @@ python demo.py
 python usage_example.py
 ```
 
+### Local Development (Vite)
+```bash
+npm install      # install dependencies
+npm run dev      # start Vite dev server (http://localhost:5173)
+```
+
+### Build & Preview
+```bash
+npm run build    # production bundle in dist/
+npm run preview  # serve the bundled dist/ locally
+```
+
+### Quality Tasks
+```bash
+npm run lint     # ESLint static analysis
+npm test         # Vitest unit/integration tests
+```
+
 ### Use in JavaScript/Web
 ```html
 <script src="RandomizerEngine.js"></script>
@@ -23,6 +41,21 @@ python usage_example.py
 const engine = new RandomizerEngine();
 // Load and use generators
 </script>
+```
+
+## 🗂️ Project Structure (key paths)
+```
+randomizer/
+├── src/              # application source code
+│   ├── ui/           # UI helpers & event wiring
+│   ├── services/     # data-fetch & engine adapters
+│   └── utils/        # misc utilities (e.g. logger)
+├── generators/       # JSON generator bundles served statically
+├── tests/            # Vitest test suites
+├── public/           # static assets (if any)
+├── vite.config.js    # Vite build configuration
+├── vitest.config.js  # Vitest configuration
+└── .github/workflows/ci.yml  # GitHub Actions pipeline
 ```
 
 ## 📁 Repository Contents

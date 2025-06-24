@@ -16,8 +16,12 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
+  "globals": {
+    "vi": "readonly"
+  },
   "rules": {
-    "no-unused-vars": "warn",
+    "no-unreachable": "off",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^app$" }],
     "import/no-unresolved": "off"
   }
 }
