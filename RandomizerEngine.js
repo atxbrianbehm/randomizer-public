@@ -1,5 +1,5 @@
 
-class RandomizerEngine {
+export default class RandomizerEngine {
     constructor() {
         this.loadedGenerators = new Map();
         this.variables = new Map();
@@ -347,7 +347,8 @@ class RandomizerEngine {
 }
 
 // Export for ES modules and browser
+// For browsers without bundler, attach to window for convenience
 if (typeof window !== 'undefined') {
     window.RandomizerEngine = RandomizerEngine;
 }
-export default RandomizerEngine;
+
