@@ -84,21 +84,36 @@ export class RandomizerApp {
 
 
     processRuleContent(rule, ruleName = null) {
-        // Use locked value if set and this is a lockable field
         const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+
+        // If this field is already locked, use the stored value immediately
+        if (ruleName && lockable.includes(ruleName) && this.Locked?.[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
+
+        // Compute the value normally
+        let result;
         if (typeof rule === 'string') {
-            return this.substituteVariables(rule);
+            result = this.substituteVariables(rule);
+        } else if (Array.isArray(rule)) {
+            result = this.processArrayRule(rule, ruleName);
+        } else if (typeof rule === 'object') {
+            result = this.processObjectRule(rule, ruleName);
+        } else {
+            result = String(rule);
         }
-        if (Array.isArray(rule)) {
-            return this.processArrayRule(rule, ruleName);
+
+        // After computing, capture it if the lock toggle is active and value not yet stored
+        if (
+            ruleName &&
+            lockable.includes(ruleName) &&
+            this.LockState?.[ruleName] &&
+            this.Locked?.[ruleName] === undefined
+        ) {
+            this.Locked[ruleName] = result;
         }
-        if (typeof rule === 'object') {
-            return this.processObjectRule(rule, ruleName);
-        }
-        return String(rule);
+
+        return result;
     }
 
     processArrayRule(rule, ruleName = null) {
