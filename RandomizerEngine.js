@@ -7,6 +7,8 @@ export default class RandomizerEngine {
         this._seed = null;
         this._prng = null;
         this.currentGenerator = null; // Track the current generator name
+        // Map of locked grammar rule names to fixed values (set by UI)
+        this.lockedValues = {};
     }
 
     /**
@@ -124,6 +126,10 @@ export default class RandomizerEngine {
 
     // Core rule expansion logic
     expandRule(generator, ruleName, context) {
+        // If this rule is locked, immediately return the locked value
+        if (this.lockedValues && Object.prototype.hasOwnProperty.call(this.lockedValues, ruleName)) {
+            return this.lockedValues[ruleName];
+        }
         const rule = generator.grammar[ruleName];
         if (!rule) {
             return `[MISSING RULE: ${ruleName}]`;
