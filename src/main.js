@@ -337,10 +337,5 @@ export class RandomizerApp {
     }
 }
 
-// Initialize the application when the DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new RandomizerApp();
-});
-
 // Export for testing
 export default RandomizerApp;

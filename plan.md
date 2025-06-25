@@ -36,7 +36,7 @@
   - [x] Delete deprecated initializeGenerators method
   - [ ] Refactor main.js:
     - [ ] Extract UI initialization logic
-    - [ ] Extract event binding logic
+    - [x] Extract event binding logic
     - [ ] Extract state rendering logic
     - [ ] Remove redundant code
 - [x] Convert `RandomizerEngine.js` to an ES module (`export default class RandomizerEngine`).
@@ -85,4 +85,4 @@
 - [x] Decide on build tool: **Vite**.
 
 ---
-_Last updated: 2025-06-25 00:02 CT_
+_Last updated: 2025-06-25 00:14 CT_
