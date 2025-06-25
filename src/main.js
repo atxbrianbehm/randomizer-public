@@ -1,9 +1,6 @@
 import RandomizerEngine from '../RandomizerEngine.js';
 import bindEvents from './ui/events.js';
 import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from './ui/state.js';
-import { loadDefaultGenerators } from './services/generatorLoader.js';
-import { generateText as generateWithService } from './services/textGenerator.js';
-import { createLockObjects } from './services/variableLocks.js';
 // Main entry for Vite – initializes the Randomizer application
 
 export class RandomizerApp {
@@ -11,21 +8,54 @@ export class RandomizerApp {
         this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
         this.isPrettyPrint = true;
-        const { Locked, LockState } = createLockObjects();
-        this.Locked = Locked;
-        this.LockState = LockState;
+        this.Locked = {
+            preacher_name: undefined,
+            divine_title: undefined,
+            platforms: undefined,
+            mediaContexts: undefined
+        };
+        this.LockState = {
+            preacher_name: false,
+            divine_title: false,
+            platforms: false,
+            mediaContexts: false
+        };
         bindEvents(this);
-        // Load generators asynchronously, then populate UI
-        loadDefaultGenerators(this.engine).then(names => {
-            this.generatorNames = names;
-            this.updateGeneratorDropdown();
-            if (this.generatorNames.length > 0) {
-                this.selectGenerator(this.generatorNames[0]);
-            }
-        });
+        this.initializeGenerators();
         // Don't call setupAdvancedModal here - it will be called when needed
     }
 
+    async initializeGenerators() {
+        // Find all .json generator files in the project directory
+        const generatorFiles = [
+            '/televangelist_generator.json',
+            '/satanic_panic_generator.json'
+        ];
+        this.generatorNames = [];
+        for (const file of generatorFiles) {
+            try {
+                console.log('Fetching generator file:', file);
+                const response = await fetch(file);
+                if (!response.ok) {
+                    console.error('Fetch failed for', file, response.status);
+                    continue;
+                }
+                const data = await response.json();
+                console.log('Loaded JSON for', file, data);
+                const name = await this.engine.loadGenerator(data, data.metadata.name);
+                console.log('Loaded generator into engine:', name);
+                this.generatorNames.push(name);
+            } catch (e) {
+                console.error('Failed to load generator', file, e);
+            }
+        }
+        console.log('All loaded generator names:', this.generatorNames);
+        this.updateGeneratorDropdown();
+        // Auto-select the first generator if available
+        if (this.generatorNames.length > 0) {
+            this.selectGenerator(this.generatorNames[0]);
+        }
+    }
 
     updateGeneratorDropdown() {
         const select = document.getElementById('generator-select');
@@ -203,10 +233,130 @@ export class RandomizerApp {
         return this.generators.get(id);
     }
 
+    showAdvancedModal() {
+        this.syncAdvancedModal();
+        document.getElementById('advanced-modal').style.display = 'block';
+    }
 
+    hideAdvancedModal() {
+        document.getElementById('advanced-modal').style.display = 'none';
+    }
 
+    syncAdvancedModal() {
+        // Get possible values from grammar for each field
+        const generatorName = this.engine.currentGenerator;
+        if (!generatorName) return;
+        
+        // Get the actual generator object from the engine using the name
+        const generator = this.engine.loadedGenerators.get(generatorName);
+        if (!generator) return;
+        
+        const grammar = generator.grammar;
+        if (!grammar) return;
+        
+        const fillSelect = (id, arr, lockedVal) => {
+            const sel = document.getElementById(id);
+            sel.innerHTML = '';
+            arr.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                if (lockedVal === val) opt.selected = true;
+                sel.appendChild(opt);
+            });
+        };
+        // Helper to extract values (array or weighted array)
+        const extractVals = rule => {
+            if (!rule) return [];
+            if (Array.isArray(rule)) {
+                return rule.map(v => typeof v === 'string' ? v : v.text).filter(Boolean);
+            }
+            return [];
+        };
+        // Preacher Name
+        fillSelect('adv-preacher-name', extractVals(grammar.preacher_name), this.Locked.preacher_name);
+        // Divine Title
+        fillSelect('adv-divine-title', extractVals(grammar.divine_title), this.Locked.divine_title);
+        // Platforms
+        fillSelect('adv-platforms', extractVals(grammar.platforms), this.Locked.platforms);
+        // Media Contexts
+        fillSelect('adv-media-contexts', extractVals(grammar.mediaContexts), this.Locked.mediaContexts);
+        
+        // Add change event listeners to automatically lock when a value is selected
+        const mapIdToField = {
+            'adv-preacher-name': 'preacher_name',
+            'adv-divine-title': 'divine_title',
+            'adv-platforms': 'platforms',
+            'adv-media-contexts': 'mediaContexts'
+        };
+        
+        Object.entries(mapIdToField).forEach(([id, fieldName]) => {
+            const select = document.getElementById(id);
+            select.onchange = () => {
+                const selectedValue = select.value;
+                if (selectedValue) {
+                    this.Locked[fieldName] = selectedValue;
+                    this.LockState[fieldName] = true;
+                    // Update the lock button appearance
+                    const lockBtn = document.getElementById('lock-' + fieldName);
+                    lockBtn.textContent = '🔒';
+                    lockBtn.className = 'lock-toggle locked';
+                }
+            };
+        });
+        
+        // Lock toggles
+        ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
+            const btn = document.getElementById('lock-' + cat);
+            btn.textContent = this.LockState[cat] ? '🔒' : '🔓';
+            btn.className = 'lock-toggle' + (this.LockState[cat] ? ' locked' : '');
+            btn.onclick = () => {
+                this.LockState[cat] = !this.LockState[cat];
+                this.syncAdvancedModal();
+            };
+            // Dropdown enable/disable
+            const sel = document.getElementById('adv-' + (cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_','-')));
+            sel.disabled = !this.LockState[cat];
+        });
+    }
 
+    applyAdvancedModal() {
+        // Save locked values to engine.lockedValues
+        this.engine.lockedValues = this.engine.lockedValues || {};
+        ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
+            const sel = document.getElementById('adv-' + (cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_','-')));
+            if (this.LockState[cat]) {
+                this.engine.lockedValues[cat] = sel.value;
+            } else {
+                delete this.engine.lockedValues[cat];
+            }
+        });
+        this.hideAdvancedModal();
+        this.updateVariablesDisplay();
+    }
 
+    setupAdvancedModal() {
+        const applyBtn = document.getElementById('apply-advanced');
+        if (applyBtn) {
+            applyBtn.onclick = () => this.applyAdvancedModal();
+        }
+        
+        const cancelBtn = document.getElementById('cancel-advanced');
+        if (cancelBtn) {
+            cancelBtn.onclick = () => this.hideAdvancedModal();
+        }
+        
+        const closeModal = document.querySelector('.close-modal');
+        if (closeModal) {
+            closeModal.onclick = () => this.hideAdvancedModal();
+        }
+        
+        // Initialize modal to be hidden
+        const modal = document.getElementById('advanced-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
 
     updateEntryPoints() {
         return uiUpdateEntryPoints(this);
@@ -244,7 +394,7 @@ export class RandomizerApp {
             const outputDiv = document.getElementById('output-area');
             let lastResult = '';
             for (let i = 0; i < count; i++) {
-                const result = generateWithService(this.engine, entryArg);
+                const result = this.engine.generate(null, entryArg);
                 lastResult = result;
                 if (outputDiv) {
                     const p = document.createElement('p');
@@ -336,6 +486,11 @@ export class RandomizerApp {
         }, 5000);
     }
 }
+
+// Initialize the application when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new RandomizerApp();
+});
 
 // Export for testing
 export default RandomizerApp;
