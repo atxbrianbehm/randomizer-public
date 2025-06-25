@@ -75,7 +75,7 @@ These rules ensure generator packs integrate cleanly with the Randomizer’s dyn
 - **Display Order**: Packs may specify a `uiOrder` array at the root to dictate field ordering. Unlisted keys follow alphabetic order.
 - **Optional Detail Grouping**: Less-critical or verbose categories can be listed in `uiOptional` to appear inside the collapsible "Optional Details" section.
 - **Randomization Helpers**: The engine’s randomizer respects the lock state. Checkbox groups will randomly select up to the max specified in `uiConfig.maxCheckboxSelect` (default = 4).
-- **Narrative Prompt Templates**: Packs may include a `promptTemplate` string with Handlebars-style `{{placeholder}}` tokens referencing grammar keys/variables to produce richer prose. If omitted, the default concatenation template is used.
+- **Narrative Prompt Templates**: Packs may include a `promptTemplate` array of strings that use `#placeholder#` tokens referencing grammar keys/variables to produce richer prose. If omitted, the engine falls back to simple concatenation.
 - **Copy-to-Clipboard UX**: No action required by content authors, but ensure `promptTemplate` stays under 2 KB for smooth clipboard operations.
 - **Styling Advice**: Stick to semantic names; visual theming is handled by the host app.
 
