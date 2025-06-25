@@ -1,8 +1,8 @@
 import RandomizerEngine from '../RandomizerEngine.js';
-import bindEvents from './ui/events.js';
-import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from './ui/state.js';
-import { createLockObjects } from './services/variableLocks.js';
-import { q } from './ui/query.js';
+import bindEvents from '@/ui/events.js';
+import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from '@/ui/state.js';
+import { createLockObjects } from '@/services/variableLocks.js';
+import { q } from '@/ui/query.js';
 // Main entry for Vite – initializes the Randomizer application
 
 export class RandomizerApp {
