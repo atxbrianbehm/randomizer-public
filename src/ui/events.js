@@ -1,4 +1,7 @@
 // UI event bindings extracted from main.js for modularity
+import { toggleTheme } from './theme.js';
+import { showModal as showAdvancedModal, setupModal as setupAdvancedModal } from './advancedModal.js';
+
 export default function bindEvents(app) {
     const generateBtn = document.getElementById('generate-btn');
     if (generateBtn) {
@@ -17,23 +20,15 @@ export default function bindEvents(app) {
 
     const generatorSelect = document.getElementById('generator-select');
     if (generatorSelect) {
-        generatorSelect.onchange = (e) => app.selectGenerator(e.target.value);
+        generatorSelect.onchange = e => app.selectGenerator(e.target.value);
     }
 
     const advancedBtn = document.getElementById('advanced-btn');
-    if (advancedBtn) {
-        advancedBtn.onclick = () => app.showAdvancedModal();
-    }
+    if (advancedBtn) advancedBtn.onclick = () => showAdvancedModal(app);
 
     const darkToggle = document.getElementById('dark-mode-toggle');
-    if (darkToggle) {
-        darkToggle.onclick = () => {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-color-scheme') === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-color-scheme', current);
-        };
-    }
+    if (darkToggle) darkToggle.onclick = toggleTheme;
 
     // Initialize advanced modal button handlers
-    app.setupAdvancedModal();
+    setupAdvancedModal(app);
 }
