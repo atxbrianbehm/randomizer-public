@@ -106,6 +106,25 @@ export function updateVariablesDisplay(app) {
     });
 }
 
+export function updateGeneratorDropdown(app) {
+    const select = document.getElementById('generator-select');
+    if (!select) return;
+    select.innerHTML = '';
+    const generatorList = app.engine.listGenerators();
+    for (const name of generatorList) {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+    }
+}
+
+export function updateGenerateButton(app) {
+    const generateBtn = document.getElementById('generate-btn');
+    if (!generateBtn) return;
+    generateBtn.disabled = !app.currentGeneratorId;
+}
+
 export function updateGeneratorStructure(app) {
     const container = document.getElementById('generator-structure');
 
