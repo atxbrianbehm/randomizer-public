@@ -1,6 +1,7 @@
 import RandomizerEngine from '../RandomizerEngine.js';
 import bindEvents from '@/ui/events.js';
 import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from '@/ui/state.js';
+import { setupModal as setupAdvancedModal, showModal as openAdvancedModal, buildModal as rebuildAdvancedModal } from '@/ui/advancedModal.js';
 import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 // Main entry for Vite – initializes the Randomizer application
@@ -15,12 +16,15 @@ export class RandomizerApp {
         this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
         this.isPrettyPrint = true;
+        // Array of grammar keys that can be locked in Advanced Options (populated per generator)
+        this.lockableRules = [];
         const { Locked, LockState } = createLockObjects();
         this.Locked = Locked;
         this.LockState = LockState;
         bindEvents(this);
         this.initializeGenerators();
-        // Don't call setupAdvancedModal here - it will be called when needed
+        // Prepare advanced modal DOM listeners
+        setupAdvancedModal(this);
     }
 
     /**
@@ -62,6 +66,9 @@ export class RandomizerApp {
      */
     selectGenerator(name) {
         this.engine.selectGenerator(name);
+        // Query engine for lockable rules of the newly selected generator
+        this.lockableRules = this.engine.getLockableRules(name) || [];
+
         this.currentGeneratorId = name;
         uiUpdateEntryPoints(this);
         this.updateVariablesDisplay();
@@ -78,6 +85,11 @@ export class RandomizerApp {
         if (!generateBtn) return;
         // Enable if a generator is selected; otherwise keep disabled
         generateBtn.disabled = !this.currentGeneratorId;
+    }
+
+    // Utility called by UI helpers to refresh modal when variable table updates
+    syncAdvancedModal() {
+        rebuildAdvancedModal(this);
     }
 
     // ...rest of RandomizerApp methods remain unchanged...

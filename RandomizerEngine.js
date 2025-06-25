@@ -331,6 +331,52 @@ export default class RandomizerEngine {
         return this.getVariablesForGenerator(this.currentGenerator);
     }
 
+    // Determine lockable grammar rules based on array structure
+    /**
+     * Return an array of grammar keys that qualify as lockable for UI.
+     * A rule is lockable if its value is:
+     *  - An array of strings, or
+     *  - An array of objects each with a `value` *or* `text` property (label/value pairs)
+     * This mirrors the guidelines documented in LLM_Content_Development_Guide.md.
+     * The host app may further filter or convert this list to include multi-select designations.
+     * @param {string} generatorName
+     * @returns {string[]} list of lockable rule names
+     */
+    getLockableRules(generatorName) {
+        const name = generatorName || this.currentGenerator;
+        if (!name) return [];
+        const generator = this.loadedGenerators.get(name);
+        if (!generator || !generator.grammar) return [];
+
+        const uiConfig = generator.uiConfig || {};
+        const explicitLockable = uiConfig.lockable || null; // optional whitelist/blacklist arrays
+        const blacklist = uiConfig.lockableExclude || [];
+
+        const result = [];
+        for (const [key, rule] of Object.entries(generator.grammar)) {
+            if (explicitLockable && !explicitLockable.includes(key)) continue; // whitelist mode
+            if (blacklist.includes(key)) continue;
+            if (this._isRuleLockable(rule)) {
+                result.push(key);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Internal helper to test whether a grammar rule fits lockable criteria.
+     * @param {*} rule
+     * @returns {boolean}
+     */
+    _isRuleLockable(rule) {
+        if (!Array.isArray(rule)) return false;
+        if (rule.length === 0) return false;
+        const first = rule[0];
+        if (typeof first === 'string') return true;
+        if (typeof first === 'object' && (first.value !== undefined || first.text !== undefined)) return true;
+        return false;
+    }
+
     // Get generator metadata
     getGeneratorInfo(generatorName) {
         const generator = this.loadedGenerators.get(generatorName);
