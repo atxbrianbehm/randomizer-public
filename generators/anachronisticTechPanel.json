@@ -152,9 +152,9 @@
       "Exotic Matter Containment Field Controls"
     ],
     "promptTemplate": [
-      "A #wearLevel# #panelArchetype# built for #techFunction# — styled in #aestheticInfluence# and operating under #factionAlignment# control. The finish is #primaryColorPalette# with #keyMaterials#, equipped with a #screenType# and #dominantControls#. Surfaces show #greebleDensity# detailing, #labelingStyle#, and #panelLighting# lighting.",
-      "This #panelArchetype# panel, now #wearLevel#, belongs to a #factionAlignment# faction. Designed with #aestheticInfluence# aesthetics, it sports #primaryColorPalette# tones over #keyMaterials#, featuring #screenType#, #dominantControls#, and #panelLighting#. Function: #techFunction#.",
-      "#aestheticInfluence# meets utility in this #wearLevel# #panelArchetype# dedicated to #techFunction#. Materials include #keyMaterials# with #primaryColorPalette# accents. Controls: #dominantControls# beside a #screenType# display, bathed in #panelLighting# and marked by #labelingStyle#. Greeble density: #greebleDensity#."
+      "A #wearLevel# #panelArchetype# built for #techFunction# — styled in #aestheticInfluence# and operating under #factionAlignment# control. The finish is #primaryColorPalette# with #keyMaterials#, equipped with a #screenType# and #dominantControls#. Surfaces show #greebleDensity# detailing, #labelingStyle#, and #panelLighting# lighting, shown in a clean front-on top-down view.",
+      "This #panelArchetype# panel, now #wearLevel#, belongs to a #factionAlignment# faction. Designed with #aestheticInfluence# aesthetics, it sports #primaryColorPalette# tones over #keyMaterials#, featuring #screenType#, #dominantControls#, and #panelLighting#. Function: #techFunction#. Rendered in a front-on top-down perspective.",
+      "#aestheticInfluence# meets utility in this #wearLevel# #panelArchetype# dedicated to #techFunction#. Materials include #keyMaterials# with #primaryColorPalette# accents. Controls: #dominantControls# beside a #screenType# display, bathed in #panelLighting# and marked by #labelingStyle#. Greeble density: #greebleDensity#. Presented as a front-on top-down view."
     ]
   },
   "uiConfig": {
