@@ -138,8 +138,11 @@ export default class RandomizerEngine {
         if (Array.isArray(rule)) {
             // Simple array of options
             return this.selectFromArray(rule, context);
-        } else if (rule.type) {
-            // Complex rule with type
+        } else if (typeof rule === 'string') {
+            // Plain text with potential nested tokens
+            return this.processText(rule, context);
+        } else if (rule && typeof rule === 'object' && rule.type) {
+            // Complex rule with explicit type field
             return this.processComplexRule(generator, rule, context);
         }
 
