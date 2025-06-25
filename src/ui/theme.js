@@ -31,10 +31,7 @@ export function setTheme(mode) {
 
 export function initTheme() {
   // Ensure toggle button exists before updating icon later
-  const ready = () => {
-    const scheme = document.documentElement.getAttribute('data-color-scheme');
-    updateToggleIcon(scheme);
-  };
+  // (removed unused 'ready' function to resolve ESLint warning)
 
   let saved;
   try {

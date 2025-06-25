@@ -155,10 +155,11 @@ export default class RandomizerEngine {
             if (typeof option === 'string') {
                 weightedOptions.push({ text: option, weight: 1 });
                 totalWeight += 1;
-            } else if (option.text) {
+            } else if (option.text || option.value) {
+                const textVal = option.text || option.value;
                 const weight = option.weight || 1;
                 if (this.checkConditions(option.conditions, context)) {
-                    weightedOptions.push({ ...option, weight });
+                    weightedOptions.push({ ...option, text: textVal, weight });
                     totalWeight += weight;
                 }
             }

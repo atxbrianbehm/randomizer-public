@@ -51,6 +51,34 @@ For each `grammar` category:
 - Weighted entries, conditional logic, and nested categories are allowed (see core engine docs for syntax).
 - Use `advancedFields` and `uiText` for UI-driven features.
 
+
+### UI & Lockable Rule Guidelines (Advanced Options Modal)
+
+These rules ensure generator packs integrate cleanly with the Randomizer’s dynamic Advanced Options UI.
+
+- **Lockable Rules**: Any grammar key whose value is
+  - An array of strings, or
+  - An array of objects using `{ "label": "...", "value": "..." }`
+  qualifies as *lockable* and will appear in the modal.
+- **Input Type Mapping**
+  - Arrays of simple strings → single-select dropdown.
+  - Arrays of `{label,value}` objects → single-select dropdown using `label` for UI and `value` for output.
+  - Designated multi-select categories (e.g., `keyMaterials`, `screenType`, `dominantControls`) render as checkbox grids. Document any new multi-select categories in the pack’s `uiConfig.multiSelect` array to opt-in.
+- **Human-Readable Labels**: Override default key-to-label mapping with optional `uiLabel` in the generator JSON:
+  ```json
+  "keyMaterials": {
+    "_meta": { "uiLabel": "Key Materials (multiple)" },
+    "$values": [ ... ]
+  }
+  ```
+  If `uiLabel` is absent, the engine will auto-format the key (camelCase → "Camel Case").
+- **Display Order**: Packs may specify a `uiOrder` array at the root to dictate field ordering. Unlisted keys follow alphabetic order.
+- **Optional Detail Grouping**: Less-critical or verbose categories can be listed in `uiOptional` to appear inside the collapsible "Optional Details" section.
+- **Randomization Helpers**: The engine’s randomizer respects the lock state. Checkbox groups will randomly select up to the max specified in `uiConfig.maxCheckboxSelect` (default = 4).
+- **Narrative Prompt Templates**: Packs may include a `promptTemplate` string with Handlebars-style `{{placeholder}}` tokens referencing grammar keys/variables to produce richer prose. If omitted, the default concatenation template is used.
+- **Copy-to-Clipboard UX**: No action required by content authors, but ensure `promptTemplate` stays under 2 KB for smooth clipboard operations.
+- **Styling Advice**: Stick to semantic names; visual theming is handled by the host app.
+
 ---
 
 ## 2. Modularization Guidelines

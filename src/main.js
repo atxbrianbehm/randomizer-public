@@ -4,8 +4,13 @@ import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiU
 import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 // Main entry for Vite – initializes the Randomizer application
+import { GENERATOR_FILES, GENERATOR_LABELS } from '@/../generators/index.js';
 
 export class RandomizerApp {
+    /**
+     * Initialize a new RandomizerApp instance.
+     * Sets up the RandomizerEngine, lock state, event bindings, and loads generators.
+     */
     constructor() {
         this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
@@ -18,30 +23,15 @@ export class RandomizerApp {
         // Don't call setupAdvancedModal here - it will be called when needed
     }
 
+    /**
+     * Asynchronously load all generator JSON files, register them with the engine,
+     * update the generator dropdown, and auto-select the first generator.
+     * @returns {Promise<void>}
+     */
     async initializeGenerators() {
-        // Find all .json generator files in the project directory
-        const generatorFiles = [
-            '/televangelist_generator.json',
-            '/satanic_panic_generator.json'
-        ];
-        this.generatorNames = [];
-        for (const file of generatorFiles) {
-            try {
-                console.log('Fetching generator file:', file);
-                const response = await fetch(file);
-                if (!response.ok) {
-                    console.error('Fetch failed for', file, response.status);
-                    continue;
-                }
-                const data = await response.json();
-                console.log('Loaded JSON for', file, data);
-                const name = await this.engine.loadGenerator(data, data.metadata.name);
-                console.log('Loaded generator into engine:', name);
-                this.generatorNames.push(name);
-            } catch (e) {
-                console.error('Failed to load generator', file, e);
-            }
-        }
+        // Use loader utility for all generators
+        const { loadGenerators } = await import('@/services/generatorLoader.js');
+        this.generatorNames = await loadGenerators(this.engine, GENERATOR_FILES);
         console.log('All loaded generator names:', this.generatorNames);
         this.updateGeneratorDropdown();
         // Auto-select the first generator if available
@@ -50,6 +40,9 @@ export class RandomizerApp {
         }
     }
 
+    /**
+     * Populate the generator select dropdown with available generators from the engine.
+     */
     updateGeneratorDropdown() {
         const select = document.getElementById('generator-select');
         select.innerHTML = '';
@@ -58,11 +51,15 @@ export class RandomizerApp {
         for (const name of generatorList) {
             const option = document.createElement('option');
             option.value = name;
-            option.textContent = name;
+            option.textContent = GENERATOR_LABELS[name] || name;
             select.appendChild(option);
         }
     }
 
+    /**
+     * Select a generator by name, update UI and state accordingly.
+     * @param {string} name - Name of the generator to select.
+     */
     selectGenerator(name) {
         this.engine.selectGenerator(name);
         this.currentGeneratorId = name;
@@ -73,6 +70,9 @@ export class RandomizerApp {
     }
 
     // Enable or disable the Generate Text button depending on state
+    /**
+     * Enable or disable the Generate Text button depending on generator selection state.
+     */
     updateGenerateButton() {
         const generateBtn = document.getElementById('generate-btn');
         if (!generateBtn) return;
@@ -83,6 +83,12 @@ export class RandomizerApp {
     // ...rest of RandomizerApp methods remain unchanged...
 
 
+    /**
+     * Process a grammar rule, handling locks and evaluating its value.
+     * @param {any} rule - The rule to process (string, array, or object).
+     * @param {string|null} ruleName - Optional grammar rule name.
+     * @returns {any} The processed value.
+     */
     processRuleContent(rule, ruleName = null) {
         const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
 
@@ -116,6 +122,12 @@ export class RandomizerApp {
         return result;
     }
 
+    /**
+     * Process an array grammar rule, supporting lockable fields.
+     * @param {Array} rule - The array rule to process.
+     * @param {string|null} ruleName - Optional grammar rule name.
+     * @returns {any} The processed value.
+     */
     processArrayRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
         const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
@@ -127,6 +139,12 @@ export class RandomizerApp {
         return this.processRuleContent(rule[idx], ruleName);
     }
 
+    /**
+     * Process an object grammar rule (conditional/weighted/other).
+     * @param {Object} rule - The object rule to process.
+     * @param {string|null} ruleName - Optional grammar rule name.
+     * @returns {any} The processed value.
+     */
     processObjectRule(rule, ruleName = null) {
         // Handle conditional or weighted rules
         if (rule.type === 'conditional') {
@@ -139,6 +157,12 @@ export class RandomizerApp {
         return '[Unknown object rule]';
     }
 
+    /**
+     * Process a conditional grammar rule, evaluating conditions and actions.
+     * @param {Object} rule - The conditional rule object.
+     * @param {string|null} ruleName - Optional grammar rule name.
+     * @returns {any} The processed value.
+     */
     processConditionalRule(rule, ruleName = null) {
         // Check conditions and select appropriate option
         if (rule.options) {
@@ -157,6 +181,12 @@ export class RandomizerApp {
         return rule.fallback ? this.processRuleContent(rule.fallback, ruleName) : '[No matching condition]';
     }
 
+    /**
+     * Process a weighted grammar rule, randomly selecting options by weight.
+     * @param {Object} rule - The weighted rule object.
+     * @param {string|null} ruleName - Optional grammar rule name.
+     * @returns {any} The processed value.
+     */
     processWeightedRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
         const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
@@ -176,6 +206,11 @@ export class RandomizerApp {
         return this.processRuleContent(options[0], ruleName);
     }
 
+    /**
+     * Evaluate a set of conditions for grammar rule selection.
+     * @param {Object} conditions - Conditions to evaluate.
+     * @returns {boolean} True if all conditions pass, false otherwise.
+     */
     evaluateConditions(conditions) {
         if (!conditions) return true;
 
@@ -193,6 +228,10 @@ export class RandomizerApp {
         return true;
     }
 
+    /**
+     * Execute actions (set, increment, decrement) on variables as part of rule evaluation.
+     * @param {Object} actions - Actions to execute.
+     */
     executeActions(actions) {
         if (actions.set) {
             for (const [variable, operation] of Object.entries(actions.set)) {
@@ -217,6 +256,11 @@ export class RandomizerApp {
         }
     }
 
+    /**
+     * Substitute variables and grammar rule references in a text string.
+     * @param {string} text - Text containing #var# placeholders.
+     * @returns {string} Text with substitutions applied.
+     */
     substituteVariables(text) {
         return text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
             if (Object.prototype.hasOwnProperty.call(this.variables, varName)) {
@@ -232,23 +276,41 @@ export class RandomizerApp {
         });
     }
 
+    /**
+     * Get a shallow copy of the current variables object.
+     * @returns {Object} Copy of variables.
+     */
     getCurrentVariables() {
         return { ...this.variables };
     }
 
+    /**
+     * Get generator info from the engine by ID.
+     * @param {string} id - Generator ID.
+     * @returns {Object} Generator info object.
+     */
     getGeneratorInfo(id) {
         return this.engine.getGeneratorInfo(id);
     }
 
+    /**
+     * Show the advanced modal and synchronize its state with current locks and variables.
+     */
     showAdvancedModal() {
         this.syncAdvancedModal();
         document.getElementById('advanced-modal').style.display = 'block';
     }
 
+    /**
+     * Hide the advanced modal dialog.
+     */
     hideAdvancedModal() {
         document.getElementById('advanced-modal').style.display = 'none';
     }
 
+    /**
+     * Synchronize the advanced modal UI with current lock states and variable values.
+     */
     syncAdvancedModal() {
         // Get possible values from grammar for each field
         const generatorName = this.engine.currentGenerator;
@@ -327,6 +389,9 @@ export class RandomizerApp {
         });
     }
 
+    /**
+     * Apply the selections from the advanced modal to the engine's locked values and update UI.
+     */
     applyAdvancedModal() {
         // Save locked values to engine.lockedValues
         this.engine.lockedValues = this.engine.lockedValues || {};
@@ -342,6 +407,9 @@ export class RandomizerApp {
         this.updateVariablesDisplay();
     }
 
+    /**
+     * Set up advanced modal event handlers and initialize its hidden state.
+     */
     setupAdvancedModal() {
         const applyBtn = document.getElementById('apply-advanced');
         if (applyBtn) {
@@ -365,21 +433,36 @@ export class RandomizerApp {
         }
     }
 
+    /**
+     * Update the entry points UI using the current app state.
+     * @returns {void}
+     */
     updateEntryPoints() {
         return uiUpdateEntryPoints(this);
     }
             
 
+    /**
+     * Update the variables display UI using the current app state.
+     * @returns {void}
+     */
     updateVariablesDisplay() {
         return uiUpdateVariablesDisplay(this);
     }
 
+    /**
+     * Update the generator structure UI using the current app state.
+     * @returns {void}
+     */
     updateGeneratorStructure() {
         return uiUpdateGeneratorStructure(this);
     }
 
 
     
+    /**
+     * Generate text using the currently selected generator and entry point, handling output and errors.
+     */
     generateText() {
         console.log('Generate text called');
         if (!this.currentGeneratorId) {
@@ -428,6 +511,9 @@ export class RandomizerApp {
         }
     }
     
+    /**
+     * Clear all generated output from the output area in the UI.
+     */
     clearOutput() {
         const outputDiv = document.getElementById('output-area');
         if (outputDiv) {
@@ -435,6 +521,9 @@ export class RandomizerApp {
         }
     }
     
+    /**
+     * Display the JSON viewer for the current generator with pretty/compact formatting.
+     */
     showJsonViewer() {
         if (!this.currentGeneratorId) {
             this.showError('Please select a generator first');
@@ -453,6 +542,9 @@ export class RandomizerApp {
         content.classList.remove('hidden');
     }
 
+    /**
+     * Toggle JSON pretty print/compact mode and update the viewer if open.
+     */
     togglePrettyPrint() {
         this.isPrettyPrint = !this.isPrettyPrint;
         const button = document.getElementById('pretty-print');
@@ -463,14 +555,27 @@ export class RandomizerApp {
         }
     }
 
+    /**
+     * Display an error message to the user.
+     * @param {string} message - Error message to display.
+     */
     showError(message) {
         this.showMessage(message, 'error');
     }
 
+    /**
+     * Display a success message to the user.
+     * @param {string} message - Success message to display.
+     */
     showSuccess(message) {
         this.showMessage(message, 'success');
     }
 
+    /**
+     * Display a message (error or success) to the user in the UI.
+     * @param {string} message - Message to display.
+     * @param {string} type - 'error' or 'success'.
+     */
     showMessage(message, type) {
         // Remove existing messages
         const existing = q('.error-message, .success-message');

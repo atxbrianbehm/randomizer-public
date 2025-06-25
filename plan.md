@@ -1,63 +1,84 @@
-# Randomizer Refactor & Build Plan
+# Randomizer Project Plan
 
-## Goals
-1. Modularize the front-end codebase (split `app.js`, rely on `RandomizerEngine.js`).
-2. Introduce Vite for fast dev server and production bundle.
-3. Keep this `plan.md` in sync with task updates.
-4. Grow the library of content generators.
+## Notes
+- This plan consolidates all active and unfinished tasks from previous plans (including .codeium/windsurf/brain/0e859844-e41d-48b0-b8fa-524135974618/plan.md).
+- Integrated tasks and notes from other project plans; archived redundant/old plans.
+- Reflects current status of Randomizer refactor, build, and new generator integration.
 
----
+## Task List
+### Active Tasks
+- [ ] Folder restructure & source migration
+  - [ ] `src/services/generatorLoader.js`
+    - [ ] Extract `fetchGeneratorSpec()` helper wrapping `fetch()`/error-handling.
+    - [ ] Move registration logic into `registerGenerator()` util.
+    - [ ] Add JSDoc comments & unit tests.
+  - [ ] `src/main.js` cleanup
+    - [ ] Abstract repetitive lockable list into `constants.js`.
+    - [ ] Wrap DOM queries in `ui/query.js` helper (e.g., `q('#id')`).
+    - [x] Remove legacy global variables.
+    - [x] Eliminate unused event listeners (`onGenerateClick`, `onHelpClick`) – none found.
+    - [x] Extract `generateText` body to `services/textGenerator.js` (thin wrapper in class).
+    - [x] Write Vitest unit tests for new helper functions.
+    - [ ] Add/update JSDoc for all RandomizerApp class methods.
+    - [x] Replace direct `document.querySelector` calls with UI helpers.
+    - [ ] Delete unused event listeners (`onGenerateClick`, `onHelpClick`).
+  - [ ] Source moves
+    - [ ] Move `randomizer.css` → `src/styles/randomizer.css`.
+    - [ ] Relocate preview images → `public/preview/`.
+  - [ ] Imports
+    - [ ] Update paths to use `@/` alias.
+    - [ ] Run ESLint autofix to catch broken paths.
+- [x] HTML / CSS polish
+  - [x] ID/class audit
+    - [x] Build checklist of expected selectors from JS.
+    - [x] Cross-verify against `index.html` and templates.
+  - [x] Dark-mode
+    - [x] Migrate hard-coded colors to CSS variables.
+    - [x] Add prefers-color-scheme fallback.
+  - [x] Modal styling
+    - [x] Ensure focus-trap & scroll-lock utilities work in Safari.
+    - [x] Add drop-shadow in light theme.
+- [x] Verification & QA
+  - [x] Manual smoke-test scenarios
+    - [x] Generate 5 prompts with default generator.
+    - [x] Toggle theme and verify persistence.
+    - [x] Lock variable and ensure new seed respects lock.
+  - [x] Performance budget
+    - [x] Keep dev bundle <200 KB gzip.
+  - [x] Accessibility
+    - [x] Run Lighthouse a11y audit and hit ≥90 score.
+- [ ] New Generator • Anachronistic Tech Panel
+  - Phase 1 – Asset & Spec
+    - [ ] Convert provided JSON → `generators/anachronisticTechPanel.json`.
+    - [ ] Optimise `previewImage` ≤150 KB.
+  - Phase 2 – Integration
+    - [ ] Import in `generators/index.js` & dropdown label “Tech Panel (Retro-Future)”.
+  - Phase 3 – UI mapping
+    - [ ] Add multi-select UI for `panelArchetype`, `aestheticInfluence`.
+    - [ ] Display color-palette swatches.
+  - Phase 4 – Logic
+    - [ ] Update `RandomizerEngine.generate()` for nested arrays.
+    - [ ] Extend variable-lock rules to cover new categories.
+  - Phase 5 – Tests
+    - [ ] Snapshot test sample prompt.
 
-## Active Tasks
+### Other Completed Refactor Items
+- Directories `src/`, `public/`, `generators/`, `tests/` created.
+- ESLint & Prettier configured.
+- README expanded with dev, build & test instructions.
+- Legacy grammar helpers removed from `main.js`, stray comment terminators cleaned up.
+- Lockable fields centralized in `constants.js`.
+- Stylesheet moved to `src/styles/randomizer.css` and reference updated in `index.html`.
+- Engine supports `lockedValues` for grammar rules.
+- Preview images moved to `public/preview/` and references updated.
+- Automated/unit tests (Vitest) running and passing.
+- Lighthouse accessibility/performance checks run.
+- Manual smoke-tests completed for prompt generation, theme toggle, variable lock.
+- Large images optimized (lazy-load, explicit dimensions).
+- QA, accessibility, and polish tasks completed.
 
-### 1. Folder restructure & source migration
-- [ ] `src/services/generatorLoader.js`
-  - [x] Extract `fetchGeneratorSpec()` helper wrapping `fetch()`/error-handling.
-  - [x] Move registration logic into `registerGenerator()` util.
-  - [x] Add JSDoc comments & unit tests.
-- [ ] `src/main.js` cleanup
-  - [ ] Abstract repetitive lockable list into `constants.js`.
-  - [ ] Wrap DOM queries in `ui/query.js` helper (e.g., `q('#id')`).
-  - [ ] Remove legacy global variables (`this.variables`, outdated `this.generators` map usage).
-  - [x] Eliminate unused event listeners (`onGenerateClick`, `onHelpClick`) – none found.
-  - [x] Extract `generateText` body to `services/textGenerator.js` (thin wrapper in class).
-  - [x] Write Vitest unit tests for new helper functions.
-  - [x] Update JSDoc across class methods.
-  - [ ] Remove legacy global variables.
-  - [x] Replace direct `document.querySelector` calls with UI helpers.
-  - [ ] Delete unused event listeners (`onGenerateClick`, `onHelpClick`).
-- [ ] Source moves
-  - [ ] Move `randomizer.css` → `src/styles/randomizer.css`.
-  - [ ] Relocate preview images → `public/preview/`.
-- [ ] Imports
-  - [ ] Update paths to use `@/` alias.
-  - [ ] Run ESLint autofix to catch broken paths.
-
-### Comment Cleanup – minimal safe diff
-1. Confirm baseline compiles: `npm run build` passes. ✅
-2. Open `src/main.js` in editor.
-3. Locate first JSDoc opener `/**` above `constructor()`.
-4. If it is missing a closer, insert `*/` on a new line **immediately before** `constructor()`.
-5. Search for the single line `/* legacy grammar helpers removed` and convert it to `// legacy grammar helpers removed` (retain following code).
-6. Run `npm run dev`; verify no new syntax errors.
-7. Grep for lone `*/` lines (`grep -n "^\s*\*/" src/main.js`).  For each match:
-   a. Check which opening comment it pairs with.
-   b. Delete the `*/` only if its corresponding opener was already closed earlier.
-8. After each deletion, re-run `npm run dev` to confirm still compiling.
-9. When grep returns **no** orphan `*/`, run `npm run build` again to double-check production bundle.
-10. Commit the minimal diff: `git add src/main.js && git commit -m "chore: tidy block comments (minimal safe diff)"`.
-11. Push branch / open PR.
-
-### 2. HTML / CSS polish
-- [ ] ID/class audit
-  - [ ] Build checklist of expected selectors from JS.
-  - [ ] Cross-verify against `index.html` and templates.
-- [ ] Dark-mode
-  - [ ] Migrate hard-coded colors to CSS variables.
-  - [ ] Add prefers-color-scheme fallback.
-- [ ] Modal styling
-  - [ ] Ensure focus-trap & scroll-lock utilities work in Safari.
-  - [ ] Add drop-shadow in light theme.
+## Current Goal
+Complete active tasks from the consolidated project plan.
 
 ### 3. Verification & QA
 - [ ] Manual smoke-test scenarios
@@ -86,6 +107,33 @@
   - [ ] Validate error on invalid `grammar` entry.
 - **Phase 6 – Docs**
   - [ ] README section with usage & example image.
+
+### Advanced Options Modal – Dynamic Refactor
+The goal is to replace the hard-coded lockable-fields modal with a generator-aware, auto-built UI.
+
+**Steps**
+1. **Determine Lockable Rules**  
+   • Any grammar rule whose value is an array of strings or objects (`{label, value}`) qualifies.  
+   • Exclude numeric or free-form variables.
+2. **Engine Helper**  
+   • Add `getLockableRules(generatorName)` in `RandomizerEngine` to return qualifying rule names.
+3. **App Data Flow**  
+   • On `selectGenerator`, compute `this.lockableRules = engine.getLockableRules(name)`.
+4. **Modal Builder Refactor** (`src/ui/advancedModal.js`)  
+   • For each rule in `app.lockableRules`, create label, `<select>`, and lock toggle.  
+   • Populate `<select>` options with string or `value/label` pairs.
+5. **Sync & Apply Logic**  
+   • Iterate `app.lockableRules` to update dropdown states and copy locked values into `engine.lockedValues`.
+6. **Remove Legacy Code**  
+   • Delete `LOCKABLE_FIELDS` in `constants.js` and related static logic.
+7. **Testing**  
+   • Tech-panel generator shows 12 categories, locks respected.  
+   • Televangelist generator still works.  
+   • Unit tests for `getLockableRules`.
+8. **Polish (optional)**  
+   • Alphabetical sort of rules, search/filter, persist locks in `localStorage`.
+
+---
 
 ### 5. Expand Existing Generators
 - **Generator A**

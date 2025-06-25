@@ -1,0 +1,132 @@
+{
+  "metadata": {
+    "name": "Anachronistic Tech Panel Generator",
+    "version": "1.0.0",
+    "previewImage": "anachro_pack_thumb.png",
+    "description": "Generates detailed, stylized prompts for retro-futuristic technology panels and interfaces.",
+    "author": "Gemini",
+    "created": "2025-06-25",
+    "category": "creative",
+    "tags": ["sci-fi", "retrofuturism", "art prompt", "world-building", "anachronistic"]
+  },
+  "assets": {},
+  "variables": {
+    "possibleTechFunctions": [
+      "Navigation and Astrogation Computer", "Primary Weapons Systems Control", "Shield Modulation & Emitter Array",
+      "Engine Core Diagnostics & Output Regulation", "Atmospheric Life Support Systems", "Internal Security Grid Monitoring",
+      "Subspace Communications Array", "Hyperspace Jump Calculation & Trajectory Plotting", "Multi-spectral Sensor Array Analysis",
+      "Automated Targeting Computer Interface", "Emergency Power Distribution Matrix", "Robotic Repair Sequencer & Drone Control",
+      "Cryo-Stasis Pod Monitoring & Revival Sequence", "Airlock Cycle & Pressure Control", "Tractor Beam Emitter Strength & Targeting",
+      "Planetary Geological Scanner Interface", "AI Core Interface & Logic Matrix", "Waste Reclamation & Repurposing System",
+      "Hydroponics Bay Climate Control", "Gravity Plating Calibration Unit", "Cloaking Device Emitter & Power Regulation",
+      "Teleportation Matrix Coordinates & Safety Interlocks", "Time-Space Distortion Field Stabilizer", "Exotic Matter Containment Field Controls"
+    ]
+  },
+  "grammar": {
+    "panelArchetype": [
+      { "label": "Cockpit Control Surface (Fighter, Shuttle)", "value": "Cockpit Control Surface" },
+      { "label": "Bridge/Command Console (Capital Ship, Ops)", "value": "Bridge/Command Center Console" },
+      { "label": "Machinery/Engineering Panel (Engine Room, Reactor)", "value": "Machinery/Engineering Panel" },
+      { "label": "Data Terminal Interface (Info Access, Logs)", "value": "Data Terminal Interface" },
+      { "label": "Handheld Device (Scanner, Commlink, Tricorder-like)", "value": "Handheld Device" },
+      { "label": "Wall-Mounted Utility Panel (Life Support, Door Control)", "value": "Wall-Mounted Utility Panel" },
+      { "label": "Mainframe Access Station (Bulky Computer Interface)", "value": "Mainframe Access Station" },
+      { "label": "Laboratory Equipment Interface (Scientific Instruments)", "value": "Laboratory Equipment Interface" }
+    ],
+    "aestheticInfluence": [
+      { "label": "Star Wars Core (Used Future, 70s Analog)", "value": "Star Wars Core" },
+      { "label": "Cassette Futurism (Alien, Blade Runner - 70s/80s CRTs)", "value": "Cassette Futurism" },
+      { "label": "Dieselpunk (Fallout, Sky Captain - Interwar/WWII, Gritty)", "value": "Dieselpunk" },
+      { "label": "Atompunk/Raygun Gothic (Jetsons, Forbidden Planet - 50s/60s)", "value": "Atompunk/Raygun Gothic" },
+      { "label": "Decopunk (Bioshock - Art Deco, Luxurious Machines)", "value": "Decopunk" },
+      { "label": "Soviet Retrofuturism (Constructivist, Monumental)", "value": "Soviet Retrofuturism" },
+      { "label": "Valvepunk/Clockpunk (Early Industrial, Brass, Valves)", "value": "Valvepunk/Clockpunk" },
+      { "label": "Formica Futurism (Googie, Populuxe - Late 50s/Early 60s)", "value": "Formica Futurism" }
+    ],
+    "factionAlignment": [
+      { "label": "Galactic Empire / Authoritarian Corp (Stark, Uniform)", "value": "Galactic Empire / Authoritarian Corporate" },
+      { "label": "Rebel Alliance / Resistance (Utilitarian, Retrofitted)", "value": "Rebel Alliance / Resistance Movement" },
+      { "label": "Civilian / Fringe Smuggler (Customized, Worn, Jury-Rigged)", "value": "Civilian / Fringe Smuggler" },
+      { "label": "Heavy Industrial / Utilitarian (Robust, Functional, No Frills)", "value": "Heavy Industrial / Utilitarian" },
+      { "label": "Ancient / Enigmatic Forerunner (Mysterious, Dated but Advanced)", "value": "Ancient / Enigmatic Forerunner Tech" },
+      { "label": "Scientific / Research Institute (Precise, Purpose-Built, Sterile)", "value": "Scientific / Research Institute" },
+      { "label": "Luxury / High-End Commercial (Polished, Ergonomic)", "value": "Luxury / High-End Commercial" }
+    ],
+    "wearLevel": [
+      { "label": "Pristine (New Old Stock - retro design, mint condition)", "value": "Pristine (New Old Stock)" },
+      { "label": "Lightly Used (Minor scuffs, dust, fingerprints)", "value": "Lightly Used" },
+      { "label": "Moderately Worn (Visible scratches, grime, faded labels)", "value": "Moderately Worn" },
+      { "label": "Heavily Used / Jury-Rigged (Damage, patches, makeshift repairs)", "value": "Heavily Used / Jury-Rigged" },
+      { "label": "Battle-Scarred / Field Repaired (Impact marks, welds)", "value": "Battle-Scarred / Field Repaired" },
+      { "label": "Overgrown / Reclaimed by Nature (Dust, vines, rust, decay)", "value": "Overgrown / Reclaimed by Nature" }
+    ],
+    "primaryColorPalette": [
+      { "label": "Dark Grays & Muted Blues (Warning Accents)", "value": "Dark Grays & Muted Blues with Warning Accents" },
+      { "label": "Military Greens, Browns & Khaki", "value": "Military Greens, Browns & Khaki" },
+      { "label": "Cream, Chrome & Pastel Highlights", "value": "Cream, Chrome & Pastel Highlights (e.g., Turquoise, Coral)" },
+      { "label": "Beige, Off-White & Orange/Brown Accents", "value": "Beige, Off-White & Orange/Brown Accents" },
+      { "label": "Industrial Grays (Yellow/Red Safety Markings)", "value": "Industrial Grays with Yellow & Red Safety Markings" },
+      { "label": "Polished Metallics & Dark Woods/Bakelite", "value": "Polished Metallics (Brass, Copper, Steel) & Dark Woods/Bakelite" },
+      { "label": "Monochromatic (e.g., green on green)", "value": "Monochromatic (shades of one color, e.g., green on green)" }
+    ],
+    "keyMaterials": [
+      { "label": "Painted Metal", "value": "Painted Metal (chipped, worn)" },
+      { "label": "Bare Metal", "value": "Bare Industrial Metal (scratched, oxidized)" },
+      { "label": "Aged Plastic", "value": "Aged Plastic/ABS (yellowed, scuffed)" },
+      { "label": "Bakelite/Catalin", "value": "Bakelite or Catalin Accents" },
+      { "label": "Rubber Elements", "value": "Rubberized Elements (cracked, grimy)" },
+      { "label": "Wood Inlays", "value": "Polished Wood Inlays or Paneling" },
+      { "label": "Heavy Steel", "value": "Heavy-Gauge Steel with Visible Welds" },
+      { "label": "Cast Iron", "value": "Cast Iron Components" },
+      { "label": "Formica", "value": "Textured Formica Surfaces" }
+    ],
+    "screenType": [
+      { "label": "Monochrome CRT", "value": "Monochrome CRT (Green/Amber/Blue-Gray Text)" },
+      { "label": "Vector Display", "value": "Basic Vector Graphics Display (Flickering Lines)" },
+      { "label": "Nixie/Panaplex", "value": "Nixie Tube or Panaplex Readouts" },
+      { "label": "LED Segments", "value": "Red/Green LED Segment Displays" },
+      { "label": "Annunciator Lights", "value": "Backlit Annunciator Panels (Status Lights)" },
+      { "label": "No Screen", "value": "No Screen (Physical Gauges & Indicators Only)" },
+      { "label": "Oscilloscope", "value": "Oscilloscope-style Waveform Display" },
+      { "label": "Early Plasma", "value": "Early Plasma Display (Orange Glow)" }
+    ],
+    "dominantControls": [
+      { "label": "Toggle Switches", "value": "Toggle Switches (Bat-handle, Paddle, Guarded)" },
+      { "label": "Chunky Buttons", "value": "Chunky Illuminated Push-buttons (Square, Round)" },
+      { "label": "Rotary Dials", "value": "Rotary Dials (Knurled Metal, Bakelite, Pointer Knob)" },
+      { "label": "Industrial Levers", "value": "Industrial Levers (Large Throw, Gated)" },
+      { "label": "Sliders", "value": "Sliders/Potentiometers (with Visible Tracks)" },
+      { "label": "Physical Keypads", "value": "Physical Keypads (Membrane, Sculpted, Clicky)" },
+      { "label": "Valve Wheels", "value": "Valve Wheels / Crank Handles" },
+      { "label": "Knife Switches", "value": "Knife Switches (Exposed Contacts)" }
+    ],
+    "greebleDensity": [
+      { "label": "None (Smooth, unbroken surfaces)", "value": "None" },
+      { "label": "Low (Clean surfaces, minimal detailing, panel lines)", "value": "Low" },
+      { "label": "Medium (Some visual complexity, small vents, exposed fasteners)", "value": "Medium" },
+      { "label": "High (Dense, intricate surface details, visible wiring)", "value": "High" },
+      { "label": "Extreme (Overlapping layers of greebles, kitbashed look)", "value": "Extreme" }
+    ],
+    "labelingStyle": [
+      { "label": "Stenciled Lettering (Military, Industrial)", "value": "Stenciled Lettering (Military, Industrial)" },
+      { "label": "Engraved Metal or Plastic Plaques", "value": "Engraved Metal or Plastic Plaques" },
+      { "label": "Dymo Embossed Tape Labels (Ad-hoc, Worn)", "value": "Dymo Embossed Tape Labels (Ad-hoc, Worn)" },
+      { "label": "Cryptic Symbols or Alien Glyphs", "value": "Cryptic Symbols or Alien Glyphs" },
+      { "label": "Minimal/No Labels (Assumed User Knowledge)", "value": "Minimal/No Labels (Assumed User Knowledge)" },
+      { "label": "Handwritten or Scratched-in Labels", "value": "Handwritten or Scratched-in Labels" },
+      { "label": "Elegant Art Deco Lettering", "value": "Elegant Art Deco Lettering" }
+    ],
+    "panelLighting": [
+      { "label": "Dimly Lit (Spot Glows from Indicators)", "value": "Dimly Lit with Spot Glows from Active Indicators" },
+      { "label": "Harsh Overhead Industrial Lighting", "value": "Harsh Overhead Industrial Lighting" },
+      { "label": "Soft Internal Glow (Backlit Panels/Buttons)", "value": "Soft Internal Glow from Backlit Panels/Buttons" },
+      { "label": "Flickering or Unreliable Light Sources", "value": "Flickering or Unreliable Light Sources" },
+      { "label": "No Dedicated Panel Lighting (Relies on Ambient)", "value": "No Dedicated Panel Lighting (Relies on Ambient)" },
+      { "label": "Warm Incandescent Bulb Illumination", "value": "Warm Incandescent Bulb Illumination" },
+      { "label": "Neon Accents or Underglow", "value": "Neon Accents or Underglow" }
+    ]
+  },
+  "entryPoints": {
+    "default": "Your prompt generation logic/string would go here, referencing grammar categories like #[categoryName]#"
+  }
+}
