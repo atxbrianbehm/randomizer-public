@@ -222,8 +222,7 @@ export class RandomizerApp {
     }
 
     getGeneratorInfo(id) {
-        if (!this.generators.has(id)) return null;
-        return this.generators.get(id);
+        return this.engine.getGeneratorInfo(id);
     }
 
     showAdvancedModal() {
