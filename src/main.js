@@ -2,6 +2,7 @@ import RandomizerEngine from '../RandomizerEngine.js';
 import bindEvents from './ui/events.js';
 import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from './ui/state.js';
 import { createLockObjects } from './services/variableLocks.js';
+import { q } from './ui/query.js';
 // Main entry for Vite – initializes the Randomizer application
 
 export class RandomizerApp {
@@ -338,7 +339,7 @@ export class RandomizerApp {
             cancelBtn.onclick = () => this.hideAdvancedModal();
         }
         
-        const closeModal = document.querySelector('.close-modal');
+        const closeModal = q('.close-modal');
         if (closeModal) {
             closeModal.onclick = () => this.hideAdvancedModal();
         }
@@ -458,7 +459,7 @@ export class RandomizerApp {
 
     showMessage(message, type) {
         // Remove existing messages
-        const existing = document.querySelector('.error-message, .success-message');
+        const existing = q('.error-message, .success-message');
         if (existing) {
             existing.remove();
         }
@@ -467,7 +468,7 @@ export class RandomizerApp {
         messageDiv.className = `${type}-message fade-in`;
         messageDiv.textContent = message;
         
-        const container = document.querySelector('.container');
+        const container = q('.container');
         container.insertBefore(messageDiv, container.firstChild);
         
         // Auto-remove after 5 seconds
