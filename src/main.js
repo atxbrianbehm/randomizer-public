@@ -1,6 +1,7 @@
 import RandomizerEngine from '../RandomizerEngine.js';
 import bindEvents from './ui/events.js';
 import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from './ui/state.js';
+import { createLockObjects } from './services/variableLocks.js';
 // Main entry for Vite – initializes the Randomizer application
 
 export class RandomizerApp {
@@ -8,18 +9,9 @@ export class RandomizerApp {
         this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
         this.isPrettyPrint = true;
-        this.Locked = {
-            preacher_name: undefined,
-            divine_title: undefined,
-            platforms: undefined,
-            mediaContexts: undefined
-        };
-        this.LockState = {
-            preacher_name: false,
-            divine_title: false,
-            platforms: false,
-            mediaContexts: false
-        };
+        const { Locked, LockState } = createLockObjects();
+        this.Locked = Locked;
+        this.LockState = LockState;
         bindEvents(this);
         this.initializeGenerators();
         // Don't call setupAdvancedModal here - it will be called when needed
