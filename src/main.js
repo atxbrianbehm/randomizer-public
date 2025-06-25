@@ -5,7 +5,7 @@ import { setupModal as setupAdvancedModal, showModal as openAdvancedModal, build
 import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 // Main entry for Vite – initializes the Randomizer application
-import { GENERATOR_FILES, GENERATOR_LABELS } from '@/../generators/index.js';
+import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 
 export class RandomizerApp {
     /**
