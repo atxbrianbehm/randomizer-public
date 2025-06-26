@@ -4,6 +4,7 @@ import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiU
 import { setupModal as setupAdvancedModal, showModal as openAdvancedModal, buildModal as rebuildAdvancedModal } from '@/ui/advancedModal.js';
 import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
+import { openPromptEditor } from '@/ui/promptEditorModal.js';
 // Main entry for Vite – initializes the Randomizer application
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 
@@ -496,19 +497,46 @@ export class RandomizerApp {
             const outputDiv = document.getElementById('output-area');
             let lastResult = '';
             for (let i = 0; i < count; i++) {
-                const result = this.engine.generate(null, entryArg);
+                const { text: result, segments } = this.engine.generateDetailed(null, entryArg);
                 lastResult = result;
                 if (outputDiv) {
+                    const card = document.createElement('div');
+                    card.className = 'prompt-card';
+
                     const p = document.createElement('p');
                     p.textContent = result;
                     p.className = 'generated-text';
-                    // Copy to clipboard on click
+                    p.style.flex = '1';
+
+                    // Copy on click
                     p.onclick = () => {
                         navigator.clipboard.writeText(p.textContent).then(() => {
                             this.showSuccess('Copied to clipboard');
                         });
                     };
-                    outputDiv.insertBefore(p, outputDiv.firstChild);
+
+                    const editBtn = document.createElement('button');
+                    editBtn.textContent = '⋯';
+                    editBtn.className = 'edit-btn';
+                    editBtn.title = 'Edit prompt';
+                    editBtn.onclick = () => {
+                        openPromptEditor({
+                            segments,
+                            rawText: result,
+                            onSave: (newText) => {
+                                p.textContent = newText;
+                            }
+                        });
+                    };
+
+                    card.style.display = 'flex';
+                    card.style.gap = '0.5rem';
+                    card.style.alignItems = 'center';
+
+                    card.appendChild(p);
+                    card.appendChild(editBtn);
+
+                    outputDiv.insertBefore(card, outputDiv.firstChild);
                 }
             }
             
