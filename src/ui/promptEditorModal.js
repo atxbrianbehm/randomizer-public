@@ -74,10 +74,9 @@ function computePreview(segments) {
 }
 
 function attachDnD(listEl, segments, previewEl) {
-    // Remove any previous listeners by cloning listEl (avoids stacking)
-    const cleanList = listEl.cloneNode(false);
-    listEl.parentNode.replaceChild(cleanList, listEl);
-    listEl = cleanList;
+    // Attach listeners only once
+    if (listEl.dataset.dndAttached) return;
+    listEl.dataset.dndAttached = 'true';
     listEl.addEventListener('dragstart', (e) => {
         const li = e.target.closest('.pem-token');
         dragSrcEl = li;
