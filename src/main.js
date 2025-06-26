@@ -502,6 +502,7 @@ export class RandomizerApp {
                 if (outputDiv) {
                     const card = document.createElement('div');
                     card.className = 'prompt-card';
+                    card.style.position = 'relative';
 
                     const p = document.createElement('p');
                     p.textContent = result;
@@ -519,6 +520,15 @@ export class RandomizerApp {
                     editBtn.textContent = '⋯';
                     editBtn.className = 'edit-btn';
                     editBtn.title = 'Edit prompt';
+                    editBtn.setAttribute('aria-label', 'Edit prompt');
+                    // dark-mode neutral styling
+                    editBtn.style.position = 'absolute';
+                    editBtn.style.top = '4px';
+                    editBtn.style.right = '4px';
+                    editBtn.style.background = 'transparent';
+                    editBtn.style.color = '#ccc';
+                    editBtn.style.border = 'none';
+                    editBtn.style.cursor = 'pointer';
                     editBtn.onclick = () => {
                         openPromptEditor({
                             segments,
