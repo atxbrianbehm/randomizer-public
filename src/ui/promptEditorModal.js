@@ -72,6 +72,10 @@ function computePreview(segments) {
 }
 
 function attachDnD(listEl, segments, previewEl) {
+    // Remove any previous listeners by cloning listEl (avoids stacking)
+    const cleanList = listEl.cloneNode(false);
+    listEl.parentNode.replaceChild(cleanList, listEl);
+    listEl = cleanList;
     listEl.addEventListener('dragstart', (e) => {
         const li = e.target.closest('.pem-token');
         dragSrcEl = li;
@@ -85,10 +89,12 @@ function attachDnD(listEl, segments, previewEl) {
         if (!li || li === dragSrcEl) return;
         const srcIdx = Number(dragSrcEl.dataset.index);
         const tgtIdx = Number(li.dataset.index);
-        segments.splice(tgtIdx, 0, segments.splice(srcIdx, 1)[0]);
-        renderTokens(listEl, segments);
-        attachDnD(listEl, segments, previewEl); // rebind indexes
-        previewEl.textContent = computePreview(segments);
+        if (srcIdx !== tgtIdx) {
+            segments.splice(tgtIdx, 0, segments.splice(srcIdx, 1)[0]);
+            renderTokens(listEl, segments);
+            attachDnD(listEl, segments, previewEl); // rebind indexes
+            previewEl.textContent = computePreview(segments);
+        }
     });
 
     listEl.addEventListener('dragend', () => {

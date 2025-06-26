@@ -510,11 +510,7 @@ export class RandomizerApp {
                     p.style.flex = '1';
 
                     // Copy on click
-                    p.onclick = () => {
-                        navigator.clipboard.writeText(p.textContent).then(() => {
-                            this.showSuccess('Copied to clipboard');
-                        });
-                    };
+
 
                     const editBtn = document.createElement('button');
                     editBtn.textContent = '⋯';
@@ -541,8 +537,25 @@ export class RandomizerApp {
 
                     card.style.display = 'flex';
                     card.style.gap = '0.5rem';
-                    card.style.alignItems = 'center';
+                    card.style.alignItems = 'flex-start';
+                    card.style.background = '#2a2a2a';
+                    card.style.border = '1px solid #444';
+                    card.style.borderRadius = '8px';
+                    card.style.padding = '0.75rem 1rem';
+                    card.style.cursor = 'pointer';
+                    card.onmouseover = () => { card.style.background = '#323232'; };
+                    card.onmouseout = () => { card.style.background = '#2a2a2a'; };
 
+                    // copy entire prompt on card click
+                    card.onclick = (e) => {
+                        // ignore if edit button clicked
+                        if (e.target.closest('button')) return;
+                        navigator.clipboard.writeText(p.textContent).then(() => {
+                            this.showSuccess('Copied to clipboard');
+                        });
+                    };
+
+                    p.style.margin = '0';
                     card.appendChild(p);
                     card.appendChild(editBtn);
 
