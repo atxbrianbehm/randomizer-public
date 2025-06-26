@@ -24,6 +24,7 @@ function ensureModalExists() {
       <div class="pem-backdrop"></div>
       <div class="pem-dialog" role="dialog" aria-modal="true" aria-labelledby="pem-title">
         <h2 id="pem-title">Edit Prompt</h2>
+        <label style="font-size:.8rem;opacity:.7">Preview</label>
         <p class="pem-preview" id="pem-preview"></p>
         <ul class="pem-token-list" id="pem-token-list"></ul>
         <div class="pem-actions">
@@ -111,8 +112,13 @@ export function openPromptEditor({ segments, rawText, onSave }) {
     const previewEl = modal.querySelector('#pem-preview');
     const listEl = modal.querySelector('#pem-token-list');
 
+    // If engine didn't supply segments, derive naïve ones by splitting on commas
+    const baseSegments = (segments && segments.length)
+        ? segments
+        : rawText.split(/,\s*/).map((t,i) => ({ key: `seg${i}`, text: t.trim() }));
+
     // Deep copy to avoid mutating caller
-    const working = segments.map(s => ({ ...s, muted: false }));
+    const working = baseSegments.map(s => ({ ...s, muted: false }));
 
     renderTokens(listEl, working);
     previewEl.textContent = computePreview(working);
