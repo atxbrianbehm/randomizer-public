@@ -7,6 +7,22 @@ export default class RandomizerEngine {
         this._seed = null;
         this._prng = null;
         this.currentGenerator = null; // Track the current generator name
+        // Built-in modifier functions (can be extended)
+        this.modifiers = {
+            capitalize: (txt) => txt.charAt(0).toUpperCase() + txt.slice(1),
+            a_an: (txt) => {
+                const first = txt.trim()[0]?.toLowerCase() || 'a';
+                const vowel = ['a', 'e', 'i', 'o', 'u'].includes(first);
+                return (vowel ? 'an ' : 'a ') + txt;
+            },
+            plural: (txt) => {
+                if (txt.endsWith('s')) return txt; // naive
+                if (txt.endsWith('y') && !/[aeiou]y$/i.test(txt)) {
+                    return txt.slice(0, -1) + 'ies';
+                }
+                return txt + 's';
+            }
+        };
         // Map of locked grammar rule names to fixed values (set by UI)
         this.lockedValues = {};
     }
@@ -274,19 +290,40 @@ export default class RandomizerEngine {
         return this.selectFromArray(rule.options, context);
     }
 
+    // Register a custom modifier
+    registerModifier(name, fn) {
+        this.modifiers[name] = fn;
+    }
+
+    // Apply modifier chain to text
+    applyModifiers(text, mods) {
+        let result = text;
+        for (const m of mods) {
+            const fn = this.modifiers[m];
+            if (fn) {
+                result = fn(result);
+            }
+        }
+        return result;
+    }
+
     // Process text with variable substitution and rule expansion
     processText(text, context) {
         if (!text) return '';
 
         // First expand rules and capture segments
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, ruleName) => {
+        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_\.]+))?#/g, (match, ruleName, modsStr) => {
             const generator = this.loadedGenerators.get(context.generatorName);
             if (generator && generator.grammar[ruleName]) {
-                const expanded = this.expandRule(generator, ruleName, context);
+                let expanded = this.expandRule(generator, ruleName, context);
+                const mods = modsStr ? modsStr.split('.') : [];
+                if (mods.length) {
+                    expanded = this.applyModifiers(expanded, mods);
+                }
                 if (Array.isArray(context.segments)) {
                     context.segments.push({ key: ruleName, text: expanded });
                 }
-                return expanded;
+                return expanded; // with modifiers applied
             }
             return match;
         });
