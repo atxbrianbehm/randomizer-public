@@ -104,6 +104,9 @@ export default class RandomizerEngine {
 
     // Generate text from a loaded generator
     // If generatorName not provided, use currentGenerator if set
+    /**
+     * Generate prompt text (simple version – returns string only)
+     */
     generate(generatorName = null, entryPoint = null, context = {}) {
         const nameToUse = generatorName || this.currentGenerator;
         if (!nameToUse) {
@@ -122,6 +125,31 @@ export default class RandomizerEngine {
         };
 
         return this.expandRule(generator, startRule, generationContext);
+    }
+
+    /**
+     * Detailed generation – returns { text, segments }
+     * segments: ordered array of { key, text } entries used when building the prompt.
+     */
+    generateDetailed(generatorName = null, entryPoint = null, context = {}) {
+        const nameToUse = generatorName || this.currentGenerator;
+        if (!nameToUse) {
+            throw new Error('No generator selected.');
+        }
+        const generator = this.loadedGenerators.get(nameToUse);
+        if (!generator) {
+            throw new Error(`Generator '${nameToUse}' not found`);
+        }
+        const startRule = entryPoint || generator.entry_points.default;
+        const generationContext = {
+            ...context,
+            generatorName: nameToUse,
+            variables: this.getVariablesForGenerator(nameToUse),
+            segments: [] // collect token info here
+        };
+        const text = this.expandRule(generator, startRule, generationContext);
+        return { text, segments: generationContext.segments };
+    
     }
 
     // Core rule expansion logic
@@ -257,11 +285,15 @@ export default class RandomizerEngine {
             return value !== undefined ? value : match;
         });
 
-        // Rule expansion
+        // Rule expansion – also record segments if context.segments present
         text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, ruleName) => {
             const generator = this.loadedGenerators.get(context.generatorName);
             if (generator && generator.grammar[ruleName]) {
-                return this.expandRule(generator, ruleName, context);
+                const expanded = this.expandRule(generator, ruleName, context);
+                if (Array.isArray(context.segments)) {
+                    context.segments.push({ key: ruleName, text: expanded });
+                }
+                return expanded;
             }
             return match;
         });
