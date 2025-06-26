@@ -25,14 +25,64 @@
   - [ ] Handle edge cases (0/1/2 chips, all muted).
   - [ ] Performance benchmark (<20 ms for 1000 rewrites).
 - [ ] Phase 4 – State Persistence (Twine-style)
-  - [ ] Store edited chip state and prompt text until new generation.
-  - [ ] Add “Reset to generator default” option.
+  - [ ] Persistence spec
+    - [ ] Define JSON schema for persisted state (`version`, `generator`, `lockedValues`, `lastPrompt`, `theme`, `seed`)
+    - [ ] Size budget ≤10 KB
+  - [ ] Implementation
+    - [ ] Create `src/services/persistence.js` with `saveState`, `loadState`, `clearState`
+    - [ ] Wire `RandomizerApp` to `saveState` after each generate & variable edit
+    - [ ] Hydrate app on init, falling back gracefully if schema version mismatches
+  - [ ] UI
+    - [ ] Add “Reset to defaults” button next to Generate
+    - [ ] Add tooltip explaining persistence
+    - [ ] Emit toast on successful restore/reset
+  - [ ] Tests
+    - [ ] Unit tests for `persistence.js`
+    - [ ] Integration test: edit variable → reload → state restored
+  - [ ] Performance
+    - [ ] Saving & loading ≤2 ms on average laptop
+  - [ ] Docs
+    - [ ] Update GUIDE with persistence API and migration notes
+
 - [ ] Phase 5 – Debug Overlay / Expansion Tree
-  - [ ] Add dev-mode overlay showing rule→text mapping and applied modifiers.
-- [ ] Phase 6 – Testing & Documentation
-  - [ ] Unit tests for modifiers, rewriter, persistence.
-  - [ ] Integration tests for modal interactions.
-  - [ ] Update `LLM_Content_Development_Guide.md` with metadata and modifier docs.
+  - [ ] Overlay framework
+    - [ ] Add `<div id="debug-overlay">` injected only when `?dev=1`
+    - [ ] Keyboard toggle `Ctrl+\\`
+  - [ ] Expansion tree view
+    - [ ] Render hierarchical list of segments with rule, text, modifiers, slot
+    - [ ] Hovering a list item highlights corresponding text in prompt
+    - [ ] Collapsible branches & search filter
+  - [ ] Performance
+    - [ ] Initial render ≤5 ms for 20 segments
+    - [ ] Virtualise list for >100 nodes
+  - [ ] Accessibility & UX
+    - [ ] Ensure contrast & focus order
+    - [ ] Close overlay with ESC
+  - [ ] Export options
+    - [ ] “Copy JSON” button to clipboard
+  - [ ] Tests
+    - [ ] Unit test overlay build util
+    - [ ] Integration test toggle + highlight flow
+  - [ ] Docs
+    - [ ] Add overlay usage section to GUIDE
+
+- [ ] Phase 6 – Testing & Documentation Hardening
+  - [ ] Test coverage
+    - [ ] Bring unit test coverage to ≥90 %
+    - [ ] Add snapshot tests for prompt readability
+  - [ ] Continuous Integration
+    - [ ] Add workflow: lint → test → build → size-budget check → upload coverage
+  - [ ] Documentation
+    - [ ] Expand `LLM_Content_Development_Guide.md` with:
+      - [ ] Metadata spec & examples
+      - [ ] Modifier reference & writing custom modifiers
+      - [ ] Persistence schema & migration
+      - [ ] Debug overlay tips
+    - [ ] Update README badges (coverage, CI, size)
+    - [ ] Update CHANGELOG 1.1.0
+  - [ ] Developer Experience
+    - [ ] Pre-commit hook for lint+tests
+    - [ ] NPM script `npm run watch:test` for TDD loop
 - [ ] Phase 7 – Visual Rule Graph (stretch)
   - [ ] Render grammar DOT graph with Viz.js for authors.
 

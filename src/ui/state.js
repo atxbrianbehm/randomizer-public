@@ -102,6 +102,7 @@ export function updateVariablesDisplay(app) {
                 app.engine.lockedValues[varName] = variables[varName];
             }
             updateVariablesDisplay(app);
+            app.persistState?.();
         };
     });
 }

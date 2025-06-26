@@ -141,6 +141,7 @@ export function applyModal(app) {
   });
   hideModal();
   app.updateVariablesDisplay?.();
+  app.persistState?.();
 }
 
 export function setupModal(app) {

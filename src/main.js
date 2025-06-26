@@ -5,6 +5,7 @@ import { setupModal as setupAdvancedModal, showModal as openAdvancedModal, build
 import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 import { openPromptEditor } from '@/ui/promptEditorModal.js';
+import { saveState, loadState, clearState } from '@/services/persistence.js';
 // Main entry for Vite – initializes the Randomizer application
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 import * as GeneratorLoader from '@/services/generatorLoader.js';
@@ -15,6 +16,8 @@ export class RandomizerApp {
      * Sets up the RandomizerEngine, lock state, event bindings, and loads generators.
      */
     constructor() {
+        // Load persisted state early
+        this.persistedState = loadState() || null;
         this.engine = new RandomizerEngine();
         this.currentGeneratorId = null;
         this.isPrettyPrint = true;
@@ -24,6 +27,14 @@ export class RandomizerApp {
         this.Locked = Locked;
         this.LockState = LockState;
         bindEvents(this);
+        // Restore locked values from persisted state if available
+        if (this.persistedState?.lockedValues) {
+            this.engine.lockedValues = { ...this.persistedState.lockedValues };
+            this.Locked = { ...this.persistedState.lockedValues };
+            Object.keys(this.persistedState.lockedValues).forEach(k => {
+                this.LockState[k] = true;
+            });
+        }
         this.initializeGenerators();
         // Prepare advanced modal DOM listeners
         setupAdvancedModal(this);
@@ -35,13 +46,17 @@ export class RandomizerApp {
      * @returns {Promise<void>}
      */
     async initializeGenerators() {
+        const persistedGen = this.persistedState?.generator || null;
         const { loadGenerators } = GeneratorLoader;
         this.generatorNames = await loadGenerators(this.engine, GENERATOR_FILES);
         console.log('All loaded generator names:', this.generatorNames);
         this.updateGeneratorDropdown();
         // Auto-select the first generator if available
         if (this.generatorNames.length > 0) {
-            this.selectGenerator(this.generatorNames[0]);
+            const pick = persistedGen && this.generatorNames.includes(persistedGen)
+                ? persistedGen
+                : this.generatorNames[0];
+            this.selectGenerator(pick);
         }
     }
 
@@ -96,6 +111,17 @@ export class RandomizerApp {
     // Utility called by UI helpers to refresh modal when variable table updates
     syncAdvancedModal() {
         rebuildAdvancedModal(this);
+    }
+
+    /**
+     * Reset locks and persisted settings to defaults.
+     */
+    resetToDefaults() {
+        this.engine.lockedValues = {};
+        this.Locked = {};
+        clearState();
+        this.updateVariablesDisplay();
+        this.showSuccess('Reset to defaults');
     }
 
     // ...rest of RandomizerApp methods remain unchanged...
@@ -481,7 +507,17 @@ export class RandomizerApp {
     /**
      * Generate text using the currently selected generator and entry point, handling output and errors.
      */
+    persistState() {
+        saveState({
+            generator: this.currentGeneratorId,
+            lockedValues: this.engine.lockedValues || {},
+            lastPrompt: this.lastPrompt ? { raw: this.lastPrompt } : undefined
+        });
+    }
+
     generateText() {
+        // clear last prompt tracker
+        let lastResultText = '';
         console.log('Generate text called');
         if (!this.currentGeneratorId) {
             this.showError('Please select a generator first');
@@ -504,6 +540,8 @@ export class RandomizerApp {
             for (let i = 0; i < count; i++) {
                 const { text: result, segments } = this.engine.generateDetailed(null, entryArg);
                 lastResult = result;
+                lastResultText = result;
+                this.lastPrompt = result;
                 if (outputDiv) {
                     const card = document.createElement('div');
                     card.className = 'prompt-card';
@@ -511,18 +549,9 @@ export class RandomizerApp {
 
                     const p = document.createElement('p');
                     p.textContent = result;
-                    p.className = 'generated-text';
-                    p.style.flex = '1';
-
-                    // Copy on click
-
-
+                    // Create Edit button
                     const editBtn = document.createElement('button');
-                    editBtn.textContent = '⋯';
-                    editBtn.className = 'edit-btn';
-                    editBtn.title = 'Edit prompt';
-                    editBtn.setAttribute('aria-label', 'Edit prompt');
-                    // dark-mode neutral styling
+                    editBtn.innerHTML = '✏️';
                     editBtn.style.position = 'absolute';
                     editBtn.style.top = '4px';
                     editBtn.style.right = '4px';
@@ -530,8 +559,8 @@ export class RandomizerApp {
                     editBtn.style.color = '#ccc';
                     editBtn.style.border = 'none';
                     editBtn.style.cursor = 'pointer';
-                    editBtn.onmouseover = () => { editBtn.style.color = '#fff'; };
-                    editBtn.onmouseout = () => { editBtn.style.color = '#ccc'; };
+                    editBtn.onmouseover = () => { editBtn.style.color = 'var(--color-text)'; };
+                    editBtn.onmouseout = () => { editBtn.style.color = 'var(--color-text-secondary)'; };
                     editBtn.onmousedown = () => { editBtn.style.transform = 'scale(0.9)'; };
                     editBtn.onmouseup = () => { editBtn.style.transform = 'scale(1)'; };
                     editBtn.onclick = () => {
@@ -547,14 +576,14 @@ export class RandomizerApp {
                     card.style.display = 'flex';
                     card.style.gap = '0.5rem';
                     card.style.alignItems = 'flex-start';
-                    card.style.background = '#2a2a2a';
-                    card.style.border = '1px solid #444';
+                    card.style.background = 'var(--color-surface)';
+                    card.style.border = '1px solid var(--color-card-border)';
                     card.style.borderRadius = '8px';
                     card.style.padding = '0.75rem 1rem';
                     card.style.cursor = 'pointer';
                     card.style.margin = '0 0 1rem';
-                    card.onmouseover = () => { card.style.background = '#323232'; };
-                    card.onmouseout = () => { card.style.background = '#2a2a2a'; };
+                    card.onmouseover = () => { card.style.background = 'var(--color-secondary-hover)'; };
+                    card.onmouseout = () => { card.style.background = 'var(--color-surface)'; };
 
                     // copy entire prompt on card click
                     card.onclick = (e) => {
@@ -572,6 +601,8 @@ export class RandomizerApp {
                     outputDiv.insertBefore(card, outputDiv.firstChild);
                 }
             }
+            // after loop, persist state
+            this.persistState();
             
             console.log(`Generated ${count} text snippet(s). Last result:`, lastResult);
             this.showSuccess(`Generated ${count} text snippet${count > 1 ? 's' : ''} successfully`);

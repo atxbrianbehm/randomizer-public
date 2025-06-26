@@ -123,6 +123,47 @@ export default class RandomizerEngine {
     /**
      * Generate prompt text (simple version – returns string only)
      */
+    // Build a human-readable prompt from generated segments using _meta info
+    buildReadablePrompt(generatorName, segments) {
+        if (!segments || segments.length === 0) return '';
+        const generator = this.loadedGenerators.get(generatorName);
+        if (!generator) return segments.map(s => s.text).join(' ');
+
+        // canonical order – could be overridden in generator.metadata.slotOrder
+        const slotOrder = generator.metadata?.slotOrder || [
+            'subject', 'faction', 'actor', 'purpose', 'theme', 'condition',
+            'materials', 'colors', 'controls', 'lighting', 'markings', 'density', 'view'
+        ];
+        // Map slot -> index for quick compare
+        const orderMap = new Map(slotOrder.map((s, i) => [s, i]));
+
+        const enriched = segments.map(seg => {
+            const rule = generator.grammar[seg.key];
+            let meta = null;
+            if (Array.isArray(rule) && rule.length && rule[0]._meta) meta = rule[0]._meta;
+            else if (typeof rule === 'object' && rule._meta) meta = rule._meta;
+            return {
+                text: seg.text,
+                slot: meta?.slot || null,
+                connector: meta?.connector || null,
+                order: orderMap.has(meta?.slot) ? orderMap.get(meta.slot) : 999
+            };
+        });
+
+        enriched.sort((a, b) => a.order - b.order);
+
+        let prompt = '';
+        enriched.forEach((item, idx) => {
+            if (idx === 0) {
+                prompt += item.text;
+            } else {
+                const conn = item.connector || ', ';
+                prompt += conn + item.text;
+            }
+        });
+        return prompt;
+    }
+
     generate(generatorName = null, entryPoint = null, context = {}) {
         const nameToUse = generatorName || this.currentGenerator;
         if (!nameToUse) {
@@ -164,7 +205,8 @@ export default class RandomizerEngine {
             segments: [] // collect token info here
         };
         const text = this.expandRule(generator, startRule, generationContext);
-        return { text, segments: generationContext.segments };
+        const readable = this.buildReadablePrompt(nameToUse, generationContext.segments);
+        return { raw: text, readable, segments: generationContext.segments };
     
     }
 

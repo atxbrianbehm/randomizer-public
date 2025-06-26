@@ -158,7 +158,41 @@ These rules ensure generator packs integrate cleanly with the Randomizer’s dyn
 
 ---
 
-## 6. FAQ and Troubleshooting
+## 6. State Persistence API (Browser)
+
+The Randomizer web app automatically stores a small snippet of user state in `localStorage` so that preferences survive a page reload.
+
+### 6.1  JSON schema (v1)
+```jsonc
+{
+  "version": 1,              // bump when breaking changes are introduced
+  "generator": "televangelist", // id of last selected generator (string | null)
+  "lockedValues": {           // values the user locked via Advanced Options
+    "preacher_name": "Reverend Bob"
+  },
+  "lastPrompt": {
+    "raw": "Beloved congregation …"  // full text of last generated prompt
+  },
+  "theme": "light",          // reserved for future use
+  "seed": 123456789           // optional future deterministic mode
+}
+```
+* Size budget: **≤ 10 KB** – keep additions minimal.
+* Unknown extra keys are ignored by the loader (forward-compat).
+
+### 6.2  Versioning / migrations
+1. **Minor additions** (non-breaking) can reuse the current version. New code must tolerate the key being absent.
+2. **Breaking changes** (renamed or re-typed fields) require incrementing `version` and bumping the constant in `src/services/persistence.js`. Loader will then ignore outdated payloads and fall back to defaults.
+3. Provide a one-off migration in `loadState()` only if the old data is valuable and trivial to convert.
+
+### 6.3  Best practices for contributors
+* When you introduce a new *lockable* grammar key, ensure the UI marks it as lockable so it can be serialized under `lockedValues`.
+* Avoid storing huge blobs. Persist only primitive or short string data.
+* If you must grow the schema, document it here and update unit tests in `tests/persistence.test.js`.
+
+---
+
+## 7. FAQ and Troubleshooting
 
 - **Malformed JSON:** Use a linter or validator to check for errors.
 - **Missing Fields:** Compare with the schema or template.

@@ -9,6 +9,11 @@ export default function bindEvents(app) {
         generateBtn.onclick = () => app.generateText();
     }
 
+    const resetBtn = q('#reset-btn');
+    if (resetBtn) {
+        resetBtn.onclick = () => app.resetToDefaults();
+    }
+
     const clearBtn = q('#clear-output');
     if (clearBtn) {
         clearBtn.onclick = () => app.clearOutput();
