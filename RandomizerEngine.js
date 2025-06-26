@@ -278,14 +278,7 @@ export default class RandomizerEngine {
     processText(text, context) {
         if (!text) return '';
 
-        // Variable substitution
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
-            const fullVarName = `${context.generatorName}.${varName}`;
-            const value = context.variables[varName] || this.variables.get(fullVarName);
-            return value !== undefined ? value : match;
-        });
-
-        // Rule expansion – also record segments if context.segments present
+        // First expand rules and capture segments
         text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, ruleName) => {
             const generator = this.loadedGenerators.get(context.generatorName);
             if (generator && generator.grammar[ruleName]) {
@@ -296,6 +289,13 @@ export default class RandomizerEngine {
                 return expanded;
             }
             return match;
+        });
+
+        // Then variable substitution on any remaining placeholders
+        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
+            const fullVarName = `${context.generatorName}.${varName}`;
+            const value = context.variables[varName] || this.variables.get(fullVarName);
+            return value !== undefined ? value : match;
         });
 
         return text;
