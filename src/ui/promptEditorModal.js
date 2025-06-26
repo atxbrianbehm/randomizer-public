@@ -45,7 +45,8 @@ function ensureModalExists() {
       #${modalId} .pem-dialog {position:relative;background:#1e1e1e;color:#eee;padding:1.25rem 1.5rem;border-radius:8px;max-width:600px;width:90%;max-height:90%;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:.75rem}
       #${modalId} .pem-preview {font-style:italic;background:#2a2a2a;padding:.5rem;border-radius:4px;min-height:2rem}
       #${modalId} .pem-token-list {list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.5rem}
-      #${modalId} .pem-token {display:inline-flex;align-items:center;white-space:nowrap;background:#3a3a3a;color:#eee;padding:.25rem .5rem;border-radius:4px;cursor:grab;user-select:none;border:1px solid #555;font-size:0.85rem}
+      #${modalId} .pem-token {display:inline-flex;align-items:center;white-space:nowrap;background:#3a3a3a;color:#eee;padding:.25rem .5rem;border-radius:4px;cursor:grab;user-select:none;border:1px solid #555;font-size:0.85rem;transition:background .15s}
+      #${modalId} .pem-token.active {background:#0b5ed7;color:#fff}
       #${modalId} .pem-token[aria-grabbed="true"] {opacity:.5}
       #${modalId} .pem-token.muted {text-decoration:line-through;opacity:.4}
       #${modalId} .pem-token button {margin-left:.4rem;background:none;border:none;cursor:pointer;font-size:1rem;color:#bbb}
@@ -69,8 +70,13 @@ function renderTokens(listEl, segments) {
     });
 }
 
-function computePreview(segments) {
-    return segments.filter(s => !s.muted).map(s => s.text).join(' ');
+function buildReadablePrompt(segments) {
+    const active = segments.filter(s => !s.muted).map(s => s.text.trim()).filter(Boolean);
+    if (active.length === 0) return '';
+    if (active.length === 1) return active[0] + '.';
+    if (active.length === 2) return `${active[0]} with ${active[1]}.`;
+    const body = active.slice(0, -1).join(', ');
+    return `${body}, and ${active[active.length - 1]}.`;
 }
 
 function attachDnD(listEl, segments, previewEl) {
@@ -81,6 +87,7 @@ function attachDnD(listEl, segments, previewEl) {
         const li = e.target.closest('.pem-token');
         dragSrcEl = li;
         li.setAttribute('aria-grabbed', 'true');
+        li.classList.add('active');
         e.dataTransfer.effectAllowed = 'move';
     });
 
@@ -91,16 +98,24 @@ function attachDnD(listEl, segments, previewEl) {
         const srcIdx = Number(dragSrcEl.dataset.index);
         const tgtIdx = Number(li.dataset.index);
         if (srcIdx !== tgtIdx) {
+            // Update array order
             segments.splice(tgtIdx, 0, segments.splice(srcIdx, 1)[0]);
-            renderTokens(listEl, segments);
-            attachDnD(listEl, segments, previewEl); // rebind indexes
-            previewEl.textContent = computePreview(segments);
+            // Visually move element without full re-render to avoid strobe
+            const referenceNode = (srcIdx < tgtIdx) ? li.nextSibling : li;
+            listEl.insertBefore(dragSrcEl, referenceNode);
+            // Update data-index attributes quickly
+            Array.from(listEl.children).forEach((child, i) => child.dataset.index = i);
         }
     });
 
     listEl.addEventListener('dragend', () => {
         const li = dragSrcEl;
-        if (li) li.setAttribute('aria-grabbed', 'false');
+        if (li) {
+            li.setAttribute('aria-grabbed', 'false');
+            li.classList.remove('active');
+        }
+        // Update preview once drop is done
+        previewEl.textContent = buildReadablePrompt(segments);
         dragSrcEl = null;
     });
 }
@@ -120,7 +135,7 @@ export function openPromptEditor({ segments, rawText, onSave }) {
     const working = baseSegments.map(s => ({ ...s, muted: false }));
 
     renderTokens(listEl, working);
-    previewEl.textContent = computePreview(working);
+    previewEl.textContent = buildReadablePrompt(working);
     attachDnD(listEl, working, previewEl);
 
     // Click mute toggle & update preview
@@ -132,7 +147,7 @@ export function openPromptEditor({ segments, rawText, onSave }) {
         working[idx].muted = !working[idx].muted;
         renderTokens(listEl, working);
         attachDnD(listEl, working, previewEl);
-        previewEl.textContent = computePreview(working);
+        previewEl.textContent = buildReadablePrompt(working);
     };
 
     // Reset
@@ -140,22 +155,19 @@ export function openPromptEditor({ segments, rawText, onSave }) {
         working.forEach(w => { w.muted = false; });
         renderTokens(listEl, working);
         attachDnD(listEl, working, previewEl);
-        previewEl.textContent = computePreview(working);
+        previewEl.textContent = buildReadablePrompt(working);
     };
 
     // Cancel
-    modal.querySelector('#pem-cancel').onclick = close;
+    modal.querySelector('#pem-cancel').onclick = () => {
+        modal.style.display = 'none';
+    };
 
     // Save
     modal.querySelector('#pem-save').onclick = () => {
-        const newText = computePreview(working);
-        onSave(newText);
-        close();
+        if (onSave) onSave(buildReadablePrompt(working));
+        modal.style.display = 'none';
     };
-
-    function close() {
-        modal.classList.remove('open');
-    }
 
     // Show modal
     modal.classList.add('open');
