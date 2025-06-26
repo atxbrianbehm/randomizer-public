@@ -525,6 +525,10 @@ export class RandomizerApp {
                     editBtn.style.color = '#ccc';
                     editBtn.style.border = 'none';
                     editBtn.style.cursor = 'pointer';
+                    editBtn.onmouseover = () => { editBtn.style.color = '#fff'; };
+                    editBtn.onmouseout = () => { editBtn.style.color = '#ccc'; };
+                    editBtn.onmousedown = () => { editBtn.style.transform = 'scale(0.9)'; };
+                    editBtn.onmouseup = () => { editBtn.style.transform = 'scale(1)'; };
                     editBtn.onclick = () => {
                         openPromptEditor({
                             segments,
@@ -543,6 +547,7 @@ export class RandomizerApp {
                     card.style.borderRadius = '8px';
                     card.style.padding = '0.75rem 1rem';
                     card.style.cursor = 'pointer';
+                    card.style.margin = '0 0 1rem';
                     card.onmouseover = () => { card.style.background = '#323232'; };
                     card.onmouseout = () => { card.style.background = '#2a2a2a'; };
 

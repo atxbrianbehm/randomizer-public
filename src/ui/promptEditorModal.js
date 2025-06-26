@@ -44,12 +44,13 @@ function ensureModalExists() {
       #${modalId} .pem-dialog {position:relative;background:#1e1e1e;color:#eee;padding:1.25rem 1.5rem;border-radius:8px;max-width:600px;width:90%;max-height:90%;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:.75rem}
       #${modalId} .pem-preview {font-style:italic;background:#2a2a2a;padding:.5rem;border-radius:4px;min-height:2rem}
       #${modalId} .pem-token-list {list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.5rem}
-      #${modalId} .pem-token {display:flex;align-items:center;background:#3a3a3a;color:#eee;padding:.25rem .5rem;border-radius:4px;cursor:grab;user-select:none}
+      #${modalId} .pem-token {display:inline-flex;align-items:center;white-space:nowrap;background:#3a3a3a;color:#eee;padding:.25rem .5rem;border-radius:4px;cursor:grab;user-select:none;border:1px solid #555;font-size:0.85rem}
       #${modalId} .pem-token[aria-grabbed="true"] {opacity:.5}
       #${modalId} .pem-token.muted {text-decoration:line-through;opacity:.4}
-      #${modalId} .pem-token button {margin-left:.4rem;background:none;border:none;cursor:pointer;font-size:1rem}
+      #${modalId} .pem-token button {margin-left:.4rem;background:none;border:none;cursor:pointer;font-size:1rem;color:#bbb}
       #${modalId} .pem-actions {display:flex;gap:.5rem;align-items:center;margin-top:.5rem}
       #${modalId} button.primary {background:#0b5ed7;color:#fff;border:none;padding:.4rem .75rem;border-radius:4px}
+      .edit-btn.tooltip:hover::after {content:attr(data-tip);position:absolute;top:-1.6rem;right:0;background:#000;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem;white-space:nowrap}
     `;
     document.head.appendChild(style);
 }
