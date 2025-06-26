@@ -52,16 +52,18 @@
   },
   "grammar": {
     "greeting": [
+      { "_meta": { "slot": "subject", "connector": "", "priority": 1 } },
       "Blessed viewers!",
       "Children of the light!",
       "Faithful flock!",
       "Beloved congregation!"
     ],
-    "platforms": { "$include": "platforms.json" },
-    "mediaContexts": { "$include": "mediaContexts.json" },
-    "downfalls": { "$include": "downfalls.json" },
-    "taglines": { "$include": "taglines.json" },
+    "platforms": { "_meta": { "slot": "platform", "priority": 7 }, "$include": "platforms.json" },
+    "mediaContexts": { "_meta": { "slot": "media_context", "priority": 8 }, "$include": "mediaContexts.json" },
+    "downfalls": { "_meta": { "slot": "downfall", "priority": 9 }, "$include": "downfalls.json" },
+    "taglines": { "_meta": { "slot": "tagline", "priority": 10 }, "$include": "taglines.json" },
     "divine_title": [
+      { "_meta": { "slot": "actor_title", "connector": "", "priority": 2 } },
       {
         "text": "Reverend",
         "weight": 3
@@ -84,6 +86,7 @@
       }
     ],
     "preacher_name": [
+      { "_meta": { "slot": "actor_name", "connector": "", "priority": 3 } },
       "Blessington",
       "Prosperity",
       "Goldenshower",
@@ -92,6 +95,7 @@
       "Cashmere"
     ],
     "urgent_need": [
+      { "_meta": { "slot": "purpose", "connector": "for", "priority": 4 } },
       {
         "text": "the Lord's private jet",
         "weight": 5
@@ -114,6 +118,7 @@
       }
     ],
     "divine_consequence": [
+      { "_meta": { "slot": "positive_consequence", "connector": "so", "priority": 5 } },
       "your crops will flourish",
       "wealth will rain upon you",
       "angels will guard your wallet",
@@ -121,6 +126,7 @@
       "divine financial blessings will overflow"
     ],
     "negative_consequence": [
+      { "_meta": { "slot": "negative_consequence", "connector": "beware of", "priority": 6 } },
       {
         "text": "financial drought",
         "weight": 3
@@ -139,6 +145,7 @@
       }
     ],
     "money_request": {
+      "_meta": { "slot": "template", "priority": 0 },
       "type": "conditional",
       "options": [
         {
@@ -173,6 +180,7 @@
       "fallback": "Donations of any amount are blessed!"
     },
     "main_sermon": [
+      { "_meta": { "slot": "template", "priority": 0 } },
       "#greeting# I am #divine_title# #preacher_name#, and the Lord has spoken to me! #money_request# But if you delay, beware of #negative_consequence#! Call now!"
     ]
   },
