@@ -47,6 +47,7 @@
   },
   "grammar": {
     "innocent_activity": [
+      { "_meta": { "slot": "activity", "connector": "", "priority": 3 } },
       {
         "text": "playing Dungeons & Dragons",
         "weight": 5
@@ -73,6 +74,7 @@
       }
     ],
     "evil_transformation": [
+      { "_meta": { "slot": "consequence", "connector": "leads to", "priority": 4 } },
       "summoning demons",
       "joining secret cults",
       "sacrificing homework to dark forces",
@@ -80,6 +82,7 @@
       "drawing pentagrams in notebook margins"
     ],
     "concerned_authority": [
+      { "_meta": { "slot": "actor", "connector": "warns", "priority": 2 } },
       {
         "text": "local pastor",
         "weight": 4
@@ -102,6 +105,7 @@
       }
     ],
     "absurd_evidence": [
+      { "_meta": { "slot": "evidence", "connector": "about", "priority": 5 } },
       "backwards messages in Saturday morning cartoons",
       "satanic symbols in breakfast cereal",
       "demonic possession via calculator displays",
@@ -109,6 +113,7 @@
       "occult rituals disguised as gym class"
     ],
     "dramatic_claim": [
+      { "_meta": { "slot": "subject", "connector": "", "priority": 1 } },
       {
         "text": "SHOCKING",
         "weight": 3
@@ -131,6 +136,7 @@
       }
     ],
     "panic_headline": {
+      "_meta": { "slot": "template", "priority": 0 },
       "type": "weighted",
       "options": [
         "#dramatic_claim#: Local #concerned_authority# warns that #innocent_activity# leads to #evil_transformation#!",
@@ -146,6 +152,7 @@
       ]
     },
     "expert_quote": [
+      { "_meta": { "slot": "quote", "connector": "", "priority": 6 } },
       "According to my research, #innocent_activity# is clearly a gateway to #evil_transformation#",
       "The signs are everywhere - #absurd_evidence# proves the influence is real",
       "As a #concerned_authority#, I've seen firsthand how #innocent_activity# corrupts our youth"
