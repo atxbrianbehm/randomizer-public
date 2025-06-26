@@ -7,6 +7,35 @@
 
 ## Task List
 ### Active Tasks
+
+#### Text Blending & Smart Prompt Rewriter (Tracery/Twine-inspired)
+- [ ] Phase 0 – Preparation
+  - [ ] Audit existing generator grammars and list prompt-visible rules.
+  - [ ] Decide canonical slot names and default order (subject, condition, purpose, materials, color, controls, displays, lighting, markings, density, view).
+  - [ ] Choose metadata storage strategy (`_meta` vs external map).
+- [ ] Phase 1 – Chip/Rule Metadata
+  - [ ] Add `_meta` to each prompt-visible rule with `slot`, `connector`, `priority`, and optional `modifiers`.
+  - [ ] Write linter script to verify metadata coverage.
+- [ ] Phase 2 – Modifier Library (Tracery-style)
+  - [ ] Implement basic modifiers (`capitalize`, `a_an`, `plural`) in `RandomizerEngine`.
+  - [ ] Support `#rule.modifier#` syntax and unit tests.
+- [ ] Phase 3 – Smart Prompt Rewriter
+  - [ ] Introduce `slotOrder` array and connector defaults.
+  - [ ] Rewrite `buildReadablePrompt()` using metadata for ordering and connectors.
+  - [ ] Handle edge cases (0/1/2 chips, all muted).
+  - [ ] Performance benchmark (<20 ms for 1000 rewrites).
+- [ ] Phase 4 – State Persistence (Twine-style)
+  - [ ] Store edited chip state and prompt text until new generation.
+  - [ ] Add “Reset to generator default” option.
+- [ ] Phase 5 – Debug Overlay / Expansion Tree
+  - [ ] Add dev-mode overlay showing rule→text mapping and applied modifiers.
+- [ ] Phase 6 – Testing & Documentation
+  - [ ] Unit tests for modifiers, rewriter, persistence.
+  - [ ] Integration tests for modal interactions.
+  - [ ] Update `LLM_Content_Development_Guide.md` with metadata and modifier docs.
+- [ ] Phase 7 – Visual Rule Graph (stretch)
+  - [ ] Render grammar DOT graph with Viz.js for authors.
+
 - [ ] Folder restructure & source migration
   - [ ] `src/services/generatorLoader.js`
     - [ ] Extract `fetchGeneratorSpec()` helper wrapping `fetch()`/error-handling.
