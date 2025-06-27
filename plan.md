@@ -8,7 +8,8 @@
 ## Task List
 ### Active Tasks
 
-#### Text Blending & Smart Prompt Rewriter (Tracery/Twine-inspired)
+<!-- Completed phases moved to bottom -->
+<!-- Active tasks begin below -->
 - [x] Phase 0 – Preparation
   - [x] **0-1 Grammar inventory script** – scan `generators/**/*.json` and output a CSV/markdown table of prompt-visible rules per generator.
   - [x] **0-2 Canonical slot taxonomy** – finalise slot names & default order (subject, condition, purpose, materials, colour, controls, displays, lighting, markings, density, view).
@@ -142,6 +143,28 @@
     - [ ] Extend variable-lock rules to cover new categories.
   - Phase 5 – Tests
     - [ ] Snapshot test sample prompt.
+
+### Completed Phases (0–4)
+
+#### Text Blending & Smart Prompt Rewriter (Tracery/Twine-inspired)
+- [x] Phase 0 – Preparation
+  - [x] 0-1 Grammar inventory script
+  - [x] 0-2 Canonical slot taxonomy
+  - [x] 0-3 Metadata-storage decision
+- [x] Phase 1 – Chip/Rule Metadata
+  - [x] 1-1 Pilot metadata
+  - [x] 1-2 Metadata linter
+  - [x] 1-3 Roll-out
+- [x] Phase 2 – Modifier Library
+  - [x] 2-1 Core modifiers
+  - [x] 2-2 Modifier syntax
+  - [x] 2-3 Unit tests
+- [x] Phase 3 – Smart Prompt Rewriter
+  - [x] 3-1 Data model
+  - [x] 3-2 Rewrite algorithm
+  - [x] 3-3 Performance bench
+  - [x] 3-4 UI integration
+- [x] Phase 4 – State Persistence (Twine-style) – all subtasks complete
 
 ### Other Completed Refactor Items
 - Directories `src/`, `public/`, `generators/`, `tests/` created.
