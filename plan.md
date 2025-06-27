@@ -9,40 +9,42 @@
 ### Active Tasks
 
 #### Text Blending & Smart Prompt Rewriter (Tracery/Twine-inspired)
-- [ ] Phase 0 – Preparation
-  - [ ] Audit existing generator grammars and list prompt-visible rules.
-  - [ ] Decide canonical slot names and default order (subject, condition, purpose, materials, color, controls, displays, lighting, markings, density, view).
-  - [ ] Choose metadata storage strategy (`_meta` vs external map).
-- [ ] Phase 1 – Chip/Rule Metadata
-  - [ ] Add `_meta` to each prompt-visible rule with `slot`, `connector`, `priority`, and optional `modifiers`.
-  - [ ] Write linter script to verify metadata coverage.
-- [ ] Phase 2 – Modifier Library (Tracery-style)
-  - [ ] Implement basic modifiers (`capitalize`, `a_an`, `plural`) in `RandomizerEngine`.
-  - [ ] Support `#rule.modifier#` syntax and unit tests.
-- [ ] Phase 3 – Smart Prompt Rewriter
-  - [ ] Introduce `slotOrder` array and connector defaults.
-  - [ ] Rewrite `buildReadablePrompt()` using metadata for ordering and connectors.
-  - [ ] Handle edge cases (0/1/2 chips, all muted).
-  - [ ] Performance benchmark (<20 ms for 1000 rewrites).
+- [x] Phase 0 – Preparation
+  - [x] **0-1 Grammar inventory script** – scan `generators/**/*.json` and output a CSV/markdown table of prompt-visible rules per generator.
+  - [x] **0-2 Canonical slot taxonomy** – finalise slot names & default order (subject, condition, purpose, materials, colour, controls, displays, lighting, markings, density, view).
+  - [x] **0-3 Metadata-storage decision** – draft a brief design doc comparing `_meta` vs external map and select one.
+- [x] Phase 1 – Chip/Rule Metadata
+  - [x] **1-1 Pilot metadata** – add `_meta` blocks to Televangelist generator rules.
+  - [x] **1-2 Metadata linter** – Node script verifying 100 % coverage across all generators; fail CI on missing/invalid.
+  - [x] **1-3 Roll-out** – apply metadata to remaining generators using the linter for validation.
+- [x] Phase 2 – Modifier Library (Tracery-style)
+  - [x] **2-1 Core modifiers** – implement `capitalize`, `a_an`, `plural` in `RandomizerEngine`.
+  - [x] **2-2 Modifier syntax** – add `#rule.modifier#` parsing & execution.
+  - [x] **2-3 Unit tests** – verify each modifier individually and in combination.
+- [x] Phase 3 – Smart Prompt Rewriter
+  - [x] **3-1 Data model** – introduce `slotOrder` array constant (overridable per generator).
+  - [x] **3-2 Rewrite algorithm** – function `buildReadablePrompt(chips)` that orders chips, injects connectors, handles edge cases, and applies modifiers.
+  - [x] **3-3 Performance bench** – benchmark 1 000 rewrites under 20 ms.
+  - [x] **3-4 UI integration** – hook rewriter into prompt-editing modal; add tests.
 - [ ] Phase 4 – State Persistence (Twine-style)
-  - [ ] Persistence spec
-    - [ ] Define JSON schema for persisted state (`version`, `generator`, `lockedValues`, `lastPrompt`, `theme`, `seed`)
-    - [ ] Size budget ≤10 KB
-  - [ ] Implementation
-    - [ ] Create `src/services/persistence.js` with `saveState`, `loadState`, `clearState`
-    - [ ] Wire `RandomizerApp` to `saveState` after each generate & variable edit
-    - [ ] Hydrate app on init, falling back gracefully if schema version mismatches
-  - [ ] UI
-    - [ ] Add “Reset to defaults” button next to Generate
-    - [ ] Add tooltip explaining persistence
-    - [ ] Emit toast on successful restore/reset
-  - [ ] Tests
-    - [ ] Unit tests for `persistence.js`
-    - [ ] Integration test: edit variable → reload → state restored
-  - [ ] Performance
-    - [ ] Saving & loading ≤2 ms on average laptop
-  - [ ] Docs
-    - [ ] Update GUIDE with persistence API and migration notes
+  - [x] Persistence spec
+    - [x] Define JSON schema for persisted state (`version`, `generator`, `lockedValues`, `lastPrompt`, `theme`, `seed`)
+    - [x] Size budget ≤10 KB
+  - [x] Implementation
+    - [x] Create `src/services/persistence.js` with `saveState`, `loadState`, `clearState`
+    - [x] Wire `RandomizerApp` to `saveState` after each generate & variable edit
+    - [x] Hydrate app on init, falling back gracefully if schema version mismatches
+  - [x] UI
+    - [x] Add “Reset to defaults” button next to Generate
+    - [x] Add tooltip explaining persistence
+    - [x] Emit toast on successful restore/reset
+  - [x] Tests
+    - [x] Unit tests for `persistence.js`
+    - [x] Integration test: edit variable → reload → state restored
+  - [x] Performance
+    - [x] Saving & loading ≤2 ms on average laptop
+  - [x] Docs
+    - [x] Update GUIDE with persistence API and migration notes
 
 - [ ] Phase 5 – Debug Overlay / Expansion Tree
   - [ ] Overlay framework
@@ -157,6 +159,7 @@
 - QA, accessibility, and polish tasks completed.
 
 ## Current Goal
+Begin Phase 5 – Debug Overlay / Expansion Tree
 Complete active tasks from the consolidated project plan.
 
 ### 3. Verification & QA
