@@ -6,6 +6,7 @@ import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 import { openPromptEditor } from '@/ui/promptEditorModal.js';
 import { saveState, loadState, clearState } from '@/services/persistence.js';
+import { LOCKABLE_FIELDS } from '@/constants.js';
 // Main entry for Vite – initializes the Randomizer application
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 import * as GeneratorLoader from '@/services/generatorLoader.js';
@@ -180,10 +181,8 @@ export class RandomizerApp {
      * @returns {any} The processed value.
      */
     processRuleContent(rule, ruleName = null) {
-        const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-
         // If this field is already locked, use the stored value immediately
-        if (ruleName && lockable.includes(ruleName) && this.Locked?.[ruleName] !== undefined) {
+        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked?.[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
 
@@ -202,7 +201,7 @@ export class RandomizerApp {
         // After computing, capture it if the lock toggle is active and value not yet stored
         if (
             ruleName &&
-            lockable.includes(ruleName) &&
+            LOCKABLE_FIELDS.includes(ruleName) &&
             this.LockState?.[ruleName] &&
             this.Locked?.[ruleName] === undefined
         ) {
@@ -220,8 +219,7 @@ export class RandomizerApp {
      */
     processArrayRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
-        const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
         // Randomly select one item from the array
@@ -279,8 +277,7 @@ export class RandomizerApp {
      */
     processWeightedRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
-        const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
         const options = rule.options || [];
@@ -465,7 +462,7 @@ export class RandomizerApp {
         });
         
         // Lock toggles
-        ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
+        LOCKABLE_FIELDS.forEach(cat => {
             const btn = document.getElementById('lock-' + cat);
             btn.textContent = this.LockState[cat] ? '🔒' : '🔓';
             btn.className = 'lock-toggle' + (this.LockState[cat] ? ' locked' : '');
@@ -485,7 +482,7 @@ export class RandomizerApp {
     applyAdvancedModal() {
         // Save locked values to engine.lockedValues
         this.engine.lockedValues = this.engine.lockedValues || {};
-        ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
+        LOCKABLE_FIELDS.forEach(cat => {
             const sel = document.getElementById('adv-' + (cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_','-')));
             if (this.LockState[cat]) {
                 this.engine.lockedValues[cat] = sel.value;
