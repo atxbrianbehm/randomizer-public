@@ -57,8 +57,31 @@ export class RandomizerApp {
             console.log('Dev mode active, debug overlay enabled.');
             this.setupDebugOverlayToggle();
             this.setupExpansionTreeSearch();
+            this.setupCopyExpansionJsonButton();
         } else if (overlayDiv) {
             overlayDiv.style.display = 'none'; // Ensure it's hidden if not dev=1
+        }
+    }
+
+    /**
+     * Sets up the copy expansion JSON button.
+     */
+    setupCopyExpansionJsonButton() {
+        const copyButton = q('#copy-expansion-json');
+        if (copyButton) {
+            copyButton.addEventListener('click', () => {
+                if (this.lastSegments) {
+                    const jsonString = JSON.stringify(this.lastSegments, null, 2);
+                    navigator.clipboard.writeText(jsonString).then(() => {
+                        this.showSuccess('Expansion JSON copied to clipboard!');
+                    }).catch(err => {
+                        console.error('Failed to copy expansion JSON:', err);
+                        this.showError('Failed to copy expansion JSON.');
+                    });
+                } else {
+                    this.showError('No expansion data to copy.');
+                }
+            });
         }
     }
 
