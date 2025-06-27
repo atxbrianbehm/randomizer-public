@@ -124,6 +124,29 @@ These rules ensure generator packs integrate cleanly with the Randomizer’s dyn
 - **Testing:** After editing, reload the generator in the browser to verify new content appears and works as expected.
 - **Preview Images:** Add or update the `previewImage` in metadata when creating a new pack.
 
+### 4.5 Using the Debug Overlay (Development Mode)
+
+When developing or troubleshooting generator content, the Randomizer application provides a debug overlay to help inspect the generation process.
+
+**Enabling the Debug Overlay:**
+
+*   To activate development mode and enable the overlay, append the query parameter `?dev=1` to the application's URL in your browser.
+    *   Example: `http://localhost:xxxx/?dev=1` (if running locally) or `https://your-app-url.com/?dev=1`.
+
+**Toggling Overlay Visibility:**
+
+*   Once enabled via the URL, you can show or hide the debug overlay by pressing the `Ctrl + \` (Control plus Backslash) keyboard shortcut. On macOS, this is `Cmd + \` (Command plus Backslash).
+
+**Purpose:**
+
+*   The debug overlay is designed to provide insights into how the Randomizer Engine processes your generator rules.
+*   Currently, it establishes the framework for these tools. Future enhancements will include an "Expansion Tree View" within this overlay, allowing you to see a hierarchical list of segments, rules, text, modifiers, and slots used to produce the final output. This will be invaluable for understanding complex interactions and debugging unexpected results.
+
+**Tips:**
+
+*   Always use the `?dev=1` parameter when you are actively working on or testing new generator rules.
+*   The keyboard shortcut provides a quick way to get the overlay out of the way when you need to see the main UI, and bring it back instantly.
+
 ---
 
 ## 5. Example Templates

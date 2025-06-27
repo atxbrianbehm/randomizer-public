@@ -27,7 +27,7 @@
 export function deriveBasePath(url) {
   const trimmed = url.startsWith('/') ? url.slice(1) : url;
   const baseName = trimmed.replace(/\.json$/i, '');
-  return `/${baseName}/`;
+  return `/generators/${baseName}/`;
 }
 
 // Recursively walk a generator spec and inline any objects of the form

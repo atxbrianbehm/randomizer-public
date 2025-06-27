@@ -6,6 +6,7 @@ import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 import { openPromptEditor } from '@/ui/promptEditorModal.js';
 import { saveState, loadState, clearState } from '@/services/persistence.js';
+import { LOCKABLE_FIELDS } from '@/constants.js';
 // Main entry for Vite – initializes the Randomizer application
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 import * as GeneratorLoader from '@/services/generatorLoader.js';
@@ -40,6 +41,48 @@ export class RandomizerApp {
         this.initializeGenerators();
         // Prepare advanced modal DOM listeners
         setupAdvancedModal(this);
+        this.initializeDebugOverlay();
+    }
+
+    /**
+     * Initializes the debug overlay, checking for ?dev=1 parameter.
+     */
+    initializeDebugOverlay() {
+        const params = new URLSearchParams(window.location.search);
+        const overlayDiv = q('#debug-overlay');
+        if (params.has('dev') && params.get('dev') === '1' && overlayDiv) {
+            // The div is added via HTML. Initial display is 'none'.
+            // Keyboard toggle will handle actual display toggling.
+            console.log('Dev mode active, debug overlay enabled.');
+            this.setupDebugOverlayToggle();
+        } else if (overlayDiv) {
+            overlayDiv.style.display = 'none'; // Ensure it's hidden if not dev=1
+        }
+    }
+
+    /**
+     * Sets up the keyboard shortcut (Ctrl+\) to toggle the debug overlay.
+     */
+    setupDebugOverlayToggle() {
+        const overlayDiv = q('#debug-overlay');
+        if (!overlayDiv) return;
+
+        document.addEventListener('keydown', (event) => {
+            // Check for Ctrl (or Meta for Mac) + \
+            if ((event.ctrlKey || event.metaKey) && event.key === '\\') {
+                event.preventDefault();
+                const isHidden = overlayDiv.style.display === 'none' || overlayDiv.style.display === '';
+                overlayDiv.style.display = isHidden ? 'block' : 'none';
+                console.log(`Debug overlay ${isHidden ? 'shown' : 'hidden'}`);
+            } else if (event.key === 'Escape') {
+                // Check for Escape key
+                if (overlayDiv.style.display !== 'none') {
+                    overlayDiv.style.display = 'none';
+                    console.log('Debug overlay hidden with ESC');
+                    event.preventDefault(); // Prevent potential browser default ESC behavior
+                }
+            }
+        });
     }
 
     /**
@@ -66,7 +109,8 @@ export class RandomizerApp {
      * Populate the generator select dropdown with available generators from the engine.
      */
     updateGeneratorDropdown() {
-        const select = document.getElementById('generator-select');
+        const select = q('#generator-select');
+        if (!select) return;
         select.innerHTML = '';
         let generatorList = this.engine.listGenerators();
         // Fallback for environments where listGenerators may be empty (e.g., tests mocking duplicates)
@@ -113,7 +157,7 @@ export class RandomizerApp {
      * Enable or disable the Generate Text button depending on generator selection state.
      */
     updateGenerateButton() {
-        const generateBtn = document.getElementById('generate-btn');
+        const generateBtn = q('#generate-btn');
         if (!generateBtn) return;
         // Enable if a generator is selected; otherwise keep disabled
         generateBtn.disabled = !this.currentGeneratorId;
@@ -145,10 +189,8 @@ export class RandomizerApp {
      * @returns {any} The processed value.
      */
     processRuleContent(rule, ruleName = null) {
-        const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-
         // If this field is already locked, use the stored value immediately
-        if (ruleName && lockable.includes(ruleName) && this.Locked?.[ruleName] !== undefined) {
+        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked?.[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
 
@@ -167,7 +209,7 @@ export class RandomizerApp {
         // After computing, capture it if the lock toggle is active and value not yet stored
         if (
             ruleName &&
-            lockable.includes(ruleName) &&
+            LOCKABLE_FIELDS.includes(ruleName) &&
             this.LockState?.[ruleName] &&
             this.Locked?.[ruleName] === undefined
         ) {
@@ -185,8 +227,7 @@ export class RandomizerApp {
      */
     processArrayRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
-        const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
         // Randomly select one item from the array
@@ -244,8 +285,7 @@ export class RandomizerApp {
      */
     processWeightedRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
-        const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
-        if (ruleName && lockable.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
         const options = rule.options || [];
@@ -353,14 +393,14 @@ export class RandomizerApp {
      */
     showAdvancedModal() {
         this.syncAdvancedModal();
-        document.getElementById('advanced-modal').style.display = 'block';
+        q('#advanced-modal').style.display = 'block';
     }
 
     /**
      * Hide the advanced modal dialog.
      */
     hideAdvancedModal() {
-        document.getElementById('advanced-modal').style.display = 'none';
+        q('#advanced-modal').style.display = 'none';
     }
 
     /**
@@ -379,7 +419,7 @@ export class RandomizerApp {
         if (!grammar) return;
         
         const fillSelect = (id, arr, lockedVal) => {
-            const sel = document.getElementById(id);
+            const sel = q(`#${id}`);
             sel.innerHTML = '';
             arr.forEach(val => {
                 const opt = document.createElement('option');
@@ -415,14 +455,14 @@ export class RandomizerApp {
         };
         
         Object.entries(mapIdToField).forEach(([id, fieldName]) => {
-            const select = document.getElementById(id);
+            const select = q(`#${id}`);
             select.onchange = () => {
                 const selectedValue = select.value;
                 if (selectedValue) {
                     this.Locked[fieldName] = selectedValue;
                     this.LockState[fieldName] = true;
                     // Update the lock button appearance
-                    const lockBtn = document.getElementById('lock-' + fieldName);
+                    const lockBtn = q(`#lock-${fieldName}`);
                     lockBtn.textContent = '🔒';
                     lockBtn.className = 'lock-toggle locked';
                 }
@@ -430,8 +470,8 @@ export class RandomizerApp {
         });
         
         // Lock toggles
-        ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
-            const btn = document.getElementById('lock-' + cat);
+        LOCKABLE_FIELDS.forEach(cat => {
+            const btn = q(`#lock-${cat}`);
             btn.textContent = this.LockState[cat] ? '🔒' : '🔓';
             btn.className = 'lock-toggle' + (this.LockState[cat] ? ' locked' : '');
             btn.onclick = () => {
@@ -439,8 +479,9 @@ export class RandomizerApp {
                 this.syncAdvancedModal();
             };
             // Dropdown enable/disable
-            const sel = document.getElementById('adv-' + (cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_','-')));
-            sel.disabled = !this.LockState[cat];
+            const selId = `adv-${cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_', '-')}`;
+            const sel = q(`#${selId}`);
+            if (sel) sel.disabled = !this.LockState[cat];
         });
     }
 
@@ -450,9 +491,10 @@ export class RandomizerApp {
     applyAdvancedModal() {
         // Save locked values to engine.lockedValues
         this.engine.lockedValues = this.engine.lockedValues || {};
-        ['preacher_name','divine_title','platforms','mediaContexts'].forEach(cat => {
-            const sel = document.getElementById('adv-' + (cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_','-')));
-            if (this.LockState[cat]) {
+        LOCKABLE_FIELDS.forEach(cat => {
+            const selId = `adv-${cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_', '-')}`;
+            const sel = q(`#${selId}`);
+            if (this.LockState[cat] && sel) {
                 this.engine.lockedValues[cat] = sel.value;
             } else {
                 delete this.engine.lockedValues[cat];
@@ -466,12 +508,12 @@ export class RandomizerApp {
      * Set up advanced modal event handlers and initialize its hidden state.
      */
     setupAdvancedModal() {
-        const applyBtn = document.getElementById('apply-advanced');
+        const applyBtn = q('#apply-advanced');
         if (applyBtn) {
             applyBtn.onclick = () => this.applyAdvancedModal();
         }
         
-        const cancelBtn = document.getElementById('cancel-advanced');
+        const cancelBtn = q('#cancel-advanced');
         if (cancelBtn) {
             cancelBtn.onclick = () => this.hideAdvancedModal();
         }
@@ -482,7 +524,7 @@ export class RandomizerApp {
         }
         
         // Initialize modal to be hidden
-        const modal = document.getElementById('advanced-modal');
+        const modal = q('#advanced-modal');
         if (modal) {
             modal.style.display = 'none';
         }
@@ -537,16 +579,16 @@ export class RandomizerApp {
 
         try {
             // Get the selected entry point
-            const entryPointSelect = document.getElementById('entry-point');
+            const entryPointSelect = q('#entry-point');
             const entryPoint = entryPointSelect ? entryPointSelect.value : 'default';
             // If the user chose "default", let the engine decide by passing null
             const entryArg = (entryPoint === 'default') ? null : entryPoint;
             
             // Determine how many generations to create (1–10)
-            const countInput = document.getElementById('generation-count');
+            const countInput = q('#generation-count');
             const count = countInput ? Math.max(1, Math.min(parseInt(countInput.value, 10) || 1, 10)) : 1;
             
-            const outputDiv = document.getElementById('output-area');
+            const outputDiv = q('#output-area');
             let lastResult = '';
             for (let i = 0; i < count; i++) {
                 let { readable, raw, segments } = this.engine.generateDetailed(null, { entryPoint: entryArg });
@@ -631,7 +673,7 @@ export class RandomizerApp {
      * Clear all generated output from the output area in the UI.
      */
     clearOutput() {
-        const outputDiv = document.getElementById('output-area');
+        const outputDiv = q('#output-area');
         if (outputDiv) {
             outputDiv.innerHTML = '';
         }
@@ -646,8 +688,8 @@ export class RandomizerApp {
             return;
         }
 
-        const content = document.getElementById('json-content');
-        const code = document.getElementById('json-code');
+        const content = q('#json-content');
+        const code = q('#json-code');
         
         const generator = this.engine.getGeneratorInfo(this.currentGeneratorId);
         const jsonString = this.isPrettyPrint 
@@ -663,10 +705,11 @@ export class RandomizerApp {
      */
     togglePrettyPrint() {
         this.isPrettyPrint = !this.isPrettyPrint;
-        const button = document.getElementById('pretty-print');
+        const button = q('#pretty-print');
         button.textContent = this.isPrettyPrint ? 'Compact' : 'Pretty Print';
         
-        if (!document.getElementById('json-content').classList.contains('hidden')) {
+        const jsonContent = q('#json-content');
+        if (jsonContent && !jsonContent.classList.contains('hidden')) {
             this.showJsonViewer();
         }
     }
