@@ -11,18 +11,32 @@ function renderNodes(parentElement, segments, rawText) {
     segments.forEach(segment => {
         const li = document.createElement('li');
         li.className = 'expansion-tree-node';
-        li.innerHTML = `<span class="rule-key">${segment.key}</span>: <span class="rule-text">${segment.text}</span>`;
+        const contentSpan = document.createElement('span');
+        contentSpan.className = 'expansion-tree-content';
+        contentSpan.innerHTML = `<span class="rule-key">${segment.key}</span>: <span class="rule-text">${segment.text}</span>`;
+        li.appendChild(contentSpan);
 
         if (segment.startIndex !== undefined && segment.endIndex !== undefined) {
             li.dataset.startIndex = segment.startIndex;
             li.dataset.endIndex = segment.endIndex;
             li.dataset.segmentText = segment.text; // Store the segment text for easy access
 
-            li.addEventListener('mouseover', () => highlightText(segment.startIndex, segment.endIndex, rawText));
-            li.addEventListener('mouseout', () => removeHighlight());
+            contentSpan.addEventListener('mouseover', () => highlightText(segment.startIndex, segment.endIndex, rawText));
+            contentSpan.addEventListener('mouseout', () => removeHighlight());
         }
 
         if (segment.children && segment.children.length > 0) {
+            li.classList.add('has-children');
+            const toggleBtn = document.createElement('span');
+            toggleBtn.className = 'tree-toggle';
+            toggleBtn.textContent = '▼'; // Down arrow for expanded state
+            li.insertBefore(toggleBtn, contentSpan);
+
+            toggleBtn.addEventListener('click', () => {
+                li.classList.toggle('collapsed');
+                toggleBtn.textContent = li.classList.contains('collapsed') ? '▶' : '▼';
+            });
+
             const ul = document.createElement('ul');
             ul.className = 'expansion-tree-children';
             renderNodes(ul, segment.children, rawText);

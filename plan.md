@@ -18,7 +18,7 @@
     - [x] Keyboard toggle `Ctrl+\`
   - [x] Expansion tree view
     - [x] Render hierarchical list of segments with rule, text, modifiers, slot
-    - [ ] Hovering a list item highlights corresponding text in prompt
+    - [x] Hovering a list item highlights corresponding text in prompt
     - [ ] Collapsible branches & search filter
   - [ ] Performance
     - [ ] Initial render 
