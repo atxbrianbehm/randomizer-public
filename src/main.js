@@ -40,6 +40,41 @@ export class RandomizerApp {
         this.initializeGenerators();
         // Prepare advanced modal DOM listeners
         setupAdvancedModal(this);
+        this.initializeDebugOverlay();
+    }
+
+    /**
+     * Initializes the debug overlay, checking for ?dev=1 parameter.
+     */
+    initializeDebugOverlay() {
+        const params = new URLSearchParams(window.location.search);
+        const overlayDiv = document.getElementById('debug-overlay');
+        if (params.has('dev') && params.get('dev') === '1' && overlayDiv) {
+            // The div is added via HTML. Initial display is 'none'.
+            // Keyboard toggle will handle actual display toggling.
+            console.log('Dev mode active, debug overlay enabled.');
+            this.setupDebugOverlayToggle();
+        } else if (overlayDiv) {
+            overlayDiv.style.display = 'none'; // Ensure it's hidden if not dev=1
+        }
+    }
+
+    /**
+     * Sets up the keyboard shortcut (Ctrl+\) to toggle the debug overlay.
+     */
+    setupDebugOverlayToggle() {
+        const overlayDiv = document.getElementById('debug-overlay');
+        if (!overlayDiv) return;
+
+        document.addEventListener('keydown', (event) => {
+            // Check for Ctrl (or Meta for Mac) + \
+            if ((event.ctrlKey || event.metaKey) && event.key === '\\') {
+                event.preventDefault();
+                const isHidden = overlayDiv.style.display === 'none' || overlayDiv.style.display === '';
+                overlayDiv.style.display = isHidden ? 'block' : 'none';
+                console.log(`Debug overlay ${isHidden ? 'shown' : 'hidden'}`);
+            }
+        });
     }
 
     /**
