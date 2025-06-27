@@ -1,30 +1,22 @@
-// src/ui/expansionTree.js
 import { q } from './query.js';
+import { createVirtualTree } from './virtualTree.js';
+
+const VIRTUALIZATION_THRESHOLD = 100; // Number of nodes to trigger virtualization
 
 /**
- * Recursively filters segments based on a search term.
- * A segment is included if its key or text matches the search term, or if any of its children match.
- * @param {Array<Object>} segments - The array of segments to filter.
- * @param {string} searchTerm - The term to search for.
- * @returns {Array<Object>} The filtered array of segments.
+ * Flattens a hierarchical segments array into a linear list, preserving order.
+ * @param {Array<Object>} segments - The hierarchical segments array.
+ * @returns {Array<Object>} A flattened array of segments.
  */
-function filterSegments(segments, searchTerm) {
-    if (!searchTerm) return segments; // If no search term, return all segments
-
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    return segments.filter(segment => {
-        const keyMatches = segment.key.toLowerCase().includes(lowerCaseSearchTerm);
-        const textMatches = segment.text.toLowerCase().includes(lowerCaseSearchTerm);
-        const childrenMatch = segment.children && filterSegments(segment.children, searchTerm).length > 0;
-
-        return keyMatches || textMatches || childrenMatch;
-    }).map(segment => {
-        // If a parent matches, ensure its children are also filtered
-        if (segment.children) {
-            return { ...segment, children: filterSegments(segment.children, searchTerm) };
+function flattenSegments(segments) {
+    const flatList = [];
+    segments.forEach(segment => {
+        flatList.push(segment);
+        if (segment.children && segment.children.length > 0) {
+            flatList.push(...flattenSegments(segment.children));
         }
-        return segment;
     });
+    return flatList;
 }
 
 /**
@@ -128,10 +120,42 @@ export function renderExpansionTree(segments, rawText, searchTerm = '') {
         return;
     }
 
-    const ul = document.createElement('ul');
-    ul.className = 'expansion-tree-root';
-    renderNodes(ul, filteredSegments, rawText);
-    treeView.appendChild(ul);
+    // Determine if virtualization is needed
+    const totalNodes = flattenSegments(filteredSegments).length; // Get total count of nodes
+
+    if (totalNodes > VIRTUALIZATION_THRESHOLD) {
+        // Use virtualization
+        const flatData = flattenSegments(filteredSegments);
+        const itemHeight = 20; // Approximate height of a single tree node
+
+        createVirtualTree(treeView, flatData, itemHeight, (segment) => {
+            const li = document.createElement('li');
+            li.className = 'expansion-tree-node';
+            const contentSpan = document.createElement('span');
+            contentSpan.className = 'expansion-tree-content';
+            contentSpan.innerHTML = `<span class="rule-key">${segment.key}</span>: <span class="rule-text">${segment.text}</span>`;
+            li.appendChild(contentSpan);
+
+            if (segment.startIndex !== undefined && segment.endIndex !== undefined) {
+                li.dataset.startIndex = segment.startIndex;
+                li.dataset.endIndex = segment.endIndex;
+                li.dataset.segmentText = segment.text;
+
+                contentSpan.addEventListener('mouseover', () => highlightText(segment.startIndex, segment.endIndex, rawText));
+                contentSpan.addEventListener('mouseout', () => removeHighlight());
+            }
+            // Note: Collapsible toggles and nested children rendering are not directly supported
+            // in this basic virtualization. A more advanced virtual tree would need to handle this.
+            return li;
+        });
+    } else {
+        // Use standard rendering
+        const ul = document.createElement('ul');
+        ul.className = 'expansion-tree-root';
+        renderNodes(ul, filteredSegments, rawText);
+        treeView.appendChild(ul);
+    }
+
     const endTime = performance.now();
     console.log(`Expansion tree render time: ${endTime - startTime}ms`);
 }

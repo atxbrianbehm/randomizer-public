@@ -21,8 +21,7 @@
     - [x] Hovering a list item highlights corresponding text in prompt
     - [x] Collapsible branches & search filter
   - [ ] Performance
-    - [ ] Initial render 
-5 ms for 20 segments
+    - [ ] - [x] Initial render ≤5 ms for 20 segments
     - [ ] Virtualise list for >100 nodes
   - [x] Accessibility & UX
     - [ ] Ensure contrast & focus order
