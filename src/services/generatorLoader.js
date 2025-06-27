@@ -16,6 +16,68 @@
  * @param {string} url Absolute path (served by Vite) to a generator JSON file.
  * @returns {Promise<object|null>} Parsed spec or `null` on failure.
  */
+// Derive a base path (directory) for resolving $include files based on the URL of
+// the main generator bundle.
+// With Vite we declare `publicDir: 'generators'`, which means every file inside
+// that folder is served at the site root with the `generators/` prefix stripped.
+// Therefore:
+//   '/televangelist_generator.json' (served from generators/)  → base '/televangelist_generator/'
+// so that $include paths like `platforms.json` will be resolved to
+//   '/televangelist_generator/platforms.json'
+export function deriveBasePath(url) {
+  const trimmed = url.startsWith('/') ? url.slice(1) : url;
+  const baseName = trimmed.replace(/\.json$/i, '');
+  return `/${baseName}/`;
+}
+
+// Recursively walk a generator spec and inline any objects of the form
+// { "$include": "foo.json", ... } by fetching the referenced JSON from the
+// given basePath and merging it (preserving optional _meta).
+export async function resolveIncludes(node, basePath) {
+  if (Array.isArray(node)) {
+    const resolved = [];
+    for (const item of node) {
+      resolved.push(await resolveIncludes(item, basePath));
+    }
+    return resolved;
+  }
+
+  if (node && typeof node === 'object') {
+    // If the node itself is an include directive
+    if (Object.prototype.hasOwnProperty.call(node, '$include')) {
+      const includePath = `${basePath}${node['$include']}`;
+      try {
+        const resp = await fetch(includePath);
+        if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status}`);
+        const includedJson = await resp.json();
+        const resolvedIncluded = await resolveIncludes(includedJson, basePath);
+        // Preserve any _meta key that co-exists with the $include object.
+        if (node._meta) {
+          if (Array.isArray(resolvedIncluded)) {
+            // Embed _meta at index 0 per existing pattern
+            return [{ _meta: node._meta }, ...resolvedIncluded];
+          }
+          return { _meta: node._meta, ...resolvedIncluded };
+        }
+        return resolvedIncluded;
+      } catch (e) {
+        console.error('[resolveIncludes] failed', includePath, e);
+        return node; // fallback to original node so generation can continue
+      }
+    }
+
+    // Otherwise recurse into object properties
+    const out = {};
+    for (const [key, value] of Object.entries(node)) {
+      out[key] = await resolveIncludes(value, basePath);
+    }
+    return out;
+  }
+
+  // Primitive value – return as-is.
+  return node;
+}
+
 export async function fetchGeneratorSpec(url) {
   try {
     console.log('[generatorLoader] fetching', url);
@@ -24,7 +86,12 @@ export async function fetchGeneratorSpec(url) {
       console.error('[generatorLoader] fetch failed', url, response.status);
       return null;
     }
-    return await response.json();
+    const spec = await response.json();
+
+    // Inline any $include references before returning
+    const basePath = deriveBasePath(url);
+    const resolvedSpec = await resolveIncludes(spec, basePath);
+    return resolvedSpec;
   } catch (err) {
     console.error('[generatorLoader] fetch threw', url, err);
     return null;

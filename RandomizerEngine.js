@@ -551,6 +551,17 @@ export default class RandomizerEngine {
         return result;
     }
 
+    /**
+     * Return array of variable keys explicitly declared in generator.variables
+     * @param {string} generatorName
+     * @returns {string[]}
+     */
+    getAllVariableKeys(generatorName) {
+        const gen = this.loadedGenerators.get(generatorName);
+        if (!gen || !gen.variables) return [];
+        return Object.keys(gen.variables);
+    }
+
     // List all loaded generators
     listGenerators() {
         return Array.from(this.loadedGenerators.keys());
@@ -602,11 +613,21 @@ export default class RandomizerEngine {
      * @returns {boolean}
      */
     _isRuleLockable(rule) {
-        if (!Array.isArray(rule)) return false;
-        if (rule.length === 0) return false;
-        const first = rule[0];
-        if (typeof first === 'string') return true;
-        if (typeof first === 'object' && (first.value !== undefined || first.text !== undefined)) return true;
+        if (!Array.isArray(rule) || rule.length === 0) return false;
+
+        // Skip leading _meta-only objects which are used for rule metadata.
+        let idx = 0;
+        while (idx < rule.length) {
+            const item = rule[idx];
+            if (typeof item === 'object' && Object.keys(item).length === 1 && item._meta) {
+                idx += 1;
+                continue; // Ignore pure _meta objects
+            }
+            // Found first substantive option – evaluate it
+            if (typeof item === 'string') return true;
+            if (typeof item === 'object' && (item.value !== undefined || item.text !== undefined)) return true;
+            break;
+        }
         return false;
     }
 

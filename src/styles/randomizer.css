@@ -1108,13 +1108,38 @@ select.form-control {
   background: var(--color-bg);
   color: var(--color-fg);
   margin: 5% auto;
-  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  padding: 1.5rem 2rem;
   border-radius: 14px;
   width: 100%;
-  max-width: 420px;
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.45);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
+
+
+/* Advanced Modal body layout */
+#advanced-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+#advanced-modal-body label.adv-label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+#advanced-modal-body select {
+  width: 100%;
+  padding: 0.35rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg2);
+  color: var(--color-fg);
+}
+
 .modal-close {
   position: absolute;
   right: 18px;
@@ -1125,6 +1150,28 @@ select.form-control {
   border: none;
   background: none;
 }
+/* --- Advanced Modal Body Layout Enhancements --- */
+#advanced-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+#advanced-modal-body label.adv-label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+#advanced-modal-body select {
+  width: 100%;
+  padding: 0.35rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg2);
+  color: var(--color-fg);
+}
+
 .advanced-row {
   display: flex;
   align-items: center;
