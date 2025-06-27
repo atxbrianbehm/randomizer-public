@@ -110,6 +110,7 @@ export class RandomizerApp {
      */
     updateGeneratorDropdown() {
         const select = q('#generator-select');
+        if (!select) return;
         select.innerHTML = '';
         let generatorList = this.engine.listGenerators();
         // Fallback for environments where listGenerators may be empty (e.g., tests mocking duplicates)

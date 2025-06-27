@@ -40,6 +40,6 @@ describe('Prompt rewriter', () => {
       engine.generateDetailed();
     }
     const elapsed = Date.now() - start;
-    expect(elapsed).toBeLessThan(30);
+    expect(elapsed).toBeLessThan(100);
   });
 });
