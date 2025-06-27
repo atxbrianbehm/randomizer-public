@@ -89,25 +89,25 @@ describe('RandomizerEngine Conditional Logic', () => {
 
     it('should handle $and operator correctly', async () => {
         await engine.loadGenerator(generator);
-        const result = engine.generate('conditional-test', 'test_and');
+        const result = engine.generate('conditional-test', { entryPoint: 'test_and' });
         expect(result).toBe('AND_SUCCESS');
     });
 
     it('should handle $or operator correctly', async () => {
         await engine.loadGenerator(generator);
-        const result = engine.generate('conditional-test', 'test_or');
+        const result = engine.generate('conditional-test', { entryPoint: 'test_or' });
         expect(result).toBe('OR_SUCCESS');
     });
 
     it('should handle $not operator correctly', async () => {
         await engine.loadGenerator(generator);
-        const result = engine.generate('conditional-test', 'test_not');
+        const result = engine.generate('conditional-test', { entryPoint: 'test_not' });
         expect(result).toBe('NOT_SUCCESS');
     });
 
     it('should handle nested operators correctly', async () => {
         await engine.loadGenerator(generator);
-        const result = engine.generate('conditional-test', 'test_nested');
+        const result = engine.generate('conditional-test', { entryPoint: 'test_nested' });
         expect(result).toBe('NESTED_SUCCESS');
     });
 });

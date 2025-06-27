@@ -199,7 +199,42 @@ export default class RandomizerEngine {
         return prompt.trim();
     }
 
-    generate(generatorName = null, entryPoint = null, context = {}) {
+    _generateFromTarget(generator, target, context) {
+        if (!generator.targeting || !generator.targeting[target]) {
+            throw new Error(`Target '${target}' not found in generator '${generator.metadata.name}'`);
+        }
+
+        const template = generator.targeting[target].template;
+        const placeholders = [...template.matchAll(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g)];
+
+        const expandedValues = {};
+        for (const match of placeholders) {
+            const ruleName = match[1];
+            if (!expandedValues[ruleName]) {
+                expandedValues[ruleName] = this.expandRule(generator, ruleName, context);
+            }
+        }
+
+        // Apply parameter mapping if available
+        const parameterMap = generator.targeting[target].parameterMap;
+        if (parameterMap) {
+            for (const ruleName in parameterMap) {
+                if (expandedValues[ruleName] !== undefined && parameterMap[ruleName][expandedValues[ruleName]] !== undefined) {
+                    expandedValues[ruleName] = parameterMap[ruleName][expandedValues[ruleName]];
+                }
+            }
+        }
+
+        let result = template;
+        for (const [ruleName, value] of Object.entries(expandedValues)) {
+            result = result.replace(new RegExp(`#${ruleName}#`, 'g'), value);
+        }
+
+        return result;
+    }
+
+    generate(generatorName = null, options = {}) {
+        const { entryPoint = null, context = {}, target = null } = options;
         const nameToUse = generatorName || this.currentGenerator;
         if (!nameToUse) {
             throw new Error('No generator selected.');
@@ -209,21 +244,33 @@ export default class RandomizerEngine {
             throw new Error(`Generator '${nameToUse}' not found`);
         }
 
-        const startRule = entryPoint || generator.entry_points.default;
         const generationContext = {
             ...context,
             generatorName: nameToUse,
             variables: this.getVariablesForGenerator(nameToUse)
         };
 
-        return this.expandRule(generator, startRule, generationContext);
+        if (target) {
+            return this._generateFromTarget(generator, target, generationContext);
+        }
+
+        const startRule = entryPoint || generator.entry_points.default;
+
+        // If startRule is a string with placeholders, process it as text
+        if (typeof startRule === 'string' && startRule.includes('#')) {
+            return this.processText(startRule, generationContext);
+        } else {
+            // Otherwise, treat it as a rule name
+            return this.expandRule(generator, startRule, generationContext);
+        }
     }
 
     /**
      * Detailed generation – returns { text, segments }
      * segments: ordered array of { key, text } entries used when building the prompt.
      */
-    generateDetailed(generatorName = null, entryPoint = null, context = {}) {
+    generateDetailed(generatorName = null, options = {}) {
+        const { entryPoint = null, context = {} } = options;
         const nameToUse = generatorName || this.currentGenerator;
         if (!nameToUse) {
             throw new Error('No generator selected.');
@@ -354,11 +401,32 @@ export default class RandomizerEngine {
 
     // Process sequential rules
     processSequentialRule(generator, rule, context) {
-        const results = [];
-        for (const option of rule.options) {
-            results.push(this.processText(option, context));
+        let finalResult = '';
+        for (let i = 0; i < rule.options.length; i++) {
+            const option = rule.options[i];
+            let textToProcess;
+            let joiner = ' '; // Default joiner
+
+            if (typeof option === 'string') {
+                textToProcess = option;
+            } else if (typeof option === 'object' && option.text !== undefined) {
+                textToProcess = option.text;
+                if (option.joiner !== undefined) {
+                    joiner = option.joiner;
+                }
+            } else {
+                // Handle invalid option format, though validation should ideally catch this
+                textToProcess = '[INVALID SEQUENTIAL OPTION]';
+            }
+
+            finalResult += this.processText(textToProcess, context);
+
+            // Add joiner if it's not the last option
+            if (i < rule.options.length - 1) {
+                finalResult += joiner;
+            }
         }
-        return results.join(' ');
+        return finalResult;
     }
 
     // Process Markov chain rules

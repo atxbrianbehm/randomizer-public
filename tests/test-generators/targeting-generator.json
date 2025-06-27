@@ -1,0 +1,45 @@
+{
+    "metadata": {
+        "name": "targeting-test"
+    },
+    "grammar": {
+        "subject": ["A sleek android diplomat"],
+        "style": ["cinematic lighting"],
+        "camera": ["close-up portrait"],
+        "aspect_ratio": ["16:9"],
+        "quality": ["high"],
+        "opening_scene": ["A desolate cityscape at dusk"],
+        "character_action": ["a lone figure walks slowly"],
+        "camera_movement": ["the camera pans across the skyline"],
+        "closing_scene": ["the city lights begin to flicker"],
+        "video_sequence": {
+            "type": "sequential",
+            "options": [
+                { "text": "#opening_scene#", "joiner": ". " },
+                { "text": "#character_action#", "joiner": ", then " },
+                { "text": "#camera_movement#", "joiner": ". " },
+                { "text": "#closing_scene#" }
+            ]
+        }
+    },
+    "entry_points": {
+        "default": "#subject#"
+    },
+    "targeting": {
+        "midjourney": {
+            "template": "#subject#, #style# #quality# --ar #aspect_ratio#",
+            "parameterMap": {
+                "quality": {
+                    "high": "--quality 2",
+                    "low": "--quality 0.5"
+                }
+            }
+        },
+        "imagen": {
+            "template": "A #style# image of a #subject#."
+        },
+        "sora": {
+            "template": "#video_sequence#"
+        }
+    }
+}

@@ -538,7 +538,7 @@ export class RandomizerApp {
             const outputDiv = document.getElementById('output-area');
             let lastResult = '';
             for (let i = 0; i < count; i++) {
-                let { readable, raw, segments } = this.engine.generateDetailed(null, entryArg);
+                let { readable, raw, segments } = this.engine.generateDetailed(null, { entryPoint: entryArg });
                 if (!readable) readable = raw;
                 lastResult = raw;
                 lastResultText = raw;
