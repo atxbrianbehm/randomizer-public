@@ -1,4 +1,3 @@
-
 export default class RandomizerEngine {
     constructor() {
         this.loadedGenerators = new Map();
@@ -124,44 +123,80 @@ export default class RandomizerEngine {
      * Generate prompt text (simple version – returns string only)
      */
     // Build a human-readable prompt from generated segments using _meta info
+    /**
+     * Build a human-readable prompt from generated segments.
+     * Implements Phase-3 rules:
+     *  – Sort chips by canonical slot order (overridable via metadata.slotOrder)
+     *  – Insert connectors defined by the _meta of each rule.
+     *  – If two adjacent chips share the same connector, join them with a comma.
+     *  – If the first chip lacks a connector but a second exists, use the second’s connector.
+     */
     buildReadablePrompt(generatorName, segments) {
         if (!segments || segments.length === 0) return '';
-        const generator = this.loadedGenerators.get(generatorName);
-        if (!generator) return segments.map(s => s.text).join(' ');
 
-        // canonical order – could be overridden in generator.metadata.slotOrder
-        const slotOrder = generator.metadata?.slotOrder || [
-            'subject', 'faction', 'actor', 'purpose', 'theme', 'condition',
-            'materials', 'colors', 'controls', 'lighting', 'markings', 'density', 'view'
+        const generator = this.loadedGenerators.get(generatorName);
+        if (!generator) return segments.map((s) => s.text).join(' ');
+
+        // Default canonical order (may be overridden per-generator)
+        const defaultOrder = [
+            'subject', 'condition', 'purpose', 'materials', 'colour', 'controls',
+            'displays', 'lighting', 'markings', 'density', 'view'
         ];
-        // Map slot -> index for quick compare
+        const slotOrder = generator.metadata?.slotOrder || defaultOrder;
         const orderMap = new Map(slotOrder.map((s, i) => [s, i]));
 
-        const enriched = segments.map(seg => {
+        // Enrich each segment with slot + connector info
+        const enriched = segments.map((seg) => {
             const rule = generator.grammar[seg.key];
-            let meta = null;
-            if (Array.isArray(rule) && rule.length && rule[0]._meta) meta = rule[0]._meta;
-            else if (typeof rule === 'object' && rule._meta) meta = rule._meta;
+            let meta;
+            if (Array.isArray(rule) && rule[0]?._meta) meta = rule[0]._meta;
+            else if (rule && typeof rule === 'object' && rule._meta) meta = rule._meta;
             return {
                 text: seg.text,
-                slot: meta?.slot || null,
-                connector: meta?.connector || null,
+                slot: meta?.slot ?? null,
+                connector: meta?.connector ?? null,
                 order: orderMap.has(meta?.slot) ? orderMap.get(meta.slot) : 999
             };
         });
 
+        // Order by slot ranking
         enriched.sort((a, b) => a.order - b.order);
 
         let prompt = '';
+        let prevConnector = null;
         enriched.forEach((item, idx) => {
             if (idx === 0) {
+                // First chip – just add the text
                 prompt += item.text;
-            } else {
-                const conn = item.connector || ', ';
-                prompt += conn + item.text;
+                prevConnector = item.connector;
+                return;
             }
+
+            let connectorToUse;
+
+            // If current and previous share the same connector → comma separation
+            if (prevConnector && item.connector && prevConnector === item.connector) {
+                connectorToUse = ', ';
+            } else if (item.connector) {
+                connectorToUse = item.connector.startsWith(' ') ? item.connector : ' ' + item.connector + ' ';
+            } else if (prevConnector) {
+                // Current lacks connector – fall back to previous connector
+                connectorToUse = prevConnector.startsWith(' ') ? prevConnector : ' ' + prevConnector + ' ';
+            } else {
+                connectorToUse = ', ';
+            }
+
+            // Ensure spacing: no leading space for comma, otherwise prefix space
+            if (!connectorToUse.endsWith(' ')) connectorToUse += ' ';
+            if (connectorToUse !== ', ' && !connectorToUse.startsWith(' ')) {
+                connectorToUse = ' ' + connectorToUse;
+            }
+
+            prompt += connectorToUse + item.text;
+            prevConnector = item.connector || prevConnector;
         });
-        return prompt;
+
+        return prompt.trim();
     }
 
     generate(generatorName = null, entryPoint = null, context = {}) {
@@ -384,14 +419,30 @@ export default class RandomizerEngine {
     checkConditions(conditions, context) {
         if (!conditions) return true;
 
-        for (const [varName, condition] of Object.entries(conditions)) {
-            const value = context.variables[varName] || this.variables.get(`${context.generatorName}.${varName}`);
+        for (const [key, value] of Object.entries(conditions)) {
+            if (key === '$and') {
+                if (!value.every(cond => this.checkConditions(cond, context))) {
+                    return false;
+                }
+            } else if (key === '$or') {
+                if (!value.some(cond => this.checkConditions(cond, context))) {
+                    return false;
+                }
+            } else if (key === '$not') {
+                if (this.checkConditions(value, context)) {
+                    return false;
+                }
+            } else {
+                const varName = key;
+                const condition = value;
+                const varValue = context.variables[varName] || this.variables.get(`${context.generatorName}.${varName}`);
 
-            if (condition.$lt !== undefined && value >= condition.$lt) return false;
-            if (condition.$gt !== undefined && value <= condition.$gt) return false;
-            if (condition.$eq !== undefined && value !== condition.$eq) return false;
-            if (condition.$gte !== undefined && value < condition.$gte) return false;
-            if (condition.$lte !== undefined && value > condition.$lte) return false;
+                if (condition.$lt !== undefined && varValue >= condition.$lt) return false;
+                if (condition.$gt !== undefined && varValue <= condition.$gt) return false;
+                if (condition.$eq !== undefined && varValue !== condition.$eq) return false;
+                if (condition.$gte !== undefined && varValue < condition.$gte) return false;
+                if (condition.$lte !== undefined && varValue > condition.$lte) return false;
+            }
         }
 
         return true;
@@ -518,4 +569,3 @@ export default class RandomizerEngine {
 if (typeof window !== 'undefined') {
     window.RandomizerEngine = RandomizerEngine;
 }
-

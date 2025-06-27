@@ -10,42 +10,7 @@
 
 <!-- Completed phases moved to bottom -->
 <!-- Active tasks begin below -->
-- [x] Phase 0 – Preparation
-  - [x] **0-1 Grammar inventory script** – scan `generators/**/*.json` and output a CSV/markdown table of prompt-visible rules per generator.
-  - [x] **0-2 Canonical slot taxonomy** – finalise slot names & default order (subject, condition, purpose, materials, colour, controls, displays, lighting, markings, density, view).
-  - [x] **0-3 Metadata-storage decision** – draft a brief design doc comparing `_meta` vs external map and select one.
-- [x] Phase 1 – Chip/Rule Metadata
-  - [x] **1-1 Pilot metadata** – add `_meta` blocks to Televangelist generator rules.
-  - [x] **1-2 Metadata linter** – Node script verifying 100 % coverage across all generators; fail CI on missing/invalid.
-  - [x] **1-3 Roll-out** – apply metadata to remaining generators using the linter for validation.
-- [x] Phase 2 – Modifier Library (Tracery-style)
-  - [x] **2-1 Core modifiers** – implement `capitalize`, `a_an`, `plural` in `RandomizerEngine`.
-  - [x] **2-2 Modifier syntax** – add `#rule.modifier#` parsing & execution.
-  - [x] **2-3 Unit tests** – verify each modifier individually and in combination.
-- [x] Phase 3 – Smart Prompt Rewriter
-  - [x] **3-1 Data model** – introduce `slotOrder` array constant (overridable per generator).
-  - [x] **3-2 Rewrite algorithm** – function `buildReadablePrompt(chips)` that orders chips, injects connectors, handles edge cases, and applies modifiers.
-  - [x] **3-3 Performance bench** – benchmark 1 000 rewrites under 20 ms.
-  - [x] **3-4 UI integration** – hook rewriter into prompt-editing modal; add tests.
-- [ ] Phase 4 – State Persistence (Twine-style)
-  - [x] Persistence spec
-    - [x] Define JSON schema for persisted state (`version`, `generator`, `lockedValues`, `lastPrompt`, `theme`, `seed`)
-    - [x] Size budget ≤10 KB
-  - [x] Implementation
-    - [x] Create `src/services/persistence.js` with `saveState`, `loadState`, `clearState`
-    - [x] Wire `RandomizerApp` to `saveState` after each generate & variable edit
-    - [x] Hydrate app on init, falling back gracefully if schema version mismatches
-  - [x] UI
-    - [x] Add “Reset to defaults” button next to Generate
-    - [x] Add tooltip explaining persistence
-    - [x] Emit toast on successful restore/reset
-  - [x] Tests
-    - [x] Unit tests for `persistence.js`
-    - [x] Integration test: edit variable → reload → state restored
-  - [x] Performance
-    - [x] Saving & loading ≤2 ms on average laptop
-  - [x] Docs
-    - [x] Update GUIDE with persistence API and migration notes
+
 
 - [ ] Phase 5 – Debug Overlay / Expansion Tree
   - [ ] Overlay framework
@@ -110,25 +75,7 @@
   - [ ] Imports
     - [ ] Update paths to use `@/` alias.
     - [ ] Run ESLint autofix to catch broken paths.
-- [x] HTML / CSS polish
-  - [x] ID/class audit
-    - [x] Build checklist of expected selectors from JS.
-    - [x] Cross-verify against `index.html` and templates.
-  - [x] Dark-mode
-    - [x] Migrate hard-coded colors to CSS variables.
-    - [x] Add prefers-color-scheme fallback.
-  - [x] Modal styling
-    - [x] Ensure focus-trap & scroll-lock utilities work in Safari.
-    - [x] Add drop-shadow in light theme.
-- [x] Verification & QA
-  - [x] Manual smoke-test scenarios
-    - [x] Generate 5 prompts with default generator.
-    - [x] Toggle theme and verify persistence.
-    - [x] Lock variable and ensure new seed respects lock.
-  - [x] Performance budget
-    - [x] Keep dev bundle <200 KB gzip.
-  - [x] Accessibility
-    - [x] Run Lighthouse a11y audit and hit ≥90 score.
+
 - [ ] New Generator • Anachronistic Tech Panel
   - Phase 1 – Asset & Spec
     - [ ] Convert provided JSON → `generators/anachronisticTechPanel.json`.
@@ -165,6 +112,26 @@
   - [x] 3-3 Performance bench
   - [x] 3-4 UI integration
 - [x] Phase 4 – State Persistence (Twine-style) – all subtasks complete
+
+- [x] HTML / CSS polish
+  - [x] ID/class audit
+    - [x] Build checklist of expected selectors from JS.
+    - [x] Cross-verify against `index.html` and templates.
+  - [x] Dark-mode
+    - [x] Migrate hard-coded colors to CSS variables.
+    - [x] Add prefers-color-scheme fallback.
+  - [x] Modal styling
+    - [x] Ensure focus-trap & scroll-lock utilities work in Safari.
+    - [x] Add drop-shadow in light theme.
+- [x] Verification & QA
+  - [x] Manual smoke-test scenarios
+    - [x] Generate 5 prompts with default generator.
+    - [x] Toggle theme and verify persistence.
+    - [x] Lock variable and ensure new seed respects lock.
+  - [x] Performance budget
+    - [x] Keep dev bundle <200 KB gzip.
+  - [x] Accessibility
+    - [x] Run Lighthouse a11y audit and hit ≥90 score.
 
 ### Other Completed Refactor Items
 - Directories `src/`, `public/`, `generators/`, `tests/` created.

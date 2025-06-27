@@ -538,17 +538,18 @@ export class RandomizerApp {
             const outputDiv = document.getElementById('output-area');
             let lastResult = '';
             for (let i = 0; i < count; i++) {
-                const { text: result, segments } = this.engine.generateDetailed(null, entryArg);
-                lastResult = result;
-                lastResultText = result;
-                this.lastPrompt = result;
+                let { readable, raw, segments } = this.engine.generateDetailed(null, entryArg);
+                if (!readable) readable = raw;
+                lastResult = raw;
+                lastResultText = raw;
+                this.lastPrompt = raw;
                 if (outputDiv) {
                     const card = document.createElement('div');
                     card.className = 'prompt-card';
                     card.style.position = 'relative';
 
                     const p = document.createElement('p');
-                    p.textContent = result;
+                    p.textContent = readable;
                     // Create Edit button
                     const editBtn = document.createElement('button');
                     editBtn.innerHTML = '✏️';
@@ -566,7 +567,7 @@ export class RandomizerApp {
                     editBtn.onclick = () => {
                         openPromptEditor({
                             segments,
-                            rawText: result,
+                            rawText: raw,
                             onSave: (newText) => {
                                 p.textContent = newText;
                             }
@@ -589,7 +590,7 @@ export class RandomizerApp {
                     card.onclick = (e) => {
                         // ignore if edit button clicked
                         if (e.target.closest('button')) return;
-                        navigator.clipboard.writeText(p.textContent).then(() => {
+                        navigator.clipboard.writeText(raw).then(() => {
                             this.showSuccess('Copied to clipboard');
                         });
                     };
