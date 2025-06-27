@@ -16,8 +16,8 @@
   - [x] Overlay framework
     - [x] Add `<div id="debug-overlay">` injected only when `?dev=1`
     - [x] Keyboard toggle `Ctrl+\`
-  - [ ] Expansion tree view
-    - [ ] Render hierarchical list of segments with rule, text, modifiers, slot
+  - [x] Expansion tree view
+    - [x] Render hierarchical list of segments with rule, text, modifiers, slot
     - [ ] Hovering a list item highlights corresponding text in prompt
     - [ ] Collapsible branches & search filter
   - [ ] Performance

@@ -665,7 +665,7 @@ export class RandomizerApp {
             // Update the JSON viewer if it's open
             uiUpdateGeneratorStructure(this);
             // Render the expansion tree in the debug overlay
-            renderExpansionTree(segments);
+            renderExpansionTree(segments, raw);
         } catch (error) {
             console.error('Error generating text:', error);
             this.showError('Error generating text: ' + error.message);

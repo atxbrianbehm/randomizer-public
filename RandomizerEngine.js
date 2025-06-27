@@ -285,7 +285,8 @@ export default class RandomizerEngine {
             ...context,
             generatorName: nameToUse,
             variables: this.getVariablesForGenerator(nameToUse),
-            currentParentSegments: rootSegments // This will be the array where new segments are pushed
+            currentParentSegments: rootSegments, // This will be the array where new segments are pushed
+            currentRawText: '' // Initialize raw text tracker
         };
         const text = this.expandRule(generator, startRule, generationContext);
         const readable = this.buildReadablePrompt(nameToUse, rootSegments);
@@ -470,17 +471,27 @@ export default class RandomizerEngine {
     processText(text, context) {
         if (!text) return '';
 
+        let resultText = '';
+        let lastIndex = 0;
+
         // First expand rules and capture segments
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_\.]+))?#/g, (match, ruleName, modsStr) => {
+        resultText = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_\.]+))?#/g, (match, ruleName, modsStr, offset) => {
+            // Add the text before the current match as a plain text segment
+            if (offset > lastIndex) {
+                const plainText = text.substring(lastIndex, offset);
+                if (context.currentParentSegments) {
+                    context.currentParentSegments.push({ type: 'text', text: plainText, startIndex: context.currentRawText.length, endIndex: context.currentRawText.length + plainText.length });
+                }
+                context.currentRawText += plainText;
+            }
+
             const generator = this.loadedGenerators.get(context.generatorName);
             if (generator && generator.grammar[ruleName]) {
-                // Create a new segment for this rule expansion
-                const segment = { key: ruleName, text: '', children: [] };
+                const segment = { key: ruleName, text: '', children: [], startIndex: context.currentRawText.length };
                 if (context.currentParentSegments) {
                     context.currentParentSegments.push(segment);
                 }
 
-                // Temporarily set the new segment's children as the current parent for nested expansions
                 const originalParentSegments = context.currentParentSegments;
                 context.currentParentSegments = segment.children;
 
@@ -489,24 +500,39 @@ export default class RandomizerEngine {
                 if (mods.length) {
                     expanded = this.applyModifiers(expanded, mods);
                 }
-                segment.text = expanded; // Assign the final expanded text to the segment
+                segment.text = expanded;
+                segment.endIndex = context.currentRawText.length + expanded.length;
 
-                // Restore the original parent segments
                 context.currentParentSegments = originalParentSegments;
 
-                return expanded; // with modifiers applied
+                lastIndex = offset + match.length;
+                context.currentRawText += expanded;
+                return expanded;
             }
+            lastIndex = offset + match.length;
+            context.currentRawText += match;
             return match;
         });
 
+        // Add any remaining text after the last match
+        if (lastIndex < text.length) {
+            const plainText = text.substring(lastIndex);
+            if (context.currentParentSegments) {
+                context.currentParentSegments.push({ type: 'text', text: plainText, startIndex: context.currentRawText.length, endIndex: context.currentRawText.length + plainText.length });
+            }
+            context.currentRawText += plainText;
+        }
+
         // Then variable substitution on any remaining placeholders
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
+        // This part needs to be re-evaluated if variables can contain rules that need segment tracking
+        // For now, assuming variables are simple text substitutions and don't create new segments
+        resultText = resultText.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
             const fullVarName = `${context.generatorName}.${varName}`;
             const value = context.variables[varName] || this.variables.get(fullVarName);
             return value !== undefined ? value : match;
         });
 
-        return text;
+        return resultText;
     }
 
     // Check conditions
