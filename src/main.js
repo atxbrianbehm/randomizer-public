@@ -23,6 +23,8 @@ export class RandomizerApp {
         this.isPrettyPrint = true;
         // Array of grammar keys that can be locked in Advanced Options (populated per generator)
         this.lockableRules = [];
+        // Comprehensive spec object for currently selected generator (name, grammar, variables, lockableRules, uiConfig)
+        this.generatorSpec = null;
         const { Locked, LockState } = createLockObjects();
         this.Locked = Locked;
         this.LockState = LockState;
@@ -87,8 +89,17 @@ export class RandomizerApp {
      */
     selectGenerator(name) {
         this.engine.selectGenerator(name);
-        // Query engine for lockable rules of the newly selected generator
+
+        // Build full generator spec for downstream UI modules
+        const genObj = this.engine.loadedGenerators.get(name);
         this.lockableRules = this.engine.getLockableRules(name) || [];
+        this.generatorSpec = {
+            name,
+            grammar: genObj?.grammar || {},
+            variables: genObj?.variables || {},
+            lockableRules: this.lockableRules,
+            uiConfig: genObj?.uiConfig || {}
+        };
 
         this.currentGeneratorId = name;
         uiUpdateEntryPoints(this);
