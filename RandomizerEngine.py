@@ -35,6 +35,25 @@ class RandomizerEngine:
             # Store the generator
             self.loaded_generators[name] = generator
 
+            # Process $include directives in grammar
+            if 'grammar' in generator:
+                for rule_name, rule_content in generator['grammar'].items():
+                    if isinstance(rule_content, dict) and '$include' in rule_content:
+                        include_path = rule_content['$include']
+                        # Assuming include_path is relative to the generator file
+                        # For simplicity, we'll assume it's in the same 'generators' directory
+                        full_include_path = f"generators/{include_path}"
+                        try:
+                            with open(full_include_path, 'r') as f:
+                                included_data = json.load(f)
+                            generator['grammar'][rule_name] = included_data
+                        except FileNotFoundError:
+                            print(f"Warning: Included file not found: {full_include_path}")
+                            generator['grammar'][rule_name] = f"[INCLUDE_ERROR: {include_path}]"
+                        except json.JSONDecodeError:
+                            print(f"Warning: Invalid JSON in included file: {full_include_path}")
+                            generator['grammar'][rule_name] = f"[INCLUDE_ERROR: {include_path}]"
+
             print(f"Successfully loaded generator: {name}")
             return name
         except Exception as error:

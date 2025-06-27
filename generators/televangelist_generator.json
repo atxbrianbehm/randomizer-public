@@ -390,16 +390,11 @@
       "fallback": "Donations of any amount are blessed!"
     },
     "humble_origin": [
-      "I remember a time when I had nothing but a dream and a rusty microphone.",
-      "My ministry began in a small, leaky garage, with only a handful of faithful souls.",
+      "I remember a time when I had nothing but a dream and a rusty microphone, as a humble #preacher_occupation#.",
+      "My ministry began in a small, leaky garage, with only a handful of faithful souls, and I, a simple #preacher_occupation#.",
       "The Lord called me from the humblest of beginnings, a simple #preacher_occupation#."
     ],
-    "preacher_occupation": [
-      "fisherman",
-      "carpenter",
-      "shepherd",
-      "tax collector"
-    ],
+    "preacher_occupation": { "$include": "preacher_occupations.json" },
     "initial_message": [
       "My message was simple: faith can move mountains, even molehills!",
       "I preached about the power of a mustard seed, and how it can grow into a mighty oak of prosperity.",
@@ -468,11 +463,31 @@
       "We need a #divine_intervention_type# breakthrough, a miracle of epic proportions!",
       "The Lord has shown me that #spiritual_breakthrough_imminent# is upon us, but we must act!"
     ],
-    "grand_vision_unveiling": [
-      "I've received a #heavenly_vision_clarity# vision for a #global_crusade_planned# that will shake the nations!",
-      "The Lord has revealed a #divine_strategy_revealed# to overcome all adversity and usher in a new era!",
-      "We are called to build a #media_empire_size# that will reach every corner of the earth!"
-    ],
+    "grand_vision_unveiling": {
+      "type": "conditional",
+      "options": [
+        {
+          "text": "I've received a #heavenly_vision_clarity# vision for a #global_crusade_planned# that will shake the nations! We are called to build a #media_empire_size# media empire!",
+          "conditions": {
+            "global_crusade_planned": {"$eq": true},
+            "divine_strategy_revealed": {"$eq": true}
+          }
+        },
+        {
+          "text": "The Lord has revealed a #divine_strategy_revealed# to overcome all adversity and usher in a new era!",
+          "conditions": {
+            "divine_strategy_revealed": {"$eq": true}
+          }
+        },
+        {
+          "text": "We are called to build a #media_empire_size# that will reach every corner of the earth!",
+          "conditions": {
+            "media_empire_size": {"$gt": 0}
+          }
+        }
+      ],
+      "fallback": "The Lord has a plan, and it is grand!"
+    },
     "sacrificial_offering_request": [
       "To overcome this crisis and fund this grand vision, we need a sacrificial offering of $#donation_amount# from every faithful believer!",
       "The Lord is calling for a #personal_sacrifice_made# from you today, a seed of $#donation_amount# that will unlock unprecedented blessings!",
@@ -486,11 +501,24 @@
       "The Lord has delivered us from the jaws of #scandal_type#, and we stand victorious!",
       "What the enemy meant for evil, God has turned for good, and our #follower_loyalty# is soaring!"
     ],
-    "new_message_focus": [
-      "My friends, I've received a fresh anointing, a new word for this generation: #new_revelation_unveiled#!",
-      "We are entering a season of #spiritual_breakthrough_imminent#, where #spiritual_gifts_manifested# will be commonplace!",
-      "The Lord has called us to a #healing_revival_focus# that will sweep across the land!"
-    ],
+    "new_message_focus": {
+      "type": "conditional",
+      "options": [
+        {
+          "text": "My friends, I've received a fresh anointing, a new word for this generation: a divine revelation!",
+          "conditions": {"new_revelation_unveiled": {"$eq": true}}
+        },
+        {
+          "text": "We are entering a season of spiritual breakthrough, where spiritual gifts will be commonplace!",
+          "conditions": {"spiritual_breakthrough_imminent": {"$eq": true}}
+        },
+        {
+          "text": "The Lord has called us to a healing revival that will sweep across the land!",
+          "conditions": {"healing_revival_focus": {"$eq": true}}
+        }
+      ],
+      "fallback": "The Lord is doing a new thing!"
+    },
     "renewed_plea_intensity": [
       "Now, more than ever, we need your unwavering support! Your seed of $#donation_amount# will secure your #heavenly_rewards_promised#!",
       "This is a critical moment! Stand with us with your most generous offering of $#donation_amount#, and witness #earthly_blessings_promised#!",
@@ -500,9 +528,9 @@
       "#greeting# I am #divine_title# #preacher_name#. #rebirth_claim# #new_message_focus# #renewed_plea_intensity#"
     ],
     "legacy_reflection": [
-      "As I reflect on this incredible journey, I see the hand of God in every step, every miracle, every offering.",
-      "My life has been a testament to His faithfulness, and your generosity has made it all possible.",
-      "We've built a #media_empire_size# for the Lord, and secured a #spiritual_legacy_secured# for generations to come."
+      "As I reflect on this incredible journey, I see the hand of God in every step, every miracle, every offering. This is my legacy.",
+      "My life has been a testament to His faithfulness, and your generosity has made it all possible. This is our shared legacy.",
+      "We've built a #media_empire_size# media empire for the Lord, and secured a #spiritual_legacy_secured# spiritual legacy for generations to come."
     ],
     "final_offering_call": [
       "Now, as we approach the culmination of this divine work, I ask for one final, ultimate offering of $#donation_amount#!",
@@ -523,22 +551,22 @@
         {
           "text": "#stage_2_sermon#",
           "conditions": {"career_stage": {"$eq": 2}},
-          "actions": {"set": {"career_stage": 3}}
+          "actions": {"set": {"career_stage": 3, "media_attention": 3, "ministry_assets": 2, "follower_loyalty": 90}}
         },
         {
           "text": "#stage_3_sermon#",
           "conditions": {"career_stage": {"$eq": 3}},
-          "actions": {"set": {"career_stage": 4}}
+          "actions": {"set": {"career_stage": 4, "scandal_level": 1, "opposition_strength": 3, "media_attention": 5, "divine_favor": 30, "scandal_type": "false accusations", "follower_loyalty": 50, "media_empire_size": 3, "heavenly_vision_clarity": 4, "global_crusade_planned": true, "divine_strategy_revealed": true}}
         },
         {
           "text": "#stage_4_sermon#",
           "conditions": {"career_stage": {"$eq": 4}},
-          "actions": {"set": {"career_stage": 5}}
+          "actions": {"set": {"career_stage": 5, "scandal_level": 0, "rebranding_success": true, "follower_loyalty": 100, "divine_favor": 80, "new_revelation_unveiled": true, "spiritual_breakthrough_imminent": true, "scandal_type": "resolved crisis", "healing_revival_focus": true}}
         },
         {
           "text": "#stage_5_sermon#",
           "conditions": {"career_stage": {"$eq": 5}},
-          "actions": {"set": {"career_stage": 1}} 
+          "actions": {"set": {"career_stage": 1, "legacy_impact": 100, "spiritual_legacy_secured": true, "media_empire_size": 5, "charitable_giving_percentage": 10, "personal_sacrifice_made": true}} 
         }
       ],
       "fallback": "The Lord works in mysterious ways. Please reset the career_stage variable."
