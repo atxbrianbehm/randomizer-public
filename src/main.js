@@ -10,6 +10,7 @@ import { LOCKABLE_FIELDS } from '@/constants.js';
 // Main entry for Vite – initializes the Randomizer application
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 import * as GeneratorLoader from '@/services/generatorLoader.js';
+import { renderExpansionTree } from '@/ui/expansionTree.js';
 
 export class RandomizerApp {
     /**
@@ -663,6 +664,8 @@ export class RandomizerApp {
             
             // Update the JSON viewer if it's open
             uiUpdateGeneratorStructure(this);
+            // Render the expansion tree in the debug overlay
+            renderExpansionTree(segments);
         } catch (error) {
             console.error('Error generating text:', error);
             this.showError('Error generating text: ' + error.message);

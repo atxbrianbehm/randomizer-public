@@ -1,0 +1,18 @@
+.expansion-tree-root {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.expansion-tree-node {
+    margin-bottom: 5px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.expansion-tree-node .rule-key {
+    color: #888;
+}
+
+.expansion-tree-node .rule-text {
+    color: #eee;
+}
