@@ -19,7 +19,7 @@
   - [x] Expansion tree view
     - [x] Render hierarchical list of segments with rule, text, modifiers, slot
     - [x] Hovering a list item highlights corresponding text in prompt
-    - [ ] Collapsible branches & search filter
+    - [x] Collapsible branches & search filter
   - [ ] Performance
     - [ ] Initial render 
 5 ms for 20 segments

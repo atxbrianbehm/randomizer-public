@@ -56,8 +56,21 @@ export class RandomizerApp {
             // Keyboard toggle will handle actual display toggling.
             console.log('Dev mode active, debug overlay enabled.');
             this.setupDebugOverlayToggle();
+            this.setupExpansionTreeSearch();
         } else if (overlayDiv) {
             overlayDiv.style.display = 'none'; // Ensure it's hidden if not dev=1
+        }
+    }
+
+    /**
+     * Sets up the search input for the expansion tree.
+     */
+    setupExpansionTreeSearch() {
+        const searchInput = q('#expansion-tree-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                this.renderDebugOverlayTree();
+            });
         }
     }
 
@@ -665,10 +678,23 @@ export class RandomizerApp {
             // Update the JSON viewer if it's open
             uiUpdateGeneratorStructure(this);
             // Render the expansion tree in the debug overlay
-            renderExpansionTree(segments, raw);
+            this.lastSegments = segments; // Store segments
+            this.lastRawText = raw; // Store raw text
+            this.renderDebugOverlayTree();
         } catch (error) {
             console.error('Error generating text:', error);
             this.showError('Error generating text: ' + error.message);
+        }
+    }
+
+    /**
+     * Renders the debug overlay expansion tree with the current search filter.
+     */
+    renderDebugOverlayTree() {
+        const searchInput = q('#expansion-tree-search');
+        const searchTerm = searchInput ? searchInput.value : '';
+        if (this.lastSegments && this.lastRawText) {
+            renderExpansionTree(this.lastSegments, this.lastRawText, searchTerm);
         }
     }
     

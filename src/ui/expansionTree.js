@@ -2,6 +2,32 @@
 import { q } from './query.js';
 
 /**
+ * Recursively filters segments based on a search term.
+ * A segment is included if its key or text matches the search term, or if any of its children match.
+ * @param {Array<Object>} segments - The array of segments to filter.
+ * @param {string} searchTerm - The term to search for.
+ * @returns {Array<Object>} The filtered array of segments.
+ */
+function filterSegments(segments, searchTerm) {
+    if (!searchTerm) return segments; // If no search term, return all segments
+
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return segments.filter(segment => {
+        const keyMatches = segment.key.toLowerCase().includes(lowerCaseSearchTerm);
+        const textMatches = segment.text.toLowerCase().includes(lowerCaseSearchTerm);
+        const childrenMatch = segment.children && filterSegments(segment.children, searchTerm).length > 0;
+
+        return keyMatches || textMatches || childrenMatch;
+    }).map(segment => {
+        // If a parent matches, ensure its children are also filtered
+        if (segment.children) {
+            return { ...segment, children: filterSegments(segment.children, searchTerm) };
+        }
+        return segment;
+    });
+}
+
+/**
  * Recursively renders the expansion tree nodes.
  * @param {HTMLElement} parentElement - The UL element to append nodes to.
  * @param {Array<Object>} segments - The array of segments to render.
@@ -81,8 +107,9 @@ function removeHighlight() {
  * Renders the expansion tree into the debug overlay.
  * @param {Array<Object>} segments - The array of segments from generateDetailed.
  * @param {string} rawText - The raw generated text for highlighting.
+ * @param {string} searchTerm - Optional search term to filter the tree.
  */
-export function renderExpansionTree(segments, rawText) {
+export function renderExpansionTree(segments, rawText, searchTerm = '') {
     const treeView = q('#expansion-tree-view');
     if (!treeView) return;
 
@@ -93,8 +120,15 @@ export function renderExpansionTree(segments, rawText) {
         return;
     }
 
+    const filteredSegments = filterSegments(segments, searchTerm);
+
+    if (filteredSegments.length === 0) {
+        treeView.textContent = 'No matching segments found.';
+        return;
+    }
+
     const ul = document.createElement('ul');
     ul.className = 'expansion-tree-root';
-    renderNodes(ul, segments, rawText);
+    renderNodes(ul, filteredSegments, rawText);
     treeView.appendChild(ul);
 }
