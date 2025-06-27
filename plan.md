@@ -13,26 +13,6 @@
 
 
 - [x] Phase 5 – Debug Overlay / Expansion Tree
-  - [x] Overlay framework
-    - [x] Add `<div id="debug-overlay">` injected only when `?dev=1`
-    - [x] Keyboard toggle `Ctrl+\`
-  - [x] Expansion tree view
-    - [x] Render hierarchical list of segments with rule, text, modifiers, slot
-    - [x] Hovering a list item highlights corresponding text in prompt
-    - [x] Collapsible branches & search filter
-  - [ ] Performance
-    - [ ] - [x] Initial render ≤5 ms for 20 segments
-    - [x] Virtualise list for >100 nodes
-  - [x] Accessibility & UX
-    - [ ] Ensure contrast & focus order
-    - [x] Close overlay with ESC
-  - [x] Export options
-    - [x] “Copy JSON” button to clipboard
-  - [ ] Tests
-    - [ ] Unit test overlay build util
-    - [ ] Integration test toggle + highlight flow
-  - [x] Docs
-    - [x] Add overlay usage section to GUIDE
 
 - [ ] Phase 6 – Testing & Documentation Hardening
   - [ ] Test coverage

@@ -280,17 +280,15 @@ export default class RandomizerEngine {
             throw new Error(`Generator '${nameToUse}' not found`);
         }
         const startRule = entryPoint || generator.entry_points.default;
-        const rootSegments = [];
         const generationContext = {
             ...context,
             generatorName: nameToUse,
             variables: this.getVariablesForGenerator(nameToUse),
-            currentParentSegments: rootSegments, // This will be the array where new segments are pushed
-            currentRawText: '' // Initialize raw text tracker
+            segments: [] // collect token info here
         };
         const text = this.expandRule(generator, startRule, generationContext);
-        const readable = this.buildReadablePrompt(nameToUse, rootSegments);
-        return { raw: text, readable, segments: rootSegments };
+        const readable = this.buildReadablePrompt(nameToUse, generationContext.segments);
+        return { raw: text, readable, segments: generationContext.segments };
     
     }
 
@@ -305,31 +303,18 @@ export default class RandomizerEngine {
             return `[MISSING RULE: ${ruleName}]`;
         }
 
-        const segment = { key: ruleName, text: '', children: [] };
-        if (context.currentParentSegments) {
-            context.currentParentSegments.push(segment);
-        }
-
-        const originalParentSegments = context.currentParentSegments;
-        context.currentParentSegments = segment.children;
-
-        let expandedText;
         if (Array.isArray(rule)) {
             // Simple array of options
-            expandedText = this.selectFromArray(rule, context);
+            return this.selectFromArray(rule, context);
         } else if (typeof rule === 'string') {
             // Plain text with potential nested tokens
-            expandedText = this.processText(rule, context);
+            return this.processText(rule, context);
         } else if (rule && typeof rule === 'object' && rule.type) {
             // Complex rule with explicit type field
-            expandedText = this.processComplexRule(generator, rule, context);
-        } else {
-            expandedText = '[INVALID RULE FORMAT]';
+            return this.processComplexRule(generator, rule, context);
         }
 
-        segment.text = expandedText;
-        context.currentParentSegments = originalParentSegments;
-        return expandedText;
+        return '[INVALID RULE FORMAT]';
     }
 
     // Select from array (with optional weights)
@@ -471,68 +456,31 @@ export default class RandomizerEngine {
     processText(text, context) {
         if (!text) return '';
 
-        let resultText = '';
-        let lastIndex = 0;
-
         // First expand rules and capture segments
-        resultText = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_\.]+))?#/g, (match, ruleName, modsStr, offset) => {
-            // Add the text before the current match as a plain text segment
-            if (offset > lastIndex) {
-                const plainText = text.substring(lastIndex, offset);
-                if (context.currentParentSegments) {
-                    context.currentParentSegments.push({ type: 'text', text: plainText, startIndex: context.currentRawText.length, endIndex: context.currentRawText.length + plainText.length });
-                }
-                context.currentRawText += plainText;
-            }
-
+        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_\.]+))?#/g, (match, ruleName, modsStr) => {
             const generator = this.loadedGenerators.get(context.generatorName);
             if (generator && generator.grammar[ruleName]) {
-                const segment = { key: ruleName, text: '', children: [], startIndex: context.currentRawText.length };
-                if (context.currentParentSegments) {
-                    context.currentParentSegments.push(segment);
-                }
-
-                const originalParentSegments = context.currentParentSegments;
-                context.currentParentSegments = segment.children;
-
                 let expanded = this.expandRule(generator, ruleName, context);
                 const mods = modsStr ? modsStr.split('.') : [];
                 if (mods.length) {
                     expanded = this.applyModifiers(expanded, mods);
                 }
-                segment.text = expanded;
-                segment.endIndex = context.currentRawText.length + expanded.length;
-
-                context.currentParentSegments = originalParentSegments;
-
-                lastIndex = offset + match.length;
-                context.currentRawText += expanded;
-                return expanded;
+                if (Array.isArray(context.segments)) {
+                    context.segments.push({ key: ruleName, text: expanded });
+                }
+                return expanded; // with modifiers applied
             }
-            lastIndex = offset + match.length;
-            context.currentRawText += match;
             return match;
         });
 
-        // Add any remaining text after the last match
-        if (lastIndex < text.length) {
-            const plainText = text.substring(lastIndex);
-            if (context.currentParentSegments) {
-                context.currentParentSegments.push({ type: 'text', text: plainText, startIndex: context.currentRawText.length, endIndex: context.currentRawText.length + plainText.length });
-            }
-            context.currentRawText += plainText;
-        }
-
         // Then variable substitution on any remaining placeholders
-        // This part needs to be re-evaluated if variables can contain rules that need segment tracking
-        // For now, assuming variables are simple text substitutions and don't create new segments
-        resultText = resultText.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
+        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
             const fullVarName = `${context.generatorName}.${varName}`;
             const value = context.variables[varName] || this.variables.get(fullVarName);
             return value !== undefined ? value : match;
         });
 
-        return resultText;
+        return text;
     }
 
     // Check conditions
