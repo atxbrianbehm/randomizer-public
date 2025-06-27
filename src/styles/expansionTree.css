@@ -1,18 +1,28 @@
-.expansion-tree-root {
+.expansion-tree-children {
     list-style: none;
-    padding-left: 10px;
+    padding-left: 15px;
+    border-left: 1px dotted #555;
+    margin-left: 5px;
 }
 
 .expansion-tree-node {
-    margin-bottom: 5px;
-    font-family: monospace;
-    font-size: 0.9em;
+    position: relative;
 }
 
-.expansion-tree-node .rule-key {
-    color: #888;
+.expansion-tree-node::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 10px;
+    width: 5px;
+    height: 0;
+    border-top: 1px dotted #555;
 }
 
-.expansion-tree-node .rule-text {
-    color: #eee;
+.expansion-tree-node:last-child::before {
+    border-top: none;
+}
+
+.expansion-tree-node:not(:last-child) > .expansion-tree-children {
+    border-left: 1px dotted #555;
 }

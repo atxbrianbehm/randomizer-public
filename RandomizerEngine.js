@@ -280,15 +280,16 @@ export default class RandomizerEngine {
             throw new Error(`Generator '${nameToUse}' not found`);
         }
         const startRule = entryPoint || generator.entry_points.default;
+        const rootSegments = [];
         const generationContext = {
             ...context,
             generatorName: nameToUse,
             variables: this.getVariablesForGenerator(nameToUse),
-            segments: [] // collect token info here
+            currentParentSegments: rootSegments // This will be the array where new segments are pushed
         };
         const text = this.expandRule(generator, startRule, generationContext);
-        const readable = this.buildReadablePrompt(nameToUse, generationContext.segments);
-        return { raw: text, readable, segments: generationContext.segments };
+        const readable = this.buildReadablePrompt(nameToUse, rootSegments);
+        return { raw: text, readable, segments: rootSegments };
     
     }
 
@@ -303,18 +304,31 @@ export default class RandomizerEngine {
             return `[MISSING RULE: ${ruleName}]`;
         }
 
-        if (Array.isArray(rule)) {
-            // Simple array of options
-            return this.selectFromArray(rule, context);
-        } else if (typeof rule === 'string') {
-            // Plain text with potential nested tokens
-            return this.processText(rule, context);
-        } else if (rule && typeof rule === 'object' && rule.type) {
-            // Complex rule with explicit type field
-            return this.processComplexRule(generator, rule, context);
+        const segment = { key: ruleName, text: '', children: [] };
+        if (context.currentParentSegments) {
+            context.currentParentSegments.push(segment);
         }
 
-        return '[INVALID RULE FORMAT]';
+        const originalParentSegments = context.currentParentSegments;
+        context.currentParentSegments = segment.children;
+
+        let expandedText;
+        if (Array.isArray(rule)) {
+            // Simple array of options
+            expandedText = this.selectFromArray(rule, context);
+        } else if (typeof rule === 'string') {
+            // Plain text with potential nested tokens
+            expandedText = this.processText(rule, context);
+        } else if (rule && typeof rule === 'object' && rule.type) {
+            // Complex rule with explicit type field
+            expandedText = this.processComplexRule(generator, rule, context);
+        } else {
+            expandedText = '[INVALID RULE FORMAT]';
+        }
+
+        segment.text = expandedText;
+        context.currentParentSegments = originalParentSegments;
+        return expandedText;
     }
 
     // Select from array (with optional weights)
@@ -460,14 +474,26 @@ export default class RandomizerEngine {
         text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_\.]+))?#/g, (match, ruleName, modsStr) => {
             const generator = this.loadedGenerators.get(context.generatorName);
             if (generator && generator.grammar[ruleName]) {
+                // Create a new segment for this rule expansion
+                const segment = { key: ruleName, text: '', children: [] };
+                if (context.currentParentSegments) {
+                    context.currentParentSegments.push(segment);
+                }
+
+                // Temporarily set the new segment's children as the current parent for nested expansions
+                const originalParentSegments = context.currentParentSegments;
+                context.currentParentSegments = segment.children;
+
                 let expanded = this.expandRule(generator, ruleName, context);
                 const mods = modsStr ? modsStr.split('.') : [];
                 if (mods.length) {
                     expanded = this.applyModifiers(expanded, mods);
                 }
-                if (Array.isArray(context.segments)) {
-                    context.segments.push({ key: ruleName, text: expanded });
-                }
+                segment.text = expanded; // Assign the final expanded text to the segment
+
+                // Restore the original parent segments
+                context.currentParentSegments = originalParentSegments;
+
                 return expanded; // with modifiers applied
             }
             return match;
