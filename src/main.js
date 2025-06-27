@@ -74,6 +74,13 @@ export class RandomizerApp {
                 const isHidden = overlayDiv.style.display === 'none' || overlayDiv.style.display === '';
                 overlayDiv.style.display = isHidden ? 'block' : 'none';
                 console.log(`Debug overlay ${isHidden ? 'shown' : 'hidden'}`);
+            } else if (event.key === 'Escape') {
+                // Check for Escape key
+                if (overlayDiv.style.display !== 'none') {
+                    overlayDiv.style.display = 'none';
+                    console.log('Debug overlay hidden with ESC');
+                    event.preventDefault(); // Prevent potential browser default ESC behavior
+                }
             }
         });
     }
