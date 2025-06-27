@@ -27,8 +27,8 @@
   - [x] Accessibility & UX
     - [ ] Ensure contrast & focus order
     - [x] Close overlay with ESC
-  - [ ] Export options
-    - [ ] “Copy JSON” button to clipboard
+  - [x] Export options
+    - [x] “Copy JSON” button to clipboard
   - [ ] Tests
     - [ ] Unit test overlay build util
     - [ ] Integration test toggle + highlight flow

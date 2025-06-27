@@ -110,6 +110,7 @@ function removeHighlight() {
  * @param {string} searchTerm - Optional search term to filter the tree.
  */
 export function renderExpansionTree(segments, rawText, searchTerm = '') {
+    const startTime = performance.now();
     const treeView = q('#expansion-tree-view');
     if (!treeView) return;
 
@@ -131,4 +132,6 @@ export function renderExpansionTree(segments, rawText, searchTerm = '') {
     ul.className = 'expansion-tree-root';
     renderNodes(ul, filteredSegments, rawText);
     treeView.appendChild(ul);
+    const endTime = performance.now();
+    console.log(`Expansion tree render time: ${endTime - startTime}ms`);
 }
