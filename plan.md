@@ -51,7 +51,11 @@
   - [ ] Developer Experience
     - [ ] Pre-commit hook for lint+tests
     - [ ] NPM script `npm run watch:test` for TDD loop
-- [ ] Phase 7 – Visual Rule Graph (stretch)
+- [ ] Phase 7 – Documentation & Developer Experience
+  - [ ] Audit and update documentation (README, dev guides)
+  - [ ] Write updated LLM guide for assembling new generators
+  - [ ] Identify further code refactoring opportunities
+- [ ] Phase 8 – Visual Rule Graph (stretch)
   - [ ] Render grammar DOT graph with Viz.js for authors.
 
 - [ ] Folder restructure & source migration
