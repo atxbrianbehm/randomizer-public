@@ -22,7 +22,7 @@
     - [x] Collapsible branches & search filter
   - [ ] Performance
     - [ ] - [x] Initial render ≤5 ms for 20 segments
-    - [ ] Virtualise list for >100 nodes
+    - [x] Virtualise list for >100 nodes
   - [x] Accessibility & UX
     - [ ] Ensure contrast & focus order
     - [x] Close overlay with ESC

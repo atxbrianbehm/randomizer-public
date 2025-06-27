@@ -48,6 +48,9 @@ function renderNodes(parentElement, segments, rawText) {
             const toggleBtn = document.createElement('span');
             toggleBtn.className = 'tree-toggle';
             toggleBtn.textContent = '▼'; // Down arrow for expanded state
+            toggleBtn.tabIndex = 0; // Make it focusable
+            toggleBtn.setAttribute('role', 'button'); // Indicate it's a button
+            toggleBtn.setAttribute('aria-label', `Toggle ${segment.key} children`); // Accessible label
             li.insertBefore(toggleBtn, contentSpan);
 
             toggleBtn.addEventListener('click', () => {
