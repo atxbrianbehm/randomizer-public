@@ -50,21 +50,64 @@ class RandomizerEngine:
         if 'entry_points' not in generator or 'default' not in generator['entry_points']:
             raise ValueError('Generator must have entry_points with default')
 
-    def generate(self, generator_name, entry_point=None, context=None):
+    def generate(self, generator_name, options=None):
         """Generate text from a loaded generator"""
+        if options is None:
+            options = {}
+
+        entry_point = options.get('entry_point')
+        context = options.get('context', {})
+        target = options.get('target')
+
         if generator_name not in self.loaded_generators:
             raise ValueError(f"Generator '{generator_name}' not found")
 
         generator = self.loaded_generators[generator_name]
-        start_rule = entry_point or generator['entry_points']['default']
 
         generation_context = {
-            **(context or {}),
+            **context,
             'generator_name': generator_name,
             'variables': self._get_variables_for_generator(generator_name)
         }
 
-        return self._expand_rule(generator, start_rule, generation_context)
+        if target:
+            return self._generate_from_target(generator, target, generation_context)
+
+        start_rule = entry_point or generator['entry_points']['default']
+
+        # If start_rule is a string with placeholders, process it as text
+        if isinstance(start_rule, str) and '#' in start_rule:
+            return self._process_text(start_rule, generation_context)
+        else:
+            # Otherwise, treat it as a rule name
+            return self._expand_rule(generator, start_rule, generation_context)
+
+    def _generate_from_target(self, generator, target, context):
+        if 'targeting' not in generator or target not in generator['targeting']:
+            raise ValueError(f"Target '{target}' not found in generator '{generator['metadata']['name']}'")
+
+        target_config = generator['targeting'][target]
+        template = target_config['template']
+
+        placeholders = re.findall(r'#([a-zA-Z_][a-zA-Z0-9_]*)#', template)
+
+        expanded_values = {}
+        for rule_name in placeholders:
+            if rule_name not in expanded_values:
+                expanded_values[rule_name] = self._expand_rule(generator, rule_name, context)
+
+        # Apply parameter mapping if available
+        parameter_map = target_config.get('parameterMap')
+        if parameter_map:
+            for rule_name, mapping in parameter_map.items():
+                if rule_name in expanded_values and expanded_values[rule_name] in mapping:
+                    expanded_values[rule_name] = mapping[expanded_values[rule_name]]
+
+        result = template
+        for rule_name, value in expanded_values.items():
+            result = result.replace(f'#{rule_name}#', str(value))
+
+        return result
 
     def _expand_rule(self, generator, rule_name, context):
         """Core rule expansion logic"""
@@ -152,10 +195,26 @@ class RandomizerEngine:
 
     def _process_sequential_rule(self, generator, rule, context):
         """Process sequential rules"""
-        results = []
-        for option in rule['options']:
-            results.append(self._process_text(option, context))
-        return ' '.join(results)
+        final_result = ''
+        for i, option in enumerate(rule['options']):
+            text_to_process = ''
+            joiner = ' '  # Default joiner
+
+            if isinstance(option, str):
+                text_to_process = option
+            elif isinstance(option, dict) and 'text' in option:
+                text_to_process = option['text']
+                if 'joiner' in option:
+                    joiner = option['joiner']
+            else:
+                text_to_process = '[INVALID SEQUENTIAL OPTION]'
+
+            final_result += self._process_text(text_to_process, context)
+
+            # Add joiner if it's not the last option
+            if i < len(rule['options']) - 1:
+                final_result += joiner
+        return final_result
 
     def _process_markov_rule(self, generator, rule, context):
         """Process Markov chain rules"""
@@ -163,20 +222,11 @@ class RandomizerEngine:
         return self._select_from_array(rule['options'], context)
 
     def _process_text(self, text, context):
-        """Process text with variable substitution and rule expansion"""
+        """Process text with rule expansion and variable substitution"""
         if not text:
             return ''
 
-        # Variable substitution
-        def replace_var(match):
-            var_name = match.group(1)
-            full_var_name = f"{context['generator_name']}.{var_name}"
-            value = context['variables'].get(var_name) or self.variables.get(full_var_name)
-            return str(value) if value is not None else match.group(0)
-
-        text = re.sub(r'#([a-zA-Z_][a-zA-Z0-9_]*)#', replace_var, text)
-
-        # Rule expansion  
+        # First expand rules
         def replace_rule(match):
             rule_name = match.group(1)
             generator = self.loaded_generators[context['generator_name']]
@@ -186,6 +236,15 @@ class RandomizerEngine:
 
         text = re.sub(r'#([a-zA-Z_][a-zA-Z0-9_]*)#', replace_rule, text)
 
+        # Then variable substitution on any remaining placeholders
+        def replace_var(match):
+            var_name = match.group(1)
+            full_var_name = f"{context['generator_name']}.{var_name}"
+            value = context['variables'].get(var_name) or self.variables.get(full_var_name)
+            return str(value) if value is not None else match.group(0)
+
+        text = re.sub(r'#([a-zA-Z_][a-zA-Z0-9_]*)#', replace_var, text)
+
         return text
 
     def _check_conditions(self, conditions, context):
@@ -193,20 +252,32 @@ class RandomizerEngine:
         if not conditions:
             return True
 
-        for var_name, condition in conditions.items():
-            full_var_name = f"{context['generator_name']}.{var_name}"
-            value = context['variables'].get(var_name) or self.variables.get(full_var_name)
+        for key, value in conditions.items():
+            if key == '$and':
+                if not all(self._check_conditions(cond, context) for cond in value):
+                    return False
+            elif key == '$or':
+                if not any(self._check_conditions(cond, context) for cond in value):
+                    return False
+            elif key == '$not':
+                if self._check_conditions(value, context):
+                    return False
+            else:
+                var_name = key
+                condition = value
+                full_var_name = f"{context['generator_name']}.{var_name}"
+                var_value = context['variables'].get(var_name) or self.variables.get(full_var_name)
 
-            if '$lt' in condition and value >= condition['$lt']:
-                return False
-            if '$gt' in condition and value <= condition['$gt']:
-                return False
-            if '$eq' in condition and value != condition['$eq']:
-                return False
-            if '$gte' in condition and value < condition['$gte']:
-                return False
-            if '$lte' in condition and value > condition['$lte']:
-                return False
+                if '$lt' in condition and var_value >= condition['$lt']:
+                    return False
+                if '$gt' in condition and var_value <= condition['$gt']:
+                    return False
+                if '$eq' in condition and var_value != condition['$eq']:
+                    return False
+                if '$gte' in condition and var_value < condition['$gte']:
+                    return False
+                if '$lte' in condition and var_value > condition['$lte']:
+                    return False
 
         return True
 
