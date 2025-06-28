@@ -1,3 +1,4 @@
+import '@/styles/randomizer.css';
 import RandomizerApp from '@/core/RandomizerApp.js';
 
 // Main entry for Vite – initializes the Randomizer application
