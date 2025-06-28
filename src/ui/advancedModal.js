@@ -43,8 +43,6 @@ export function extractValues(rule) {
   }).filter(val => val !== undefined);
 }
 
-
-
 export function createLockBtn(key, app) {
   const btn = document.createElement('button');
   btn.type = 'button';
@@ -73,10 +71,6 @@ export function buildModal(app) {
   if (!app?.generatorSpec) return;
 
   const { grammar, lockableRules, name } = app.generatorSpec;
-  // Refresh lockableRules in case spec updated
-  app.lockableRules = lockableRules;
-
-
 
   const modalBody = document.getElementById('advanced-modal-body');
   if (!modalBody) return; // Modal not present
@@ -139,8 +133,6 @@ export function buildModal(app) {
     field.appendChild(select);
     gridWrap.appendChild(field);
   });
-
-  
 }
 
 export function showModal(app) {
@@ -212,4 +204,3 @@ export function setupModal(app) {
   const modal = document.getElementById('advanced-modal');
   if (modal) modal.style.display = 'none';
 }
-
