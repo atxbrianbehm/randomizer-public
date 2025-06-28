@@ -24,7 +24,7 @@ jobs:
       - name: Prepare site content
         run: |
           mkdir public
-          rsync -av --exclude '.git*' --exclude 'node_modules' ./ public/
+          rsync -av --exclude '.git*' --exclude 'node_modules' --exclude 'public' ./ ./public/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
