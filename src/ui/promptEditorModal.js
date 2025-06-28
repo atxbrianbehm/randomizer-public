@@ -16,6 +16,7 @@ const modalId = 'prompt-editor-modal';
 let dragSrcEl = null;
 
 function ensureModalExists() {
+    if (typeof document === 'undefined') return;
     if (document.getElementById(modalId)) return; // already built
 
     const modal = document.createElement('div');
@@ -54,10 +55,13 @@ function ensureModalExists() {
       #${modalId} button.primary {background:#0b5ed7;color:#fff;border:none;padding:.4rem .75rem;border-radius:4px}
       .edit-btn.tooltip:hover::after {content:attr(data-tip);position:absolute;top:-1.6rem;right:0;background:#000;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem;white-space:nowrap}
     `;
-    document.head.appendChild(style);
+    if (document && document.head) {
+        document.head.appendChild(style);
+    }
 }
 
 function renderTokens(listEl, segments) {
+    if (typeof document === 'undefined') return;
     listEl.innerHTML = '';
     segments.forEach((seg, idx) => {
         const li = document.createElement('li');

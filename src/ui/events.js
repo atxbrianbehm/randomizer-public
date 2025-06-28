@@ -4,6 +4,8 @@ import { toggleTheme } from '@/ui/theme.js';
 import { showModal as showAdvancedModal, setupModal as setupAdvancedModal } from '@/ui/advancedModal.js';
 
 export default function bindEvents(app) {
+    if (typeof document === 'undefined') return;
+
     const generateBtn = q('#generate-btn');
     if (generateBtn) {
         generateBtn.onclick = () => app.generateText();

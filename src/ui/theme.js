@@ -3,6 +3,7 @@
 const STORAGE_KEY = 'randomizer-theme';
 
 function updateToggleIcon() {
+  if (typeof document === 'undefined') return;
   const btn = document.getElementById('dark-mode-toggle');
   if (!btn) return;
   const scheme = document.documentElement.getAttribute('data-color-scheme');
@@ -19,6 +20,7 @@ function updateToggleIcon() {
 }
 
 export function setTheme(mode) {
+  if (typeof document === 'undefined') return;
   const html = document.documentElement;
   html.setAttribute('data-color-scheme', mode);
   try {
@@ -30,6 +32,7 @@ export function setTheme(mode) {
 }
 
 export function initTheme() {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
   // Ensure toggle button exists before updating icon later
   // (removed unused 'ready' function to resolve ESLint warning)
 

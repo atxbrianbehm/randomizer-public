@@ -43,10 +43,10 @@ describe('buildReadablePrompt algorithm', () => {
 
   it('orders chips by slotOrder and applies connectors', () => {
     const segments = [
-      { key: 'purpose', text: 'controlling engines' },
-      { key: 'subject', text: 'retro console' },
-      { key: 'condition', text: 'heavy wear' },
-      { key: 'colour', text: 'neon green' }
+      { key: 'purpose', text: 'controlling engines', _meta: { slot: 'purpose', connector: 'for', priority: 3 } },
+      { key: 'subject', text: 'retro console', _meta: { slot: 'subject', connector: '', priority: 1 } },
+      { key: 'condition', text: 'heavy wear', _meta: { slot: 'condition', connector: 'with', priority: 2 } },
+      { key: 'colour', text: 'neon green', _meta: { slot: 'colour', connector: 'in', priority: 4 } }
     ];
 
     const result = engine.buildReadablePrompt('mock', segments);
@@ -57,9 +57,9 @@ describe('buildReadablePrompt algorithm', () => {
 
   it('joins same connector with comma', () => {
     const segments = [
-      { key: 'subject', text: 'retro console' },
-      { key: 'condition', text: 'heavy wear' },
-      { key: 'condition', text: 'rusty screws' }
+      { key: 'subject', text: 'retro console', _meta: { slot: 'subject', connector: '', priority: 1 } },
+      { key: 'condition', text: 'heavy wear', _meta: { slot: 'condition', connector: 'with', priority: 2 } },
+      { key: 'condition', text: 'rusty screws', _meta: { slot: 'condition', connector: 'with', priority: 2 } }
     ];
 
     const result = engine.buildReadablePrompt('mock', segments);

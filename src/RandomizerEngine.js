@@ -175,10 +175,7 @@ export default class RandomizerEngine {
 
         // Enrich each segment with slot + connector info
         const enriched = segments.map((seg) => {
-            const rule = generator.grammar[seg.key];
-            let meta;
-            if (Array.isArray(rule) && rule[0]?._meta) meta = rule[0]._meta;
-            else if (rule && typeof rule === 'object' && rule._meta) meta = rule._meta;
+            const meta = seg._meta;
             return {
                 text: seg.text,
                 slot: meta?.slot ?? null,
@@ -191,37 +188,30 @@ export default class RandomizerEngine {
         enriched.sort((a, b) => a.order - b.order);
 
         let prompt = '';
-        let prevConnector = null;
+        let lastUsedConnector = null; // Stores the connector that was actually used for the previous segment
+
         enriched.forEach((item, idx) => {
             if (idx === 0) {
-                // First chip – just add the text
                 prompt += item.text;
-                prevConnector = item.connector;
+                lastUsedConnector = item.connector; // Store the connector of the first item
                 return;
             }
 
-            let connectorToUse;
+            let connectorToAdd = '';
 
-            // If current and previous share the same connector → comma separation
-            if (prevConnector && item.connector && prevConnector === item.connector) {
-                connectorToUse = ', ';
+            // Rule: If current item's connector is the same as the last used connector, join with comma
+            if (item.connector && lastUsedConnector && item.connector === lastUsedConnector) {
+                connectorToAdd = ', ';
             } else if (item.connector) {
-                connectorToUse = item.connector.startsWith(' ') ? item.connector : ' ' + item.connector + ' ';
-            } else if (prevConnector) {
-                // Current lacks connector – fall back to previous connector
-                connectorToUse = prevConnector.startsWith(' ') ? prevConnector : ' ' + prevConnector + ' ';
+                // If current item has a connector, use it (with proper spacing)
+                connectorToAdd = item.connector.startsWith(' ') ? item.connector : ' ' + item.connector + ' ';
             } else {
-                connectorToUse = ', ';
+                // If current item has no connector, just add a space
+                connectorToAdd = ' ';
             }
 
-            // Ensure spacing: no leading space for comma, otherwise prefix space
-            if (!connectorToUse.endsWith(' ')) connectorToUse += ' ';
-            if (connectorToUse !== ', ' && !connectorToUse.startsWith(' ')) {
-                connectorToUse = ' ' + connectorToUse;
-            }
-
-            prompt += connectorToUse + item.text;
-            prevConnector = item.connector || prevConnector;
+            prompt += connectorToAdd + item.text;
+            lastUsedConnector = item.connector; // Update lastUsedConnector for the next iteration
         });
 
         return prompt.trim();
@@ -275,7 +265,8 @@ export default class RandomizerEngine {
         const generationContext = {
             ...context,
             generatorName: nameToUse,
-            variables: this.getVariablesForGenerator(nameToUse)
+            variables: this.getVariablesForGenerator(nameToUse),
+            segments: context.segments || [] // Ensure segments is always an array
         };
 
         if (target) {
@@ -331,18 +322,35 @@ export default class RandomizerEngine {
             return `[MISSING RULE: ${ruleName}]`;
         }
 
-        if (Array.isArray(rule)) {
-            // Simple array of options
-            return this.selectFromArray(rule, context);
-        } else if (typeof rule === 'string') {
-            // Plain text with potential nested tokens
-            return this.processText(rule, context);
-        } else if (rule && typeof rule === 'object' && rule.type) {
-            // Complex rule with explicit type field
-            return this.processComplexRule(generator, rule, context);
+        let expandedText;
+        let segmentIndex = -1;
+
+        // If segments array is available, add a placeholder segment for this rule
+        if (Array.isArray(context.segments)) {
+            const meta = (Array.isArray(rule) && rule[0]?._meta) ? rule[0]._meta : (rule && typeof rule === 'object' && rule._meta) ? rule._meta : null;
+            segmentIndex = context.segments.length;
+            context.segments.push({ key: ruleName, text: '', _meta: meta });
         }
 
-        return '[INVALID RULE FORMAT]';
+        if (Array.isArray(rule)) {
+            // Simple array of options
+            expandedText = this.selectFromArray(rule, context);
+        } else if (typeof rule === 'string') {
+            // Plain text with potential nested tokens
+            expandedText = this.processText(rule, context);
+        } else if (rule && typeof rule === 'object' && rule.type) {
+            // Complex rule with explicit type field
+            expandedText = this.processComplexRule(generator, rule, context);
+        } else {
+            expandedText = '[INVALID RULE FORMAT]';
+        }
+
+        // Update the text of the segment after expansion
+        if (segmentIndex !== -1) {
+            context.segments[segmentIndex].text = expandedText;
+        }
+
+        return expandedText;
     }
 
     // Select from array (with optional weights)
@@ -493,10 +501,9 @@ export default class RandomizerEngine {
             let expandedText = "";
 
             if (generator && generator.grammar[ruleName]) {
+                const ruleObj = generator.grammar[ruleName];
+                const meta = (Array.isArray(ruleObj) && ruleObj[0]?._meta) ? ruleObj[0]._meta : (ruleObj && typeof ruleObj === 'object' && ruleObj._meta) ? ruleObj._meta : null;
                 expandedText = this.expandRule(generator, ruleName, context);
-                if (Array.isArray(context.segments)) {
-                    context.segments.push({ key: ruleName, text: expandedText });
-                }
             } else {
                 // If ruleName is not in grammar, it might be a variable.
                 // So, we don't return match yet, let variable substitution handle it.
@@ -712,8 +719,3 @@ export default class RandomizerEngine {
     }
 }
 
-// Export for ES modules and browser
-// For browsers without bundler, attach to window for convenience
-if (typeof window !== 'undefined') {
-    window.RandomizerEngine = RandomizerEngine;
-}

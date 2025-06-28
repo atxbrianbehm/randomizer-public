@@ -5,7 +5,7 @@
 // --- Utility helpers -------------------------------------------------------
 let __advStylesInjected = false;
 function injectAdvStyles() {
-  if (__advStylesInjected) return;
+  if (typeof document === 'undefined' || __advStylesInjected) return;
   const styleTag = document.createElement('style');
   styleTag.textContent = `
     .lock-button { background:none;border:none;font-size:1rem;cursor:pointer;color: var(--color-accent);vertical-align:middle;margin-left:4px; }
@@ -23,7 +23,9 @@ function injectAdvStyles() {
       .modal-content { scrollbar-width: thin; scrollbar-color: var(--color-border) var(--color-bg2); }
     }
   `;
-  document.head.appendChild(styleTag);
+  if (document && document.head) {
+    document.head.appendChild(styleTag);
+  }
   __advStylesInjected = true;
 }
 export function humanLabel(key, generator) {
@@ -44,6 +46,7 @@ export function extractValues(rule) {
 }
 
 export function createLockBtn(key, app) {
+  if (typeof document === 'undefined') return null;
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'lock-button' + (app.LockState[key] ? ' locked' : '');
@@ -66,6 +69,7 @@ export function createLockBtn(key, app) {
 
 // --- Main builders ---------------------------------------------------------
 export function buildModal(app) {
+  if (typeof document === 'undefined') return;
   injectAdvStyles();
   // Ensure generatorSpec present
   if (!app?.generatorSpec) return;
@@ -136,6 +140,7 @@ export function buildModal(app) {
 }
 
 export function showModal(app) {
+  if (typeof document === 'undefined') return;
   const modal = document.getElementById('advanced-modal');
   buildModal(app);
   if (!modal) return;
@@ -165,6 +170,7 @@ export function showModal(app) {
 }
 
 export function hideModal() {
+  if (typeof document === 'undefined') return;
   const modal = document.getElementById('advanced-modal');
   if (!modal) return;
   modal.style.display = 'none';
@@ -176,6 +182,7 @@ export function hideModal() {
 }
 
 export function applyModal(app) {
+  if (typeof document === 'undefined') return;
   app.engine.lockedValues = app.engine.lockedValues || {};
   app.lockableRules.forEach(key => {
     if (app.LockState[key]) {
@@ -195,6 +202,7 @@ export function applyModal(app) {
 }
 
 export function setupModal(app) {
+  if (typeof document === 'undefined') return;
   const applyBtn = document.getElementById('apply-advanced');
   if (applyBtn) applyBtn.onclick = () => applyModal(app);
   const cancelBtn = document.getElementById('cancel-advanced');
