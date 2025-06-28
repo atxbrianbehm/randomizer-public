@@ -1,5 +1,7 @@
 import { JSDOM } from 'jsdom';
-import { RandomizerApp } from '../src/main.js'; // Use relative path
+import { RandomizerApp } from '@/core/RandomizerApp.js';
+
+vi.mock('@/ui/events.js', () => ({ default: () => {} }));
 
 describe('RandomizerApp integration', () => {
   beforeEach(() => {

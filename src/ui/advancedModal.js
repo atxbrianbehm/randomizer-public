@@ -53,9 +53,12 @@ export function createLockBtn(key, app) {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'lock-button' + (app.LockState[key] ? ' locked' : '');
+  btn.setAttribute('aria-label', (app.LockState[key] ? 'Unlock ' : 'Lock ') + key);
+  btn.setAttribute('title', (app.LockState[key] ? 'Unlock ' : 'Lock ') + key);
   btn.textContent = app.LockState[key] ? '🔒' : '🔓';
   btn.onclick = () => {
-    app.LockState[key] = !app.LockState[key];
+    const newState = !app.LockState[key];
+    app.LockState[key] = newState;
     // When unlocking, also clear stored value
     if (!app.LockState[key]) {
       delete app.Locked[key];
@@ -182,6 +185,8 @@ export function buildModal(app) {
       app.engine.lockedValues[ruleKey] = select.value;
       lockBtn.classList.add('locked');
       lockBtn.textContent = '🔒';
+      lockBtn.setAttribute('aria-label', 'Unlock ' + ruleKey);
+      lockBtn.setAttribute('title', 'Unlock ' + ruleKey);
     }
     options.forEach(opt => {
       const o = document.createElement('option');
@@ -199,12 +204,43 @@ export function buildModal(app) {
 }
 
 export function showModal(app) {
+  const modal = document.getElementById('advanced-modal');
   buildModal(app);
-  document.getElementById('advanced-modal').style.display = 'block';
+  if (!modal) return;
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.tabIndex = -1;
+  modal.style.display = 'block';
+
+  // Basic focus trap within modal
+  const focusable = Array.from(modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(el => !el.disabled);
+  const firstEl = focusable[0];
+  const lastEl = focusable[focusable.length - 1];
+  function handleTrap(e) {
+    if (e.key === 'Tab') {
+      if (e.shiftKey) {
+        if (document.activeElement === firstEl) { e.preventDefault(); lastEl.focus(); }
+      } else {
+        if (document.activeElement === lastEl) { e.preventDefault(); firstEl.focus(); }
+      }
+    } else if (e.key === 'Escape') {
+      hideModal();
+    }
+  }
+  modal.addEventListener('keydown', handleTrap);
+  modal.__trapHandler = handleTrap;
+  setTimeout(() => firstEl?.focus(), 0);
 }
 
 export function hideModal() {
-  document.getElementById('advanced-modal').style.display = 'none';
+  const modal = document.getElementById('advanced-modal');
+  if (!modal) return;
+  modal.style.display = 'none';
+  if (modal.__trapHandler) {
+    modal.removeEventListener('keydown', modal.__trapHandler);
+    delete modal.__trapHandler;
+  }
+  
 }
 
 export function applyModal(app) {

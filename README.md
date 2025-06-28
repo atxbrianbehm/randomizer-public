@@ -34,6 +34,17 @@ npm run lint     # ESLint static analysis
 npm test         # Vitest unit/integration tests
 ```
 
+### Feature Flags & Advanced Modal
+The new keyboard-friendly Advanced Options modal is **on by default**. To temporarily revert to the legacy UI, add the following flag **before** the app is instantiated (e.g. in `index.html`):
+
+```html
+<script>
+  window.FEATURE_ADV_MODAL = false;
+</script>
+```
+
+See [`docs/advanced_modal.md`](docs/advanced_modal.md) for full details.
+
 ### Use in JavaScript/Web
 ```html
 <script src="RandomizerEngine.js"></script>

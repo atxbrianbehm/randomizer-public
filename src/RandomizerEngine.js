@@ -457,7 +457,7 @@ export default class RandomizerEngine {
         if (!text) return '';
 
         // First expand rules and capture segments
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_\.]+))?#/g, (match, ruleName, modsStr) => {
+        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#/g, (match, ruleName, modsStr) => {
             const generator = this.loadedGenerators.get(context.generatorName);
             if (generator && generator.grammar[ruleName]) {
                 let expanded = this.expandRule(generator, ruleName, context);

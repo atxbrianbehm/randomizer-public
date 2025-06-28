@@ -104,6 +104,15 @@ function removeHighlight() {
  * @param {string} rawText - The raw generated text for highlighting.
  * @param {string} searchTerm - Optional search term to filter the tree.
  */
+// Simple filter utility used by renderExpansionTree
+export function filterSegments(segments, term = '') {
+    if (!term) return segments;
+    const lower = term.toLowerCase();
+    return segments.filter(s =>
+        s.key?.toLowerCase().includes(lower) || s.text?.toLowerCase().includes(lower)
+    );
+}
+
 export function renderExpansionTree(segments, rawText, searchTerm = '') {
     const startTime = performance.now();
     const treeView = q('#expansion-tree-view');

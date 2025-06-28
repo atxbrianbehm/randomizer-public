@@ -40,8 +40,10 @@ export class RandomizerApp {
             });
         }
         this.initializeGenerators();
-        // Prepare advanced modal DOM listeners
-        setupAdvancedModal(this);
+        // Prepare advanced modal DOM listeners (feature flag can disable)
+        if (window.FEATURE_ADV_MODAL !== false) {
+            setupAdvancedModal(this);
+        }
         this.initializeDebugOverlay();
     }
 
@@ -200,10 +202,6 @@ export class RandomizerApp {
         generateBtn.disabled = !this.currentGeneratorId;
     }
 
-    // Utility called by UI helpers to refresh modal when variable table updates
-    syncAdvancedModal() {
-        rebuildAdvancedModal(this);
-    }
 
     /**
      * Reset locks and persisted settings to defaults.
@@ -511,11 +509,10 @@ export class RandomizerApp {
                 };
             }
         });
+    }
+}
 
-// Initialize the application when the DOM is loaded
+// Initialize the application when the DOMContentLoaded event fires
 document.addEventListener('DOMContentLoaded', () => {
     new RandomizerApp();
 });
-
-// Export for testing
-export default RandomizerApp;

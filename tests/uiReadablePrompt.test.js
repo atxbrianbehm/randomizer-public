@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { JSDOM } from 'jsdom';
-import RandomizerApp from '../src/main.js'; // Use relative path
+import { RandomizerApp } from '@/core/RandomizerApp.js';
 import RandomizerEngine from '../src/RandomizerEngine.js'; // Use relative path
 
-vi.mock('../src/ui/events.js', () => ({ default: () => {} })); // Use relative path
+vi.mock('@/ui/events.js', () => ({ default: () => {} })); // Use relative path
 vi.mock('../src/ui/state.js', () => ({ // Use relative path
   updateEntryPoints: () => {},
   updateVariablesDisplay: () => {},

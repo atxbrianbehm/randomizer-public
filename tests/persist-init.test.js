@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { saveState, clearState } from '../src/services/persistence.js'; // Use relative path
-import { RandomizerApp } from '../src/main.js'; // Use relative path
+import { RandomizerApp } from '@/core/RandomizerApp.js'; // Use relative path
 
 vi.mock('../src/services/generatorLoader.js', () => ({ // Use relative path
   loadGenerators: vi.fn(async () => [])
 }));
 
-vi.mock('../src/ui/events.js', () => ({
+vi.mock('@/ui/events.js', () => ({
   default: () => {}
 }));
 vi.mock('../src/ui/advancedModal.js', () => ({
