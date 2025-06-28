@@ -162,6 +162,16 @@ export default class RandomizerEngine {
     buildReadablePrompt(generatorName, segments) {
         if (!segments || segments.length === 0) return '';
 
+        // Ignore placeholder/root segments that lack metadata. These usually represent
+        // top-level rules such as "origin" that already combine other segments and would
+        // otherwise result in duplicate text (e.g. "cat in space cat in space").
+        const segs = segments.filter((s) => s && s._meta);
+        if (segs.length === 0) {
+            // Nothing with metadata – fall back to simple join
+            return segments.map((s) => s.text).join(' ');
+        }
+        // (moved above)
+
         const generator = this.loadedGenerators.get(generatorName);
         if (!generator) return segments.map((s) => s.text).join(' ');
 
@@ -174,7 +184,7 @@ export default class RandomizerEngine {
         const orderMap = new Map(slotOrder.map((s, i) => [s, i]));
 
         // Enrich each segment with slot + connector info
-        const enriched = segments.map((seg) => {
+        const enriched = segs.map((seg) => {
             const meta = seg._meta;
             return {
                 text: seg.text,
@@ -305,7 +315,21 @@ export default class RandomizerEngine {
             variables: this.getVariablesForGenerator(nameToUse),
             segments: [] // collect token info here
         };
+        // Expand the primary rule first
         const text = this.expandRule(generator, startRule, generationContext);
+
+        // If caller did not explicitly request an entryPoint and the generator defines a slotOrder,
+        // automatically expand any additional grammar rules found in slotOrder so that the
+        // resulting `readable` prompt can incorporate all chips (e.g., subject + condition + purpose).
+        if (!entryPoint && Array.isArray(generator.metadata?.slotOrder)) {
+            for (const slot of generator.metadata.slotOrder) {
+                if (slot === startRule) continue; // already expanded
+                if (generator.grammar[slot] && !generationContext.segments.some(s => s.key === slot)) {
+                    // Expand but ignore returned text – we're only interested in segments for readable prompt
+                    this.expandRule(generator, slot, generationContext);
+                }
+            }
+        }
         const readable = this.buildReadablePrompt(nameToUse, generationContext.segments);
         return { raw: text, readable, segments: generationContext.segments };
     
