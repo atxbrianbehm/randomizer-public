@@ -1,33 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { JSDOM } from 'jsdom';
+import RandomizerApp from '../src/main.js'; // Use relative path
+import RandomizerEngine from '../src/RandomizerEngine.js'; // Use relative path
 
-// --- mock DOM-related dependencies used inside RandomizerApp ------------
-vi.mock('@/ui/events.js', () => ({ default: () => {} }));
-vi.mock('@/ui/state.js', () => ({
+vi.mock('../src/ui/events.js', () => ({ default: () => {} })); // Use relative path
+vi.mock('../src/ui/state.js', () => ({ // Use relative path
   updateEntryPoints: () => {},
   updateVariablesDisplay: () => {},
   updateGeneratorStructure: () => {},
 }));
-vi.mock('@/ui/advancedModal.js', () => ({
+vi.mock('../src/ui/advancedModal.js', () => ({ // Use relative path
   setupModal: () => {},
   showModal: () => {},
   buildModal: () => {},
 }));
 
-// Generator loader will attempt to fetch json files – stub it to no-op
-vi.mock('@/services/generatorLoader.js', () => ({
+vi.mock('../src/services/generatorLoader.js', () => ({ // Use relative path
   loadGenerators: async () => [],
 }));
 
-// Navigator.clipboard mock for jsdom
 Object.assign(globalThis.navigator, {
   clipboard: {
     writeText: vi.fn().mockResolvedValue(undefined),
   },
 });
-
-import { JSDOM } from 'jsdom';
-import RandomizerApp from '../src/main.js';
-import RandomizerEngine from '../RandomizerEngine.js';
 
 function createMockGenerator() {
   return {
@@ -53,8 +49,6 @@ function createMockGenerator() {
   };
 }
 
-// -----------------------------------------------------------------------
-
 describe('UI ➜ readable prompt rendering', () => {
   let window, document, app;
 
@@ -69,21 +63,17 @@ describe('UI ➜ readable prompt rendering', () => {
     </body>`);
     window = dom.window;
     document = window.document;
-    // expose globals expected by code
     global.document = document;
     global.window = window;
 
-    // Instantiate app (constructor will use mocked dependencies)
     app = new RandomizerApp();
 
-    // Load mock generator manually
     const gen = createMockGenerator();
     await app.engine.loadGenerator(gen);
     app.selectGenerator('mock');
   });
 
   it('displays readable prompt in DOM after generateText()', () => {
-    // Call generateText which modifies DOM
     app.generateText();
 
     const cards = document.querySelectorAll('.prompt-card');

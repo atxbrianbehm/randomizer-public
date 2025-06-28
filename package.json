@@ -2,6 +2,7 @@
   "name": "randomizer",
   "version": "1.0.0",
   "description": "A flexible, modular system for creating and executing probabilistic text generation based on JSON-defined decision trees. Build your own comedy generators, story prompters, or any procedural text content with sophisticated randomization logic.",
+  "type": "module",
   "main": "RandomizerEngine.js",
   "scripts": {
     "dev": "vite",

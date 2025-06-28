@@ -10,6 +10,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: [],
+    include: ['tests/**/*.js'],
     coverage: {
       reporter: ['text', 'html']
     }

@@ -1,6 +1,6 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import RandomizerEngine from '../RandomizerEngine';
+import RandomizerEngine from '@/RandomizerEngine.js';
 import targetingGenerator from './test-generators/targeting-generator.json';
 
 describe('RandomizerEngine Prompt Targeting', () => {
