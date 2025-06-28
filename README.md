@@ -5,7 +5,7 @@ A flexible, modular system for creating and executing probabilistic text generat
 ## 🚀 Quick Start
 
 ### Try the Interactive Demo
-Visit the [live demo](https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/2cedf96edb6dc31a07a9692d1545eda2/30396d72-8c2a-4862-aae9-c090a812687c/index.html) to see the system in action with example generators.
+Visit the [live demo](https://atxbrianbehm.github.io/randomizer-public/) to see the latest deployed version with example generators.
 
 ### Run Locally (Python)
 ```bash
