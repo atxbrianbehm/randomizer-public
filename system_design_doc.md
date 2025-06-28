@@ -93,8 +93,12 @@ Variables enable:
 ### Text Processing
 Advanced text substitution supports:
 - Variable interpolation: `#variable_name#`
-- Rule expansion: `#rule_name#`
-- Nested processing and recursive expansion
+- **Rule Expansion**: `#rule_name#` (Python & JS).
+- **Text Modifiers**: In both Python and JavaScript, rule expansions can include modifiers: `#rule_name.modifier1.modifier2#`. Standard modifiers (e.g., `capitalize`, `plural`, `a_an`) are built-in, and custom modifiers can be registered.
+- **Nested processing** and recursive expansion.
+- **Grammar Includes**: Grammar rules can use an `$include` directive, e.g., `{"$include": "path/to/other_rules.json"}`.
+    - **Python**: By default, attempts to read included files relative to a base path (e.g., `generators/`).
+    - **JavaScript**: Requires an `includeResolver` function to be passed in the options to `loadGenerator`. This function is responsible for fetching and returning the content of the included path.
 
 ### Asset Management
 Complete multimedia support:
@@ -192,13 +196,33 @@ def weighted_select(options, weights):
 
 ### Variable Substitution
 ```python
-def substitute_variables(text, variables):
+def substitute_variables(text, variables): # Simplified for illustration
+    # Actual implementation handles rules, modifiers, then variables
     def replace_var(match):
         var_name = match.group(1)
         return str(variables.get(var_name, match.group(0)))
     
+    # Example of rule/modifier regex (simplified)
+    # rule_modifier_regex = r'#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#'
+    # text = re.sub(rule_modifier_regex, expand_and_modify_rule_function, text)
     return re.sub(r'#([a-zA-Z_][a-zA-Z0-9_]*)#', replace_var, text)
+
+def apply_modifiers_example(text, modifier_names_str, modifier_map):
+    if not modifier_names_str:
+        return text
+    modified_text = text
+    for mod_name in modifier_names_str.split('.'):
+        if mod_name in modifier_map:
+            modified_text = modifier_map[mod_name](modified_text)
+    return modified_text
 ```
+
+### Seedable PRNG (Python)
+The Python engine can be initialized with a seed (string or int) or by calling `set_seed()` to ensure reproducible random generation sequences. It uses a Linear Congruential Generator (LCG) when seeded.
+
+### Include Directive Resolution
+- **Python**: `load_generator` resolves `{"$include": "path"}` by attempting to read `generators/path`.
+- **JavaScript**: `loadGenerator` accepts an `options.includeResolver` function. This function `(path) => resolvedContent` is called to provide the content for any `$include` directives.
 
 ### Conditional Logic
 Supports MongoDB-style operators:

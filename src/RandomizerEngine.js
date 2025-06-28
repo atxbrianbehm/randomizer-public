@@ -70,16 +70,44 @@ export default class RandomizerEngine {
     }
 
     // Load a generator bundle from JSON
-    async loadGenerator(generatorData, bundleName = null) {
+    async loadGenerator(generatorData, bundleName = null, options = {}) {
+        const { includeResolver } = options;
         try {
-            const generator = typeof generatorData === 'string' 
-                ? JSON.parse(generatorData) 
+            const generator = typeof generatorData === 'string'
+                ? JSON.parse(generatorData)
                 : generatorData;
 
             // Validate the generator structure
             this.validateGenerator(generator);
 
             const name = bundleName || generator.metadata.name;
+
+            // Process $include directives in grammar
+            if (generator.grammar) {
+                for (const ruleName in generator.grammar) {
+                    const ruleContent = generator.grammar[ruleName];
+                    if (typeof ruleContent === 'object' && ruleContent !== null && ruleContent.$include) {
+                        const includePath = ruleContent.$include;
+                        if (typeof includeResolver === 'function') {
+                            try {
+                                const includedData = includeResolver(includePath);
+                                if (includedData) {
+                                    generator.grammar[ruleName] = includedData;
+                                } else {
+                                    console.warn(`Include resolver returned no data for: ${includePath}`);
+                                    generator.grammar[ruleName] = `[INCLUDE_ERROR: Resolver no data - ${includePath}]`;
+                                }
+                            } catch (e) {
+                                console.warn(`Error in include resolver for path ${includePath}:`, e);
+                                generator.grammar[ruleName] = `[INCLUDE_ERROR: Resolver failed - ${includePath}]`;
+                            }
+                        } else {
+                            console.warn(`Found $include directive for "${includePath}" but no includeResolver function was provided.`);
+                            generator.grammar[ruleName] = `[INCLUDE_ERROR: No resolver - ${includePath}]`;
+                        }
+                    }
+                }
+            }
 
             // Initialize variables
             if (generator.variables) {
