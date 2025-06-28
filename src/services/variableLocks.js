@@ -1,14 +1,9 @@
 // Utilities for managing lockable variables used by the generators
 // Provides factory to attach Locked/LockState objects to an app or engine
-import { LOCKABLE_FIELDS } from '../constants.js';
-const FIELD_LIST = Array.isArray(LOCKABLE_FIELDS) ? LOCKABLE_FIELDS : [];
-
-
-
-export function createLockObjects() {
+export function createLockObjects(lockableRules = []) {
   const Locked = {};
   const LockState = {};
-  FIELD_LIST.forEach(f => {
+  lockableRules.forEach(f => {
     Locked[f] = undefined;
     LockState[f] = false;
   });
@@ -16,6 +11,8 @@ export function createLockObjects() {
 }
 
 export function toggleLock(lockState, field) {
-  if (!FIELD_LIST.includes(field)) return;
+  // This function might need to be re-evaluated if FIELD_LIST is truly gone.
+  // For now, assuming lockState will contain all relevant fields.
+  if (lockState[field] === undefined) return; // Field not initialized as lockable
   lockState[field] = !lockState[field];
 }

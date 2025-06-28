@@ -27,7 +27,7 @@ export class RandomizerApp {
         this.lockableRules = [];
         // Comprehensive spec object for currently selected generator (name, grammar, variables, lockableRules, uiConfig)
         this.generatorSpec = null;
-        const { Locked, LockState } = createLockObjects();
+        const { Locked, LockState } = createLockObjects(this.lockableRules);
         this.Locked = Locked;
         this.LockState = LockState;
         bindEvents(this);
