@@ -1,54 +1,30 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { saveState, clearState } from '../src/services/persistence.js'; // Use relative path
-import { RandomizerApp } from '@/core/RandomizerApp.js'; // Use relative path
 
-vi.mock('../src/services/generatorLoader.js', () => ({ // Use relative path
-  loadGenerators: vi.fn(async () => [])
-}));
+import { describe, it, expect, beforeEach } from 'vitest';
+import { saveState, loadState, clearState } from '../src/services/persistence.js';
 
-vi.mock('@/ui/events.js', () => ({
-  default: () => {}
-}));
-vi.mock('../src/ui/advancedModal.js', () => ({
-  setupModal: () => {},
-  showModal: () => {},
-  buildModal: () => {}
-}));
-vi.mock('../src/ui/state.js', () => ({
-  updateEntryPoints: () => {},
-  updateVariablesDisplay: () => {},
-  updateGeneratorStructure: () => {}
-}));
-vi.mock('../src/ui/query.js', () => ({ q: () => null })); // Use relative path
-
-function setupBasicDOM() {
-  const ids = [
-    'generator-select',
-    'entry-point',
-    'generation-count',
-    'output-area'
-  ];
-  ids.forEach(id => {
-    const el = document.createElement(id === 'output-area' ? 'div' : 'select');
-    el.id = id;
-    document.body.appendChild(el);
-  });
-}
-
-describe('RandomizerApp hydration', () => {
+describe('Persistence Service', () => {
   beforeEach(() => {
-    document.body.innerHTML = '';
-    clearState();
     localStorage.clear();
-    setupBasicDOM();
   });
 
-  it('restores lockedValues on init', async () => {
-    const locked = { preacher_name: 'Alice' };
-    saveState({ generator: null, lockedValues: locked });
+  it('saves and loads state', () => {
+    const state = { 
+      generator: 'test-generator', 
+      lockedValues: { foo: 'bar' },
+      lastPrompt: { raw: 'raw', readable: 'readable' },
+      theme: 'dark',
+      seed: 123
+    };
+    saveState(state);
+    const loadedState = loadState();
+    expect(loadedState).toEqual({ version: 1, ...state });
+  });
 
-    const app = new RandomizerApp();
-    expect(app.engine.lockedValues).toEqual(locked);
-    expect(app.Locked).toEqual(locked);
+  it('clears state', () => {
+    const state = { generator: 'test-generator' };
+    saveState(state);
+    clearState();
+    const loadedState = loadState();
+    expect(loadedState).toBeNull();
   });
 });

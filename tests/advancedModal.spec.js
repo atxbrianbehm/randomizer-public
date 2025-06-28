@@ -30,10 +30,7 @@ describe('advancedModal helpers', () => {
     expect(extractValues(arr)).toEqual(['a', 'b', 'c']);
   });
 
-  it('isMultiSelect respects default list', () => {
-    expect(isMultiSelect('keyMaterials', { uiConfig: {} })).toBe(true);
-    expect(isMultiSelect('other', { uiConfig: {} })).toBe(false);
-  });
+  
 });
 
 describe('advancedModal buildModal integration', () => {

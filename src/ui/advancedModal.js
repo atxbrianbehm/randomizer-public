@@ -5,7 +5,7 @@
 // --- Utility helpers -------------------------------------------------------
 let __advStylesInjected = false;
 function injectAdvStyles() {
-  if (__advStylesInjected) return;
+  if (typeof document === 'undefined' || __advStylesInjected) return;
   const styleTag = document.createElement('style');
   styleTag.textContent = `
     .lock-button { background:none;border:none;font-size:1rem;cursor:pointer;color: var(--color-accent);vertical-align:middle;margin-left:4px; }
@@ -23,7 +23,9 @@ function injectAdvStyles() {
       .modal-content { scrollbar-width: thin; scrollbar-color: var(--color-border) var(--color-bg2); }
     }
   `;
-  document.head.appendChild(styleTag);
+  if (document && document.head) {
+    document.head.appendChild(styleTag);
+  }
   __advStylesInjected = true;
 }
 export function humanLabel(key, generator) {
@@ -43,13 +45,8 @@ export function extractValues(rule) {
   }).filter(val => val !== undefined);
 }
 
-export function isMultiSelect(key, generator) {
-  const uiCfg = generator.uiConfig || {};
-  const multi = uiCfg.multiSelect || ['keyMaterials', 'screenType', 'dominantControls'];
-  return multi.includes(key);
-}
-
 export function createLockBtn(key, app) {
+  if (typeof document === 'undefined') return null;
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'lock-button' + (app.LockState[key] ? ' locked' : '');
@@ -72,15 +69,12 @@ export function createLockBtn(key, app) {
 
 // --- Main builders ---------------------------------------------------------
 export function buildModal(app) {
+  if (typeof document === 'undefined') return;
   injectAdvStyles();
   // Ensure generatorSpec present
   if (!app?.generatorSpec) return;
 
   const { grammar, lockableRules, name } = app.generatorSpec;
-  // Refresh lockableRules in case spec updated
-  app.lockableRules = lockableRules;
-
-
 
   const modalBody = document.getElementById('advanced-modal-body');
   if (!modalBody) return; // Modal not present
@@ -91,69 +85,14 @@ export function buildModal(app) {
   h.textContent = name;
   modalBody.appendChild(h);
 
-    // Exclude composite sermon placeholder rules
-  const meaningful = lockableRules.filter(r => !/stage_\d+_sermon$/.test(r));
+  const gridWrap = document.createElement('div');
+  gridWrap.style.display = 'grid';
+  gridWrap.style.gridTemplateColumns = '1fr 1fr';
+  gridWrap.style.columnGap = '1.5rem';
+  gridWrap.style.rowGap = '0.75rem';
+  modalBody.appendChild(gridWrap);
 
-  // Build mapping by inspecting stage_X_sermon templates
-  const stageVars = {};
-  for (let s = 1; s <= 5; s++) {
-    const key = `stage_${s}_sermon`;
-    const arr = grammar[key];
-    if (!Array.isArray(arr)) continue;
-    const set = new Set();
-    arr.forEach(t => {
-      if (typeof t === 'string') {
-        const matches = t.match(/#(.*?)#/g) || [];
-        matches.forEach(m => set.add(m.replace(/#/g, '')));
-      }
-    });
-    stageVars[`Stage ${s}`] = set;
-  }
-
-  const groups = {};
-  meaningful.forEach(ruleKey => {
-    let foundStage = 'General';
-    for (const [stageName, set] of Object.entries(stageVars)) {
-      if (set.has(ruleKey)) { foundStage = stageName; break; }
-    }
-    groups[foundStage] = groups[foundStage] || [];
-    groups[foundStage].push(ruleKey);
-  });
-
-
-  const ordered = Object.keys(groups).sort((a, b) => {
-    const na = /^Stage (\d+)/.exec(a)?.[1];
-    const nb = /^Stage (\d+)/.exec(b)?.[1];
-    if (na && nb) return parseInt(na) - parseInt(nb);
-    if (na) return 1; // General first
-    if (nb) return -1;
-    return a.localeCompare(b);
-  });
-
-  ordered.forEach(groupName => {
-    // Wrapper box for stage group
-    const stageBox = document.createElement('div');
-    stageBox.className = 'stage-box';
-    stageBox.style.border = '1px solid var(--color-border)';
-    stageBox.style.borderRadius = '12px';
-    stageBox.style.padding = '1rem';
-    stageBox.style.marginBottom = '2rem';
-    // Group header
-    const gh = document.createElement('h4');
-    gh.textContent = groupName;
-    gh.style.margin = '1rem 0 0.4rem';
-    modalBody.appendChild(gh);
-    modalBody.appendChild(stageBox);
-
-    // Grid container (2 columns)
-    const gridWrap = document.createElement('div');
-    gridWrap.style.display = 'grid';
-    gridWrap.style.gridTemplateColumns = '1fr 1fr';
-    gridWrap.style.columnGap = '1.5rem';
-    gridWrap.style.rowGap = '0.75rem';
-    stageBox.appendChild(gridWrap);
-
-    groups[groupName].forEach(ruleKey => {
+  lockableRules.forEach(ruleKey => {
     const ruleArr = grammar[ruleKey] || [];
     // Skip if no options
     if (!Array.isArray(ruleArr) || ruleArr.length === 0) return;
@@ -161,7 +100,7 @@ export function buildModal(app) {
     const options = ruleArr.filter(it => typeof it === 'string' || (typeof it === 'object' && (it.value || it.text))).map(it => typeof it === 'string' ? it : (it.label || it.value || it.text));
 
     const label = document.createElement('label');
-    label.textContent = `${ruleKey}:`;
+    label.textContent = humanLabel(ruleKey, app.generatorSpec) + ':';
     label.className = 'adv-label';
     // add lock toggle
     const lockBtn = createLockBtn(ruleKey, app);
@@ -177,7 +116,7 @@ export function buildModal(app) {
     select.id = `adv-${ruleKey}`;
     select.name = ruleKey;
     // always enabled; on change auto-lock
-    select.disabled = false;
+    select.disabled = !app.LockState[ruleKey]; // Set disabled state based on LockState
     select.onchange = () => {
       app.LockState[ruleKey] = true;
       app.Locked[ruleKey] = select.value;
@@ -198,12 +137,10 @@ export function buildModal(app) {
     field.appendChild(select);
     gridWrap.appendChild(field);
   });
-  });
-
-  
 }
 
 export function showModal(app) {
+  if (typeof document === 'undefined') return;
   const modal = document.getElementById('advanced-modal');
   buildModal(app);
   if (!modal) return;
@@ -233,6 +170,7 @@ export function showModal(app) {
 }
 
 export function hideModal() {
+  if (typeof document === 'undefined') return;
   const modal = document.getElementById('advanced-modal');
   if (!modal) return;
   modal.style.display = 'none';
@@ -244,6 +182,7 @@ export function hideModal() {
 }
 
 export function applyModal(app) {
+  if (typeof document === 'undefined') return;
   app.engine.lockedValues = app.engine.lockedValues || {};
   app.lockableRules.forEach(key => {
     if (app.LockState[key]) {
@@ -263,6 +202,7 @@ export function applyModal(app) {
 }
 
 export function setupModal(app) {
+  if (typeof document === 'undefined') return;
   const applyBtn = document.getElementById('apply-advanced');
   if (applyBtn) applyBtn.onclick = () => applyModal(app);
   const cancelBtn = document.getElementById('cancel-advanced');
@@ -272,4 +212,3 @@ export function setupModal(app) {
   const modal = document.getElementById('advanced-modal');
   if (modal) modal.style.display = 'none';
 }
-

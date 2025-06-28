@@ -2,6 +2,7 @@
 // Usage: import { q } from '@/ui/query.js';
 // Example: const btn = q('#generate-btn');
 
-export function q(selector, context = document) {
-  return context.querySelector(selector);
+export function q(selector, context = null) {
+  if (typeof document === 'undefined') return null;
+  return (context || document).querySelector(selector);
 }

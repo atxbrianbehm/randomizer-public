@@ -70,16 +70,44 @@ export default class RandomizerEngine {
     }
 
     // Load a generator bundle from JSON
-    async loadGenerator(generatorData, bundleName = null) {
+    async loadGenerator(generatorData, bundleName = null, options = {}) {
+        const { includeResolver } = options;
         try {
-            const generator = typeof generatorData === 'string' 
-                ? JSON.parse(generatorData) 
+            const generator = typeof generatorData === 'string'
+                ? JSON.parse(generatorData)
                 : generatorData;
 
             // Validate the generator structure
             this.validateGenerator(generator);
 
             const name = bundleName || generator.metadata.name;
+
+            // Process $include directives in grammar
+            if (generator.grammar) {
+                for (const ruleName in generator.grammar) {
+                    const ruleContent = generator.grammar[ruleName];
+                    if (typeof ruleContent === 'object' && ruleContent !== null && ruleContent.$include) {
+                        const includePath = ruleContent.$include;
+                        if (typeof includeResolver === 'function') {
+                            try {
+                                const includedData = includeResolver(includePath);
+                                if (includedData) {
+                                    generator.grammar[ruleName] = includedData;
+                                } else {
+                                    console.warn(`Include resolver returned no data for: ${includePath}`);
+                                    generator.grammar[ruleName] = `[INCLUDE_ERROR: Resolver no data - ${includePath}]`;
+                                }
+                            } catch (e) {
+                                console.warn(`Error in include resolver for path ${includePath}:`, e);
+                                generator.grammar[ruleName] = `[INCLUDE_ERROR: Resolver failed - ${includePath}]`;
+                            }
+                        } else {
+                            console.warn(`Found $include directive for "${includePath}" but no includeResolver function was provided.`);
+                            generator.grammar[ruleName] = `[INCLUDE_ERROR: No resolver - ${includePath}]`;
+                        }
+                    }
+                }
+            }
 
             // Initialize variables
             if (generator.variables) {
@@ -134,6 +162,16 @@ export default class RandomizerEngine {
     buildReadablePrompt(generatorName, segments) {
         if (!segments || segments.length === 0) return '';
 
+        // Ignore placeholder/root segments that lack metadata. These usually represent
+        // top-level rules such as "origin" that already combine other segments and would
+        // otherwise result in duplicate text (e.g. "cat in space cat in space").
+        const segs = segments.filter((s) => s && s._meta);
+        if (segs.length === 0) {
+            // Nothing with metadata – fall back to simple join
+            return segments.map((s) => s.text).join(' ');
+        }
+        // (moved above)
+
         const generator = this.loadedGenerators.get(generatorName);
         if (!generator) return segments.map((s) => s.text).join(' ');
 
@@ -146,11 +184,8 @@ export default class RandomizerEngine {
         const orderMap = new Map(slotOrder.map((s, i) => [s, i]));
 
         // Enrich each segment with slot + connector info
-        const enriched = segments.map((seg) => {
-            const rule = generator.grammar[seg.key];
-            let meta;
-            if (Array.isArray(rule) && rule[0]?._meta) meta = rule[0]._meta;
-            else if (rule && typeof rule === 'object' && rule._meta) meta = rule._meta;
+        const enriched = segs.map((seg) => {
+            const meta = seg._meta;
             return {
                 text: seg.text,
                 slot: meta?.slot ?? null,
@@ -163,37 +198,30 @@ export default class RandomizerEngine {
         enriched.sort((a, b) => a.order - b.order);
 
         let prompt = '';
-        let prevConnector = null;
+        let lastUsedConnector = null; // Stores the connector that was actually used for the previous segment
+
         enriched.forEach((item, idx) => {
             if (idx === 0) {
-                // First chip – just add the text
                 prompt += item.text;
-                prevConnector = item.connector;
+                lastUsedConnector = item.connector; // Store the connector of the first item
                 return;
             }
 
-            let connectorToUse;
+            let connectorToAdd = '';
 
-            // If current and previous share the same connector → comma separation
-            if (prevConnector && item.connector && prevConnector === item.connector) {
-                connectorToUse = ', ';
+            // Rule: If current item's connector is the same as the last used connector, join with comma
+            if (item.connector && lastUsedConnector && item.connector === lastUsedConnector) {
+                connectorToAdd = ', ';
             } else if (item.connector) {
-                connectorToUse = item.connector.startsWith(' ') ? item.connector : ' ' + item.connector + ' ';
-            } else if (prevConnector) {
-                // Current lacks connector – fall back to previous connector
-                connectorToUse = prevConnector.startsWith(' ') ? prevConnector : ' ' + prevConnector + ' ';
+                // If current item has a connector, use it (with proper spacing)
+                connectorToAdd = item.connector.startsWith(' ') ? item.connector : ' ' + item.connector + ' ';
             } else {
-                connectorToUse = ', ';
+                // If current item has no connector, just add a space
+                connectorToAdd = ' ';
             }
 
-            // Ensure spacing: no leading space for comma, otherwise prefix space
-            if (!connectorToUse.endsWith(' ')) connectorToUse += ' ';
-            if (connectorToUse !== ', ' && !connectorToUse.startsWith(' ')) {
-                connectorToUse = ' ' + connectorToUse;
-            }
-
-            prompt += connectorToUse + item.text;
-            prevConnector = item.connector || prevConnector;
+            prompt += connectorToAdd + item.text;
+            lastUsedConnector = item.connector; // Update lastUsedConnector for the next iteration
         });
 
         return prompt.trim();
@@ -247,7 +275,8 @@ export default class RandomizerEngine {
         const generationContext = {
             ...context,
             generatorName: nameToUse,
-            variables: this.getVariablesForGenerator(nameToUse)
+            variables: this.getVariablesForGenerator(nameToUse),
+            segments: context.segments || [] // Ensure segments is always an array
         };
 
         if (target) {
@@ -286,7 +315,21 @@ export default class RandomizerEngine {
             variables: this.getVariablesForGenerator(nameToUse),
             segments: [] // collect token info here
         };
+        // Expand the primary rule first
         const text = this.expandRule(generator, startRule, generationContext);
+
+        // If caller did not explicitly request an entryPoint and the generator defines a slotOrder,
+        // automatically expand any additional grammar rules found in slotOrder so that the
+        // resulting `readable` prompt can incorporate all chips (e.g., subject + condition + purpose).
+        if (!entryPoint && Array.isArray(generator.metadata?.slotOrder)) {
+            for (const slot of generator.metadata.slotOrder) {
+                if (slot === startRule) continue; // already expanded
+                if (generator.grammar[slot] && !generationContext.segments.some(s => s.key === slot)) {
+                    // Expand but ignore returned text – we're only interested in segments for readable prompt
+                    this.expandRule(generator, slot, generationContext);
+                }
+            }
+        }
         const readable = this.buildReadablePrompt(nameToUse, generationContext.segments);
         return { raw: text, readable, segments: generationContext.segments };
     
@@ -303,18 +346,35 @@ export default class RandomizerEngine {
             return `[MISSING RULE: ${ruleName}]`;
         }
 
-        if (Array.isArray(rule)) {
-            // Simple array of options
-            return this.selectFromArray(rule, context);
-        } else if (typeof rule === 'string') {
-            // Plain text with potential nested tokens
-            return this.processText(rule, context);
-        } else if (rule && typeof rule === 'object' && rule.type) {
-            // Complex rule with explicit type field
-            return this.processComplexRule(generator, rule, context);
+        let expandedText;
+        let segmentIndex = -1;
+
+        // If segments array is available, add a placeholder segment for this rule
+        if (Array.isArray(context.segments)) {
+            const meta = (Array.isArray(rule) && rule[0]?._meta) ? rule[0]._meta : (rule && typeof rule === 'object' && rule._meta) ? rule._meta : null;
+            segmentIndex = context.segments.length;
+            context.segments.push({ key: ruleName, text: '', _meta: meta });
         }
 
-        return '[INVALID RULE FORMAT]';
+        if (Array.isArray(rule)) {
+            // Simple array of options
+            expandedText = this.selectFromArray(rule, context);
+        } else if (typeof rule === 'string') {
+            // Plain text with potential nested tokens
+            expandedText = this.processText(rule, context);
+        } else if (rule && typeof rule === 'object' && rule.type) {
+            // Complex rule with explicit type field
+            expandedText = this.processComplexRule(generator, rule, context);
+        } else {
+            expandedText = '[INVALID RULE FORMAT]';
+        }
+
+        // Update the text of the segment after expansion
+        if (segmentIndex !== -1) {
+            context.segments[segmentIndex].text = expandedText;
+        }
+
+        return expandedText;
     }
 
     // Select from array (with optional weights)
@@ -456,28 +516,58 @@ export default class RandomizerEngine {
     processText(text, context) {
         if (!text) return '';
 
-        // First expand rules and capture segments
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#/g, (match, ruleName, modsStr) => {
+        // Rule and modifier regex: #ruleName.mod1.mod2#
+        const rule_modifier_regex = /#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#/g;
+
+        // First expand rules and apply modifiers
+        text = text.replace(rule_modifier_regex, (match, ruleName, modsStr) => {
             const generator = this.loadedGenerators.get(context.generatorName);
+            let expandedText = "";
+
             if (generator && generator.grammar[ruleName]) {
-                let expanded = this.expandRule(generator, ruleName, context);
-                const mods = modsStr ? modsStr.split('.') : [];
-                if (mods.length) {
-                    expanded = this.applyModifiers(expanded, mods);
-                }
-                if (Array.isArray(context.segments)) {
-                    context.segments.push({ key: ruleName, text: expanded });
-                }
-                return expanded; // with modifiers applied
+                const ruleObj = generator.grammar[ruleName];
+                const meta = (Array.isArray(ruleObj) && ruleObj[0]?._meta) ? ruleObj[0]._meta : (ruleObj && typeof ruleObj === 'object' && ruleObj._meta) ? ruleObj._meta : null;
+                expandedText = this.expandRule(generator, ruleName, context);
+            } else {
+                // If ruleName is not in grammar, it might be a variable.
+                // So, we don't return match yet, let variable substitution handle it.
+                // However, if modifiers were present, they are lost, which is intended.
+                return match; // Keep original if not a rule
             }
-            return match;
+
+            if (modsStr) {
+                const modifierNames = modsStr.split('.');
+                for (const modName of modifierNames) {
+                    const fn = this.modifiers[modName];
+                    if (fn) {
+                        try {
+                            expandedText = fn(expandedText);
+                        } catch (e) {
+                            console.warn(`Error applying modifier '${modName}' to text '${expandedText}':`, e);
+                            // Keep text as is before modifier error
+                        }
+                    } else {
+                        console.warn(`Warning: Modifier '${modName}' not found.`);
+                    }
+                }
+            }
+            return expandedText;
         });
 
-        // Then variable substitution on any remaining placeholders
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
+        // Then variable substitution on any remaining placeholders (e.g. #varName# without modifiers)
+        // This regex should not conflict with the rule_modifier_regex because rules are processed first.
+        const variable_regex = /#([a-zA-Z_][a-zA-Z0-9_]*)#/g;
+        text = text.replace(variable_regex, (match, varName) => {
+            // Check if it was already processed as a rule; if so, it won't be a simple #varName# anymore.
+            // This check is somewhat implicit: if it still matches '#varName#', it wasn't a rule.
+
             const fullVarName = `${context.generatorName}.${varName}`;
-            const value = context.variables[varName] || this.variables.get(fullVarName);
-            return value !== undefined ? value : match;
+            let value = context.variables[varName]; // Check context specific vars first
+            if (value === undefined) {
+                 value = this.variables.get(fullVarName); // Check global engine vars
+            }
+
+            return value !== undefined ? value : match; // Keep original if not found
         });
 
         return text;
@@ -653,8 +743,3 @@ export default class RandomizerEngine {
     }
 }
 
-// Export for ES modules and browser
-// For browsers without bundler, attach to window for convenience
-if (typeof window !== 'undefined') {
-    window.RandomizerEngine = RandomizerEngine;
-}

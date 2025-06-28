@@ -105,10 +105,12 @@ randomizer/
 - **Version Management**: Track generator versions and metadata
 
 ### 🔧 Advanced Text Processing
-- **Variable Substitution**: `#variable_name#` interpolation
-- **Rule Expansion**: `#rule_name#` recursive processing
-- **Conditional Actions**: Modify variables based on selections
-- **Error Handling**: Graceful fallbacks for missing content
+- **Variable Substitution**: `#variable_name#` interpolation.
+- **Rule Expansion**: `#rule_name#` recursive processing.
+- **Text Modifiers (JS & Python)**: Apply functions like capitalization or pluralization using `#ruleName.modifier1.modifier2#` syntax. Both implementations include built-in modifiers (e.g., `capitalize`, `a_an`, `plural`) and support for custom ones.
+- **Conditional Actions**: Modify variables based on selections.
+- **Error Handling**: Graceful fallbacks for missing content.
+- **Grammar Includes (JS & Python)**: Organize grammar by including content from other sources/files using `{"$include": "path_or_key"}`. Python reads relative files by default. JavaScript requires an `includeResolver` function to be passed during generator loading.
 
 ## 📋 Generator Bundle Format
 
@@ -165,8 +167,9 @@ Each generator is a JSON file with this structure:
 from RandomizerEngine import RandomizerEngine
 import json
 
-# Create engine
-engine = RandomizerEngine()
+# Create engine (optionally with a seed for reproducible results)
+engine = RandomizerEngine(seed="my_seed_or_number")
+# or engine.set_seed("another_seed") later
 
 # Load generator
 with open('my_generator.json', 'r') as f:
@@ -186,11 +189,25 @@ for i in range(5):
 ```javascript
 const engine = new RandomizerEngine();
 
-// Load generator
+// Example include resolver function (you provide this based on your environment)
+const myIncludeResolver = (path) => {
+  // In a Node.js environment, you might read a file:
+  //   const fs = require('fs');
+  //   const fileContent = fs.readFileSync(path, 'utf-8');
+  //   return JSON.parse(fileContent);
+  // In a browser, you might have preloaded data or fetch it:
+  if (path === "some/data.json") {
+    return { "resolved_rule": ["This came from an include!"] };
+  }
+  return null;
+};
+
+// Load generator, potentially with an include resolver
 fetch('my_generator.json')
   .then(response => response.json())
   .then(data => {
-    const name = engine.loadGenerator(data);
+    // The third argument to loadGenerator is an options object
+    const name = engine.loadGenerator(data, null, { includeResolver: myIncludeResolver });
     
     // Generate content
     const result = engine.generate(name);
@@ -244,9 +261,11 @@ fetch('my_generator.json')
       "options": [
         {
           "text": "You gained a level! Now level #level#",
-          "actions": {"increment": {"level": 1}}
+          "conditions": {"counter": {"$lt": 5}},
+          "actions": {"increment": {"counter": 1}}
         }
-      ]
+      ],
+      "fallback": "Default text"
     }
   }
 }

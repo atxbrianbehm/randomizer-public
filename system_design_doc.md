@@ -93,112 +93,17 @@ Variables enable:
 ### Text Processing
 Advanced text substitution supports:
 - Variable interpolation: `#variable_name#`
-- Rule expansion: `#rule_name#`
-- Nested processing and recursive expansion
+- **Rule Expansion**: `#rule_name#` (Python & JS).
+- **Text Modifiers**: In both Python and JavaScript, rule expansions can include modifiers: `#rule_name.modifier1.modifier2#`. Standard modifiers (e.g., `capitalize`, `plural`, `a_an`) are built-in, and custom modifiers can be registered.
+- **Nested processing** and recursive expansion.
+- **Grammar Includes**: Grammar rules can use an `$include` directive, e.g., `{"$include": "path/to/other_rules.json"}`. Python reads relative files by default. JavaScript requires an `includeResolver` function to be passed in the options to `loadGenerator`. This function `(path) => resolvedContent` is called to provide the content for any `$include` directives.
 
-### Asset Management
-Complete multimedia support:
-- Image files for visual generators
-- Audio files for sound-based content
-- Custom fonts and styling
-- Bundled asset distribution
+### Seedable PRNG (Python)
+The Python engine can be initialized with a seed (string or int) or by calling `set_seed()` to ensure reproducible random generation sequences. It uses a Linear Congruential Generator (LCG) when seeded.
 
-## Example Generators
-
-### Televangelist Generator
-Creates humorous televangelist-style money requests with:
-- Dynamic donation amounts that increase
-- Weighted selection of urgent needs
-- Conditional logic based on donation levels
-- Variable tracking for miracle counts
-
-### Satanic Panic Generator
-Generates 1980s-style moral panic headlines featuring:
-- Innocent activities transformed into evil
-- Absurd evidence and conspiracy theories
-- Period-appropriate language and concerns
-- Weighted selection for maximum humor
-
-## Usage Examples
-
-### Basic Usage
-```python
-from RandomizerEngine import RandomizerEngine
-import json
-
-# Create and load generator
-engine = RandomizerEngine()
-with open('generator.json', 'r') as f:
-    data = json.load(f)
-generator_name = engine.load_generator(data)
-
-# Generate content
-result = engine.generate(generator_name)
-print(result)
-```
-
-### Advanced Usage
-```python
-# Generate with specific entry point
-result = engine.generate(generator_name, 'custom_entry')
-
-# Generate with context
-context = {"special_mode": True}
-result = engine.generate(generator_name, context=context)
-
-# Check generator state
-variables = engine._get_variables_for_generator(generator_name)
-print(f"Current state: {variables}")
-```
-
-## Plugin Architecture
-
-The system follows plugin architecture principles:
-
-### Core System
-- Minimal, stable core functionality
-- Well-defined interfaces for generators
-- Runtime loading/unloading capabilities
-- No modification required for new content
-
-### Generator Plugins
-- Self-contained JSON bundles
-- Independent operation
-- Hot-swappable without system restart
-- Version and dependency management
-
-### Benefits
-- **Modularity**: Each generator is isolated
-- **Extensibility**: Easy to add new generators
-- **Flexibility**: Mix and match generators
-- **Maintainability**: Update individual generators
-- **Scalability**: Add generators without core changes
-
-## Implementation Details
-
-### Weighted Selection Algorithm
-```python
-def weighted_select(options, weights):
-    total_weight = sum(weights)
-    random_value = random.random() * total_weight
-    
-    for option, weight in zip(options, weights):
-        random_value -= weight
-        if random_value <= 0:
-            return option
-    
-    return options[0]  # fallback
-```
-
-### Variable Substitution
-```python
-def substitute_variables(text, variables):
-    def replace_var(match):
-        var_name = match.group(1)
-        return str(variables.get(var_name, match.group(0)))
-    
-    return re.sub(r'#([a-zA-Z_][a-zA-Z0-9_]*)#', replace_var, text)
-```
+### Include Directive Resolution
+- **Python**: `load_generator` resolves `{"$include": "path"}` by attempting to read `generators/path`.
+- **JavaScript**: `loadGenerator` accepts an `options.includeResolver` function. This function `(path) => resolvedContent` is called to provide the content for any `$include` directives.
 
 ### Conditional Logic
 Supports MongoDB-style operators:
