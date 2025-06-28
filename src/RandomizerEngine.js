@@ -70,16 +70,44 @@ export default class RandomizerEngine {
     }
 
     // Load a generator bundle from JSON
-    async loadGenerator(generatorData, bundleName = null) {
+    async loadGenerator(generatorData, bundleName = null, options = {}) {
+        const { includeResolver } = options;
         try {
-            const generator = typeof generatorData === 'string' 
-                ? JSON.parse(generatorData) 
+            const generator = typeof generatorData === 'string'
+                ? JSON.parse(generatorData)
                 : generatorData;
 
             // Validate the generator structure
             this.validateGenerator(generator);
 
             const name = bundleName || generator.metadata.name;
+
+            // Process $include directives in grammar
+            if (generator.grammar) {
+                for (const ruleName in generator.grammar) {
+                    const ruleContent = generator.grammar[ruleName];
+                    if (typeof ruleContent === 'object' && ruleContent !== null && ruleContent.$include) {
+                        const includePath = ruleContent.$include;
+                        if (typeof includeResolver === 'function') {
+                            try {
+                                const includedData = includeResolver(includePath);
+                                if (includedData) {
+                                    generator.grammar[ruleName] = includedData;
+                                } else {
+                                    console.warn(`Include resolver returned no data for: ${includePath}`);
+                                    generator.grammar[ruleName] = `[INCLUDE_ERROR: Resolver no data - ${includePath}]`;
+                                }
+                            } catch (e) {
+                                console.warn(`Error in include resolver for path ${includePath}:`, e);
+                                generator.grammar[ruleName] = `[INCLUDE_ERROR: Resolver failed - ${includePath}]`;
+                            }
+                        } else {
+                            console.warn(`Found $include directive for "${includePath}" but no includeResolver function was provided.`);
+                            generator.grammar[ruleName] = `[INCLUDE_ERROR: No resolver - ${includePath}]`;
+                        }
+                    }
+                }
+            }
 
             // Initialize variables
             if (generator.variables) {
@@ -456,17 +484,19 @@ export default class RandomizerEngine {
     processText(text, context) {
         if (!text) return '';
 
-        // First expand rules and capture segments
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#/g, (match, ruleName, modsStr) => {
-            const generator = this.loadedGenerators.get(context.generatorName);
-            if (generator && generator.grammar[ruleName]) {
-        // First expand rules and capture segments
+        // Rule and modifier regex: #ruleName.mod1.mod2#
+        const rule_modifier_regex = /#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#/g;
+
+        // First expand rules and apply modifiers
         text = text.replace(rule_modifier_regex, (match, ruleName, modsStr) => {
             const generator = this.loadedGenerators.get(context.generatorName);
             let expandedText = "";
 
             if (generator && generator.grammar[ruleName]) {
                 expandedText = this.expandRule(generator, ruleName, context);
+                if (Array.isArray(context.segments)) {
+                    context.segments.push({ key: ruleName, text: expandedText });
+                }
             } else {
                 // If ruleName is not in grammar, it might be a variable.
                 // So, we don't return match yet, let variable substitution handle it.
@@ -490,17 +520,23 @@ export default class RandomizerEngine {
                     }
                 }
             }
-            if (Array.isArray(context.segments)) {
-                context.segments.push({ key: ruleName, text: expandedText });
-            }
-            return expandedText; // with modifiers applied
+            return expandedText;
         });
 
-        // Then variable substitution on any remaining placeholders
-        text = text.replace(/#([a-zA-Z_][a-zA-Z0-9_]*)#/g, (match, varName) => {
+        // Then variable substitution on any remaining placeholders (e.g. #varName# without modifiers)
+        // This regex should not conflict with the rule_modifier_regex because rules are processed first.
+        const variable_regex = /#([a-zA-Z_][a-zA-Z0-9_]*)#/g;
+        text = text.replace(variable_regex, (match, varName) => {
+            // Check if it was already processed as a rule; if so, it won't be a simple #varName# anymore.
+            // This check is somewhat implicit: if it still matches '#varName#', it wasn't a rule.
+
             const fullVarName = `${context.generatorName}.${varName}`;
-            const value = context.variables[varName] || this.variables.get(fullVarName);
-            return value !== undefined ? value : match;
+            let value = context.variables[varName]; // Check context specific vars first
+            if (value === undefined) {
+                 value = this.variables.get(fullVarName); // Check global engine vars
+            }
+
+            return value !== undefined ? value : match; // Keep original if not found
         });
 
         return text;
