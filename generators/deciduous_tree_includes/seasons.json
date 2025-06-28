@@ -1,0 +1,30 @@
+[
+  {
+    "text": "Spring",
+    "weight": 10,
+    "actions": {
+      "set": {"current_season": "spring"}
+    }
+  },
+  {
+    "text": "Summer",
+    "weight": 15,
+    "actions": {
+      "set": {"current_season": "summer"}
+    }
+  },
+  {
+    "text": "Autumn",
+    "weight": 12,
+    "actions": {
+      "set": {"current_season": "autumn"}
+    }
+  },
+  {
+    "text": "Winter",
+    "weight": 8,
+    "actions": {
+      "set": {"current_season": "winter"}
+    }
+  }
+]

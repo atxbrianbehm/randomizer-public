@@ -1,0 +1,12 @@
+[
+  {"text": "A tight knot of", "weight": 10},
+  {"text": "A dense thicket of", "weight": 8},
+  {"text": "A loose gathering of", "weight": 12},
+  {"text": "A small, proud family of", "weight": 7},
+  {"text": "A scattered group of", "weight": 9},
+  {"text": "An intimate circle of", "weight": 6},
+  {"text": "A resilient stand of", "weight": 10},
+  {"text": "A young grove of", "weight": 8, "conditions": {"tree_age_category": {"$eq": "young"}}},
+  {"text": "A mature stand of", "weight": 8, "conditions": {"tree_age_category": {"$eq": "mature"}}},
+  {"text": "An ancient conclave of", "weight": 5, "conditions": {"tree_age_category": {"$eq": "ancient"}}}
+]

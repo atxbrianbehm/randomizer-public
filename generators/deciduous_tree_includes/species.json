@@ -1,0 +1,18 @@
+[
+  {"text": "Oak", "weight": 10, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Maple", "weight": 10, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Birch", "weight": 8, "regions": ["North America", "Europe", "Asia", "Arctic"]},
+  {"text": "Aspen", "weight": 6, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Beech", "weight": 7, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Elm", "weight": 5, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Cherry", "weight": 4, "actions": {"set": {"has_fruit_or_flowers_in_spring": true}}, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Willow", "weight": 5, "notes": "Often near water", "regions": ["North America", "Europe", "Asia", "South America", "Africa"]},
+  {"text": "Poplar", "weight": 6, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Sycamore", "weight": 7, "regions": ["Europe", "North America (Plane Tree)"]},
+  {"text": "Alder", "weight": 4, "regions": ["North America", "Europe", "Asia"]},
+  {"text": "Linden", "weight": 3, "regions": ["North America", "Europe"]},
+  {"text": "Hornbeam", "weight": 2, "notes": "Muscular bark", "regions": ["Europe", "Asia", "North America"]},
+  {"text": "Rowan", "weight": 3, "actions": {"set": {"has_berries_in_autumn": true}}, "regions": ["Europe", "Asia", "North America"]},
+  {"text": "Hawthorn", "weight": 2, "actions": {"set": {"has_thorns": true, "has_berries_in_autumn": true}}, "regions": ["Europe", "North America", "Asia", "North Africa"]},
+  {"text": "Ginkgo", "weight": 1, "notes": "Unique fan-shaped leaves, very old species, often urban", "regions": ["Asia (native)", "Global (cultivated)"]}
+]

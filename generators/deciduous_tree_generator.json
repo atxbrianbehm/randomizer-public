@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "name": "Deciduous Tree Prompt Generator",
+    "version": "0.1.0",
+    "description": "Generates descriptive prompts for various deciduous trees in different settings and seasons, including small clusters.",
+    "author": "Jules",
+    "category": "creative",
+    "tags": ["nature", "trees", "prompts", "creative writing", "art", "clusters"]
+  },
+  "variables": {
+    "current_season": {"type": "string", "default": "summer", "description": "Tracks the current season for conditional logic."},
+    "tree_age_category": {"type": "string", "default": "mature", "description": "Tracks the general age/size category of the tree."},
+    "tree_species_name": {"type": "string", "default": "oak", "description": "Stores the chosen primary species name. Ideally set by pick_species."},
+    "setting_type": {"type": "string", "default": "forest", "description": "Stores the type of setting chosen."},
+    "is_cluster": {"type": "boolean", "default": false, "description": "True if generating a cluster of trees."},
+    "cluster_size": {"type": "number", "default": 1, "description": "Number of trees in the cluster (2-4 if is_cluster is true)."},
+    "cluster_type": {"type": "string", "default": "single_species", "description": "Type of cluster: 'single_species' or 'mixed_species_simple'."},
+    "secondary_species_name": {"type": "string", "default": "", "description": "Placeholder for secondary species text in mixed clusters. Not reliably set yet."}
+  },
+  "grammar": {
+    "pick_species": {
+      "$include": "deciduous_tree_includes/species.json",
+      "actions": [
+        {"set_variable_from_selected_text": "tree_species_name"}
+      ]
+    },
+    "pick_season": {"$include": "deciduous_tree_includes/seasons.json"},
+    "pick_age_size": {"$include": "deciduous_tree_includes/age_sizes.json"},
+    "pick_setting": {"$include": "deciduous_tree_includes/settings.json"},
+
+    "pick_leaf_shape": {"$include": "deciduous_tree_includes/leaf_shapes.json"},
+    "pick_leaf_edge": {"$include": "deciduous_tree_includes/leaf_edges.json"},
+    "pick_leaf_summer_color": {"$include": "deciduous_tree_includes/leaf_summer_colors.json"},
+    "pick_leaf_texture": {"$include": "deciduous_tree_includes/leaf_textures.json"},
+    "pick_leaf_general_description": {"$include": "deciduous_tree_includes/leaf_general_descriptions.json"},
+
+    "generate_leaf_description": {
+      "type": "conditional",
+      "options": [
+        {"text": "its #pick_leaf_shape#, which are #pick_leaf_summer_color# and #pick_leaf_texture#", "conditions": {"current_season": {"$eq": "summer"}}, "weight": 7},
+        {"text": "its #pick_leaf_shape# #pick_leaf_edge#, colored #pick_leaf_summer_color#", "conditions": {"current_season": {"$eq": "summer"}}, "weight": 5},
+        {"text": "leaves of #pick_leaf_summer_color# that feel #pick_leaf_texture#", "conditions": {"current_season": {"$eq": "summer"}}, "weight": 4},
+        {"text": "newly formed #pick_leaf_shape#", "conditions": {"current_season": {"$eq": "spring"}}, "weight": 7},
+        {"text": "#pick_leaf_general_description#", "conditions": {"current_season": {"$in": ["spring", "summer"]}}, "weight": 3}
+      ],
+      "fallback": "#pick_leaf_general_description#"
+    },
+
+    "pick_bark_attribute_generic": {"$include": "deciduous_tree_includes/bark_attributes.json"},
+    "pick_autumn_leaf_color": {"$include": "deciduous_tree_includes/autumn_leaf_colors.json"},
+    "pick_spring_detail": {"$include": "deciduous_tree_includes/spring_details.json"},
+    "pick_summer_detail": {"$include": "deciduous_tree_includes/summer_details.json"},
+    "pick_winter_detail": {"$include": "deciduous_tree_includes/winter_details.json"},
+    "pick_ancient_mystic_feature": {"$include": "deciduous_tree_includes/ancient_mystic_features.json"},
+    "pick_overall_shape": {"$include": "deciduous_tree_includes/overall_shapes.json"},
+    "pick_cluster_descriptor": {"$include": "deciduous_tree_includes/cluster_descriptors.json"},
+
+    "seasonal_details_logic": {
+      "type": "conditional",
+      "options": [
+        {"text": "#pick_spring_detail#", "conditions": {"current_season": {"$eq": "spring"}}},
+        {"text": "#pick_summer_detail#", "conditions": {"current_season": {"$eq": "summer"}}},
+        {"text": "#pick_autumn_leaf_color#", "conditions": {"current_season": {"$eq": "autumn"}}},
+        {"text": "#pick_winter_detail#", "conditions": {"current_season": {"$eq": "winter"}}}
+      ],
+      "fallback": "in an indeterminate seasonal state"
+    },
+
+    "optional_ancient_feature_logic": {
+      "type": "conditional",
+      "options": [{
+        "text": ". #pick_ancient_mystic_feature#",
+        "conditions": {
+          "$and": [
+            {"tree_age_category": {"$eq": "ancient"}},
+            {"setting_type": {"$in": ["forest", "stone_circle", "ley_lines"]}}
+          ]}
+      }],
+      "fallback": ""
+    },
+
+    "determine_cluster_or_single": [
+      {"text": "#generate_single_tree_description#", "weight": 80, "actions": {"set": {"is_cluster": false, "cluster_size": 1}}},
+      {"text": "#generate_cluster_description#", "weight": 20, "actions": [{"set": {"is_cluster": true}}, {"rule": "#_set_cluster_details#"}]}
+    ],
+
+    "_set_cluster_details": [
+      {"text": "", "weight": 28, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 2}}},
+      {"text": "", "weight": 28, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 3}}},
+      {"text": "", "weight": 14, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 4}}},
+      {"text": "", "weight": 18, "actions": {"set": {"cluster_type": "mixed_species_simple", "cluster_size": 2}}},
+      {"text": "", "weight": 12, "actions": {"set": {"cluster_type": "mixed_species_simple", "cluster_size": 3}}}
+    ],
+
+    "generate_single_tree_description": [
+      {"rule_once": "#pick_species#"},
+      "A #tree_species_name.a_an# tree, described as #pick_age_size# with #pick_overall_shape#, is seen in #pick_season# #pick_setting#. The tree presents #generate_leaf_description# and #pick_bark_attribute_generic#. Currently, it shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."
+    ],
+
+    "cluster_size_numeric_text": {
+      "type": "conditional",
+      "options": [
+        {"text": "two", "conditions": {"cluster_size": {"$eq": 2}}},
+        {"text": "three", "conditions": {"cluster_size": {"$eq": 3}}},
+        {"text": "four", "conditions": {"cluster_size": {"$eq": 4}}}
+      ],
+      "fallback": "several"
+    },
+
+    "pick_different_species_text": {
+        "$include": "deciduous_tree_includes/species.json"
+    },
+
+    "generate_cluster_description": {
+      "type": "conditional",
+      "options": [
+        {
+          "actions": [{"rule_once":"#pick_species#"}],
+          "text": "#pick_cluster_descriptor# #cluster_size_numeric_text# #tree_species_name.plural# stand together. They are generally #pick_age_size#, typically sharing #pick_overall_shape#, and situated #pick_setting#. As #pick_season# unfolds, they collectively display #generate_leaf_description# and similar #pick_bark_attribute_generic#. They respond to the season with #seasonal_details_logic##optional_ancient_feature_logic#.",
+          "conditions": {"cluster_type": {"$eq": "single_species"}}
+        },
+        {
+          "text": "#generate_single_tree_description# Nearby, #pick_different_species_text.a_an# other tree, of a different kind, adds to the small grove. It is a #pick_age_size# specimen.",
+          "conditions": {"cluster_type": {"$eq": "mixed_species_simple"}}
+        }
+      ],
+      "fallback": "A group of trees is present."
+    },
+
+    "debug_vars": [
+      "Cluster: #is_cluster#, Size: #cluster_size#, Type: #cluster_type#. Season: #current_season#, Age Category: #tree_age_category#, Species: #tree_species_name#, Setting: #setting_type#, Secondary Species (placeholder): #secondary_species_name#"
+    ]
+  },
+  "entry_points": {
+    "default": "#determine_cluster_or_single#",
+    "debug": "#debug_vars#"
+  }
+}

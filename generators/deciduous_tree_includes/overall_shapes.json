@@ -1,0 +1,12 @@
+[
+  {"text": "a classic rounded crown", "weight": 15},
+  {"text": "a broadly spreading canopy", "weight": 12},
+  {"text": "a tall, columnar form", "weight": 8, "notes": "e.g., Lombardy Poplar, some Oaks"},
+  {"text": "delicate, weeping branches that cascade downwards", "weight": 6, "notes": "e.g., Weeping Willow, Weeping Cherry"},
+  {"text": "a somewhat irregular and wild silhouette", "weight": 10},
+  {"text": "a conical, almost fir-like shape", "weight": 5, "notes": "Less common for deciduous but possible e.g. some Lindens, young trees"},
+  {"text": "a dense, shrubby form", "weight": 7, "conditions": {"tree_age_category": {"$in": ["young", "small_stunted"]}}},
+  {"text": "an open, airy structure with sparse branching", "weight": 6},
+  {"text": "a majestic, vase-like shape", "weight": 7, "notes": "e.g., American Elm before DED"},
+  {"text": "a twisted, sculptural form, shaped by wind or age", "weight": 4, "conditions": {"tree_age_category": {"$eq": "ancient"}}}
+]
