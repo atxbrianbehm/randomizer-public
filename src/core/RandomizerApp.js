@@ -448,3 +448,9 @@ export class RandomizerApp {
         if (typeof document === 'undefined') return;
         q('#advanced-modal').style.display = 'none';
     }
+
+    // --- END OF CLASS METHODS ---
+}
+
+// Provide a default export for environments that import the class directly
+export default RandomizerApp;
