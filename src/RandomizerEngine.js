@@ -494,6 +494,9 @@ export default class RandomizerEngine {
 
             if (generator && generator.grammar[ruleName]) {
                 expandedText = this.expandRule(generator, ruleName, context);
+                if (Array.isArray(context.segments)) {
+                    context.segments.push({ key: ruleName, text: expandedText });
+                }
             } else {
                 // If ruleName is not in grammar, it might be a variable.
                 // So, we don't return match yet, let variable substitution handle it.

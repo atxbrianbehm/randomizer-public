@@ -96,9 +96,7 @@ Advanced text substitution supports:
 - **Rule Expansion**: `#rule_name#` (Python & JS).
 - **Text Modifiers**: In both Python and JavaScript, rule expansions can include modifiers: `#rule_name.modifier1.modifier2#`. Standard modifiers (e.g., `capitalize`, `plural`, `a_an`) are built-in, and custom modifiers can be registered.
 - **Nested processing** and recursive expansion.
-- **Grammar Includes**: Grammar rules can use an `$include` directive, e.g., `{"$include": "path/to/other_rules.json"}`.
-    - **Python**: By default, attempts to read included files relative to a base path (e.g., `generators/`).
-    - **JavaScript**: `loadGenerator` accepts an `options.includeResolver` function. This function `(path) => resolvedContent` is called to provide the content for any `$include` directives.
+- **Grammar Includes**: Grammar rules can use an `$include` directive, e.g., `{"$include": "path/to/other_rules.json"}`. Python reads relative files by default. JavaScript requires an `includeResolver` function to be passed in the options to `loadGenerator`. This function `(path) => resolvedContent` is called to provide the content for any `$include` directives.
 
 ### Seedable PRNG (Python)
 The Python engine can be initialized with a seed (string or int) or by calling `set_seed()` to ensure reproducible random generation sequences. It uses a Linear Congruential Generator (LCG) when seeded.
