@@ -1,5 +1,5 @@
 import { JSDOM } from 'jsdom';
-import RandomizerEngine from '../RandomizerEngine.js';
+import RandomizerEngine from '@/RandomizerEngine.js';
 import { updateEntryPoints, updateVariablesDisplay } from '../src/ui/state.js';
 
 const mockGenerator = {

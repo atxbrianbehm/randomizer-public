@@ -1,6 +1,6 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import RandomizerEngine from '../RandomizerEngine';
+import RandomizerEngine from '@/RandomizerEngine.js';
 
 describe('RandomizerEngine Conditional Logic', () => {
     let engine;

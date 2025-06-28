@@ -1,4 +1,4 @@
-import RandomizerEngine from '../RandomizerEngine.js';
+import RandomizerEngine from '@/RandomizerEngine.js';
 import bindEvents from '@/ui/events.js';
 import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from '@/ui/state.js';
 import { setupModal as setupAdvancedModal, showModal as openAdvancedModal, buildModal as rebuildAdvancedModal } from '@/ui/advancedModal.js';
@@ -6,10 +6,11 @@ import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 import { openPromptEditor } from '@/ui/promptEditorModal.js';
 import { saveState, loadState, clearState } from '@/services/persistence.js';
-import { LOCKABLE_FIELDS } from '@/constants.js';
+
 // Main entry for Vite – initializes the Randomizer application
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 import * as GeneratorLoader from '@/services/generatorLoader.js';
+import { renderExpansionTree } from '@/ui/expansionTree.js';
 
 export class RandomizerApp {
     /**
@@ -39,8 +40,10 @@ export class RandomizerApp {
             });
         }
         this.initializeGenerators();
-        // Prepare advanced modal DOM listeners
-        setupAdvancedModal(this);
+        // Prepare advanced modal DOM listeners (feature flag can disable)
+        if (window.FEATURE_ADV_MODAL !== false) {
+            setupAdvancedModal(this);
+        }
         this.initializeDebugOverlay();
     }
 
@@ -55,8 +58,44 @@ export class RandomizerApp {
             // Keyboard toggle will handle actual display toggling.
             console.log('Dev mode active, debug overlay enabled.');
             this.setupDebugOverlayToggle();
+            this.setupExpansionTreeSearch();
+            this.setupCopyExpansionJsonButton();
         } else if (overlayDiv) {
             overlayDiv.style.display = 'none'; // Ensure it's hidden if not dev=1
+        }
+    }
+
+    /**
+     * Sets up the copy expansion JSON button.
+     */
+    setupCopyExpansionJsonButton() {
+        const copyButton = q('#copy-expansion-json');
+        if (copyButton) {
+            copyButton.addEventListener('click', () => {
+                if (this.lastSegments) {
+                    const jsonString = JSON.stringify(this.lastSegments, null, 2);
+                    navigator.clipboard.writeText(jsonString).then(() => {
+                        this.showSuccess('Expansion JSON copied to clipboard!');
+                    }).catch(err => {
+                        console.error('Failed to copy expansion JSON:', err);
+                        this.showError('Failed to copy expansion JSON.');
+                    });
+                } else {
+                    this.showError('No expansion data to copy.');
+                }
+            });
+        }
+    }
+
+    /**
+     * Sets up the search input for the expansion tree.
+     */
+    setupExpansionTreeSearch() {
+        const searchInput = q('#expansion-tree-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                this.renderDebugOverlayTree();
+            });
         }
     }
 
@@ -163,10 +202,6 @@ export class RandomizerApp {
         generateBtn.disabled = !this.currentGeneratorId;
     }
 
-    // Utility called by UI helpers to refresh modal when variable table updates
-    syncAdvancedModal() {
-        rebuildAdvancedModal(this);
-    }
 
     /**
      * Reset locks and persisted settings to defaults.
@@ -190,7 +225,7 @@ export class RandomizerApp {
      */
     processRuleContent(rule, ruleName = null) {
         // If this field is already locked, use the stored value immediately
-        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked?.[ruleName] !== undefined) {
+        if (ruleName && this.engine.lockedValues && this.engine.lockedValues[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
 
@@ -209,11 +244,11 @@ export class RandomizerApp {
         // After computing, capture it if the lock toggle is active and value not yet stored
         if (
             ruleName &&
-            LOCKABLE_FIELDS.includes(ruleName) &&
             this.LockState?.[ruleName] &&
-            this.Locked?.[ruleName] === undefined
+            this.engine.lockedValues &&
+            this.engine.lockedValues[ruleName] === undefined
         ) {
-            this.Locked[ruleName] = result;
+            this.engine.lockedValues[ruleName] = result;
         }
 
         return result;
@@ -227,7 +262,7 @@ export class RandomizerApp {
      */
     processArrayRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
-        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+        if (ruleName && this.engine.lockedValues && this.engine.lockedValues[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
         // Randomly select one item from the array
@@ -285,7 +320,7 @@ export class RandomizerApp {
      */
     processWeightedRule(rule, ruleName = null) {
         // Use locked value if set and this is a lockable field
-        if (ruleName && LOCKABLE_FIELDS.includes(ruleName) && this.Locked && this.Locked[ruleName] !== undefined) {
+        if (ruleName && this.engine.lockedValues && this.engine.lockedValues[ruleName] !== undefined) {
             return this.Locked[ruleName];
         }
         const options = rule.options || [];
@@ -437,331 +472,47 @@ export class RandomizerApp {
             }
             return [];
         };
-        // Preacher Name
-        fillSelect('adv-preacher-name', extractVals(grammar.preacher_name), this.Locked.preacher_name);
-        // Divine Title
-        fillSelect('adv-divine-title', extractVals(grammar.divine_title), this.Locked.divine_title);
-        // Platforms
-        fillSelect('adv-platforms', extractVals(grammar.platforms), this.Locked.platforms);
-        // Media Contexts
-        fillSelect('adv-media-contexts', extractVals(grammar.mediaContexts), this.Locked.mediaContexts);
-        
-        // Add change event listeners to automatically lock when a value is selected
-        const mapIdToField = {
-            'adv-preacher-name': 'preacher_name',
-            'adv-divine-title': 'divine_title',
-            'adv-platforms': 'platforms',
-            'adv-media-contexts': 'mediaContexts'
-        };
-        
-        Object.entries(mapIdToField).forEach(([id, fieldName]) => {
-            const select = q(`#${id}`);
-            select.onchange = () => {
-                const selectedValue = select.value;
-                if (selectedValue) {
-                    this.Locked[fieldName] = selectedValue;
-                    this.LockState[fieldName] = true;
-                    // Update the lock button appearance
-                    const lockBtn = q(`#lock-${fieldName}`);
-                    lockBtn.textContent = '🔒';
-                    lockBtn.className = 'lock-toggle locked';
-                }
-            };
-        });
-        
-        // Lock toggles
-        LOCKABLE_FIELDS.forEach(cat => {
+
+        this.lockableRules.forEach(cat => {
+            const rule = grammar[cat];
+            const values = extractVals(rule);
+            if (values.length === 0) return;
+
+            const selId = `adv-${cat.replace(/_/g, '-')}`;
+            fillSelect(selId, values, this.Locked[cat]);
+
+            const select = q(`#${selId}`);
+            if (select) {
+                select.onchange = () => {
+                    const selectedValue = select.value;
+                    if (selectedValue) {
+                        this.Locked[cat] = selectedValue;
+                        this.LockState[cat] = true;
+                        // Update the lock button appearance
+                        const lockBtn = q(`#lock-${cat}`);
+                        if (lockBtn) {
+                            lockBtn.textContent = '🔒';
+                            lockBtn.className = 'lock-toggle locked';
+                        }
+                    }
+                };
+                select.disabled = !this.LockState[cat];
+            }
+
             const btn = q(`#lock-${cat}`);
-            btn.textContent = this.LockState[cat] ? '🔒' : '🔓';
-            btn.className = 'lock-toggle' + (this.LockState[cat] ? ' locked' : '');
-            btn.onclick = () => {
-                this.LockState[cat] = !this.LockState[cat];
-                this.syncAdvancedModal();
-            };
-            // Dropdown enable/disable
-            const selId = `adv-${cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_', '-')}`;
-            const sel = q(`#${selId}`);
-            if (sel) sel.disabled = !this.LockState[cat];
-        });
-    }
-
-    /**
-     * Apply the selections from the advanced modal to the engine's locked values and update UI.
-     */
-    applyAdvancedModal() {
-        // Save locked values to engine.lockedValues
-        this.engine.lockedValues = this.engine.lockedValues || {};
-        LOCKABLE_FIELDS.forEach(cat => {
-            const selId = `adv-${cat === 'mediaContexts' ? 'media-contexts' : cat.replace('_', '-')}`;
-            const sel = q(`#${selId}`);
-            if (this.LockState[cat] && sel) {
-                this.engine.lockedValues[cat] = sel.value;
-            } else {
-                delete this.engine.lockedValues[cat];
+            if (btn) {
+                btn.textContent = this.LockState[cat] ? '🔒' : '🔓';
+                btn.className = 'lock-toggle' + (this.LockState[cat] ? ' locked' : '');
+                btn.onclick = () => {
+                    this.LockState[cat] = !this.LockState[cat];
+                    this.syncAdvancedModal();
+                };
             }
         });
-        this.hideAdvancedModal();
-        this.updateVariablesDisplay();
-    }
-
-    /**
-     * Set up advanced modal event handlers and initialize its hidden state.
-     */
-    setupAdvancedModal() {
-        const applyBtn = q('#apply-advanced');
-        if (applyBtn) {
-            applyBtn.onclick = () => this.applyAdvancedModal();
-        }
-        
-        const cancelBtn = q('#cancel-advanced');
-        if (cancelBtn) {
-            cancelBtn.onclick = () => this.hideAdvancedModal();
-        }
-        
-        const closeModal = q('.close-modal');
-        if (closeModal) {
-            closeModal.onclick = () => this.hideAdvancedModal();
-        }
-        
-        // Initialize modal to be hidden
-        const modal = q('#advanced-modal');
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    /**
-     * Update the entry points UI using the current app state.
-     * @returns {void}
-     */
-    updateEntryPoints() {
-        return uiUpdateEntryPoints(this);
-    }
-            
-
-    /**
-     * Update the variables display UI using the current app state.
-     * @returns {void}
-     */
-    updateVariablesDisplay() {
-        return uiUpdateVariablesDisplay(this);
-    }
-
-    /**
-     * Update the generator structure UI using the current app state.
-     * @returns {void}
-     */
-    updateGeneratorStructure() {
-        return uiUpdateGeneratorStructure(this);
-    }
-
-
-    
-    /**
-     * Generate text using the currently selected generator and entry point, handling output and errors.
-     */
-    persistState() {
-        saveState({
-            generator: this.currentGeneratorId,
-            lockedValues: this.engine.lockedValues || {},
-            lastPrompt: this.lastPrompt ? { raw: this.lastPrompt } : undefined
-        });
-    }
-
-    generateText() {
-        // clear last prompt tracker
-        let lastResultText = '';
-        console.log('Generate text called');
-        if (!this.currentGeneratorId) {
-            this.showError('Please select a generator first');
-            return;
-        }
-
-        try {
-            // Get the selected entry point
-            const entryPointSelect = q('#entry-point');
-            const entryPoint = entryPointSelect ? entryPointSelect.value : 'default';
-            // If the user chose "default", let the engine decide by passing null
-            const entryArg = (entryPoint === 'default') ? null : entryPoint;
-            
-            // Determine how many generations to create (1–10)
-            const countInput = q('#generation-count');
-            const count = countInput ? Math.max(1, Math.min(parseInt(countInput.value, 10) || 1, 10)) : 1;
-            
-            const outputDiv = q('#output-area');
-            let lastResult = '';
-            for (let i = 0; i < count; i++) {
-                let { readable, raw, segments } = this.engine.generateDetailed(null, { entryPoint: entryArg });
-                if (!readable) readable = raw;
-                lastResult = raw;
-                lastResultText = raw;
-                this.lastPrompt = raw;
-                if (outputDiv) {
-                    const card = document.createElement('div');
-                    card.className = 'prompt-card';
-                    card.style.position = 'relative';
-
-                    const p = document.createElement('p');
-                    p.textContent = readable;
-                    // Create Edit button
-                    const editBtn = document.createElement('button');
-                    editBtn.innerHTML = '✏️';
-                    editBtn.style.position = 'absolute';
-                    editBtn.style.top = '4px';
-                    editBtn.style.right = '4px';
-                    editBtn.style.background = 'transparent';
-                    editBtn.style.color = '#ccc';
-                    editBtn.style.border = 'none';
-                    editBtn.style.cursor = 'pointer';
-                    editBtn.onmouseover = () => { editBtn.style.color = 'var(--color-text)'; };
-                    editBtn.onmouseout = () => { editBtn.style.color = 'var(--color-text-secondary)'; };
-                    editBtn.onmousedown = () => { editBtn.style.transform = 'scale(0.9)'; };
-                    editBtn.onmouseup = () => { editBtn.style.transform = 'scale(1)'; };
-                    editBtn.onclick = () => {
-                        openPromptEditor({
-                            segments,
-                            rawText: raw,
-                            onSave: (newText) => {
-                                p.textContent = newText;
-                            }
-                        });
-                    };
-
-                    card.style.display = 'flex';
-                    card.style.gap = '0.5rem';
-                    card.style.alignItems = 'flex-start';
-                    card.style.background = 'var(--color-surface)';
-                    card.style.border = '1px solid var(--color-card-border)';
-                    card.style.borderRadius = '8px';
-                    card.style.padding = '0.75rem 1rem';
-                    card.style.cursor = 'pointer';
-                    card.style.margin = '0 0 1rem';
-                    card.onmouseover = () => { card.style.background = 'var(--color-secondary-hover)'; };
-                    card.onmouseout = () => { card.style.background = 'var(--color-surface)'; };
-
-                    // copy entire prompt on card click
-                    card.onclick = (e) => {
-                        // ignore if edit button clicked
-                        if (e.target.closest('button')) return;
-                        navigator.clipboard.writeText(raw).then(() => {
-                            this.showSuccess('Copied to clipboard');
-                        });
-                    };
-
-                    p.style.margin = '0';
-                    card.appendChild(p);
-                    card.appendChild(editBtn);
-
-                    outputDiv.insertBefore(card, outputDiv.firstChild);
-                }
-            }
-            // after loop, persist state
-            this.persistState();
-            
-            console.log(`Generated ${count} text snippet(s). Last result:`, lastResult);
-            this.showSuccess(`Generated ${count} text snippet${count > 1 ? 's' : ''} successfully`);
-            
-            // Update the JSON viewer if it's open
-            uiUpdateGeneratorStructure(this);
-        } catch (error) {
-            console.error('Error generating text:', error);
-            this.showError('Error generating text: ' + error.message);
-        }
-    }
-    
-    /**
-     * Clear all generated output from the output area in the UI.
-     */
-    clearOutput() {
-        const outputDiv = q('#output-area');
-        if (outputDiv) {
-            outputDiv.innerHTML = '';
-        }
-    }
-    
-    /**
-     * Display the JSON viewer for the current generator with pretty/compact formatting.
-     */
-    showJsonViewer() {
-        if (!this.currentGeneratorId) {
-            this.showError('Please select a generator first');
-            return;
-        }
-
-        const content = q('#json-content');
-        const code = q('#json-code');
-        
-        const generator = this.engine.getGeneratorInfo(this.currentGeneratorId);
-        const jsonString = this.isPrettyPrint 
-            ? JSON.stringify(generator, null, 2)
-            : JSON.stringify(generator);
-        
-        code.textContent = jsonString;
-        content.classList.remove('hidden');
-    }
-
-    /**
-     * Toggle JSON pretty print/compact mode and update the viewer if open.
-     */
-    togglePrettyPrint() {
-        this.isPrettyPrint = !this.isPrettyPrint;
-        const button = q('#pretty-print');
-        button.textContent = this.isPrettyPrint ? 'Compact' : 'Pretty Print';
-        
-        const jsonContent = q('#json-content');
-        if (jsonContent && !jsonContent.classList.contains('hidden')) {
-            this.showJsonViewer();
-        }
-    }
-
-    /**
-     * Display an error message to the user.
-     * @param {string} message - Error message to display.
-     */
-    showError(message) {
-        this.showMessage(message, 'error');
-    }
-
-    /**
-     * Display a success message to the user.
-     * @param {string} message - Success message to display.
-     */
-    showSuccess(message) {
-        this.showMessage(message, 'success');
-    }
-
-    /**
-     * Display a message (error or success) to the user in the UI.
-     * @param {string} message - Message to display.
-     * @param {string} type - 'error' or 'success'.
-     */
-    showMessage(message, type) {
-        // Remove existing messages
-        const existing = q('.error-message, .success-message');
-        if (existing) {
-            existing.remove();
-        }
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `${type}-message fade-in`;
-        messageDiv.textContent = message;
-        
-        const container = q('.container');
-        container.insertBefore(messageDiv, container.firstChild);
-        
-        // Auto-remove after 5 seconds
-        setTimeout(() => {
-            if (messageDiv.parentNode) {
-                messageDiv.remove();
-            }
-        }, 5000);
     }
 }
 
-// Initialize the application when the DOM is loaded
+// Initialize the application when the DOMContentLoaded event fires
 document.addEventListener('DOMContentLoaded', () => {
     new RandomizerApp();
 });
-
-// Export for testing
-export default RandomizerApp;

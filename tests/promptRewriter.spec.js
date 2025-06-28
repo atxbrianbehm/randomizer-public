@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import RandomizerEngine from '../RandomizerEngine.js';
+import RandomizerEngine from '@/RandomizerEngine.js';
 
 const gen = {
   metadata: {

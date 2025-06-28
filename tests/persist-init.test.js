@@ -1,26 +1,25 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { saveState, clearState } from '../src/services/persistence.js'; // Use relative path
+import { RandomizerApp } from '@/core/RandomizerApp.js'; // Use relative path
 
-vi.mock('@/services/generatorLoader.js', () => ({
+vi.mock('../src/services/generatorLoader.js', () => ({ // Use relative path
   loadGenerators: vi.fn(async () => [])
 }));
 
 vi.mock('@/ui/events.js', () => ({
   default: () => {}
 }));
-vi.mock('@/ui/advancedModal.js', () => ({
+vi.mock('../src/ui/advancedModal.js', () => ({
   setupModal: () => {},
   showModal: () => {},
   buildModal: () => {}
 }));
-vi.mock('@/ui/state.js', () => ({
+vi.mock('../src/ui/state.js', () => ({
   updateEntryPoints: () => {},
   updateVariablesDisplay: () => {},
   updateGeneratorStructure: () => {}
 }));
-vi.mock('@/ui/query.js', () => ({ q: () => null }));
-
-import { saveState, clearState } from '../src/services/persistence.js';
-import { RandomizerApp } from '../src/main.js';
+vi.mock('../src/ui/query.js', () => ({ q: () => null })); // Use relative path
 
 function setupBasicDOM() {
   const ids = [

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import RandomizerEngine from '../RandomizerEngine.js';
+import RandomizerEngine from '@/RandomizerEngine.js';
 
 // Helper to synchronously read fixture generator JSON
 function readGenerator(relPath) {

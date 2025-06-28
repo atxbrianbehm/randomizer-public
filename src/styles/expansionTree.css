@@ -1,0 +1,66 @@
+.expansion-tree-root {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.expansion-tree-node {
+    margin-bottom: 5px;
+    font-family: monospace;
+    font-size: 0.9em;
+    position: relative;
+}
+
+.expansion-tree-node .expansion-tree-content {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.expansion-tree-node .rule-key {
+    color: #888;
+}
+
+.expansion-tree-node .rule-text {
+    color: #eee;
+}
+
+.expansion-tree-children {
+    list-style: none;
+    padding-left: 15px;
+    border-left: 1px dotted #555;
+    margin-left: 5px;
+}
+
+.expansion-tree-node.collapsed > .expansion-tree-children {
+    display: none;
+}
+
+.tree-toggle {
+    cursor: pointer;
+    margin-right: 5px;
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+}
+
+.expansion-tree-node.has-children > .expansion-tree-content {
+    margin-left: -1em; /* Adjust for toggle button width */
+}
+
+/* Lines for tree structure */
+.expansion-tree-node::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 10px;
+    width: 5px;
+    height: 0;
+    border-top: 1px dotted #555;
+}
+
+.expansion-tree-node:last-child::before {
+    border-top: none;
+}
+
+.expansion-tree-node:not(:last-child) > .expansion-tree-children {
+    border-left: 1px dotted #555;
+}

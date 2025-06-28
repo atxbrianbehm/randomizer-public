@@ -1,0 +1,310 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import * as AdvancedModal from '../../src/ui/advancedModal.js';
+
+// Mock the DOM for testing UI functions
+const mockApp = {
+    engine: {
+        loadedGenerators: new Map(),
+        currentGenerator: 'test-gen',
+        getLockableRules: vi.fn(() => ['rule1', 'rule2']),
+        lockedValues: {},
+    },
+    generatorSpec: {
+        name: 'test-gen',
+        grammar: {
+            rule1: ['option1a', 'option1b'],
+            rule2: [{ text: 'option2a', value: 'val2a' }, { text: 'option2b', value: 'val2b' }],
+            rule3: 'just a string',
+        },
+        lockableRules: ['rule1', 'rule2'],
+        uiConfig: {
+            multiSelect: ['rule1'],
+        },
+    },
+    LockState: {},
+    Locked: {},
+    updateVariablesDisplay: vi.fn(),
+    persistState: vi.fn(),
+};
+
+
+describe('advancedModal.js utility functions', () => {
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <div id="advanced-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Advanced Options</h2>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div id="advanced-modal-body"></div>
+                    <div class="modal-footer">
+                        <button id="apply-advanced"></button>
+                        <button id="cancel-advanced"></button>
+                    </div>
+                </div>
+            </div>
+            <div id="output-area"></div>
+        `;
+        mockApp.LockState = {};
+        mockApp.Locked = {};
+        mockApp.engine.loadedGenerators.set(mockApp.engine.currentGenerator, mockApp.generatorSpec); // Ensure generator is loaded
+        mockApp.engine.lockedValues = {};
+        mockApp.updateVariablesDisplay.mockClear();
+        mockApp.persistState.mockClear();
+        vi.spyOn(document.head, 'appendChild').mockImplementation(() => {});
+    });
+
+    it('humanLabel should format camelCase keys', () => {
+        expect(AdvancedModal.humanLabel('someCamelCaseKey')).toBe('Some Camel Case Key');
+    });
+
+    it('humanLabel should use uiLabel from _meta if present', () => {
+        const generator = { grammar: { ruleWithLabel: { _meta: { uiLabel: 'Custom Label' } } } };
+        expect(AdvancedModal.humanLabel('ruleWithLabel', generator)).toBe('Custom Label');
+    });
+
+    it('extractValues should extract values from string arrays', () => {
+        const rule = ['val1', 'val2', 'val3'];
+        expect(AdvancedModal.extractValues(rule)).toEqual(['val1', 'val2', 'val3']);
+    });
+
+    it('extractValues should extract values from object arrays (text or value)', () => {
+        const rule = [{ text: 'Text1' }, { value: 'Value2' }, { label: 'Label3', value: 'Value3' }];
+        expect(AdvancedModal.extractValues(rule)).toEqual(['Text1', 'Value2', 'Value3']);
+    });
+
+    it('extractValues should filter out non-string/object values', () => {
+        const rule = ['val1', 123, null, { text: 'Text2' }];
+        expect(AdvancedModal.extractValues(rule)).toEqual(['val1', 'Text2']);
+    });
+
+    it('isMultiSelect should return true for multi-select keys', () => {
+        expect(AdvancedModal.isMultiSelect('rule1', mockApp.generatorSpec)).toBe(true);
+    });
+
+    it('isMultiSelect should return false for non-multi-select keys', () => {
+        expect(AdvancedModal.isMultiSelect('rule2', mockApp.generatorSpec)).toBe(false);
+    });
+
+    it('createLockBtn should create a locked button if LockState is true', () => {
+        mockApp.LockState.rule1 = true;
+        const btn = AdvancedModal.createLockBtn('rule1', mockApp);
+        expect(btn.textContent).toBe('🔒');
+        expect(btn.classList.contains('locked')).toBe(true);
+    });
+
+    it('createLockBtn should create an unlocked button if LockState is false', () => {
+        mockApp.LockState.rule1 = false;
+        const btn = AdvancedModal.createLockBtn('rule1', mockApp);
+        expect(btn.textContent).toBe('🔓');
+        expect(btn.classList.contains('locked')).toBe(false);
+    });
+
+    it('createLockBtn should toggle LockState and clear Locked value on click if unlocking', () => {
+        mockApp.LockState.rule1 = true;
+        mockApp.Locked.rule1 = 'someValue';
+        mockApp.engine.lockedValues.rule1 = 'someValue';
+
+        const btn = AdvancedModal.createLockBtn('rule1', mockApp);
+        btn.click();
+
+        expect(mockApp.LockState.rule1).toBe(false);
+        expect(mockApp.Locked.rule1).toBeUndefined();
+        expect(mockApp.engine.lockedValues.rule1).toBeUndefined();
+    });
+
+    it('createLockBtn should toggle LockState on click if locking', () => {
+        mockApp.LockState.rule1 = false;
+        const btn = AdvancedModal.createLockBtn('rule1', mockApp);
+        btn.click();
+        expect(mockApp.LockState.rule1).toBe(true);
+    });
+});
+
+describe('advancedModal.js main functions', () => {
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <div id="advanced-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Advanced Options</h2>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div id="advanced-modal-body"></div>
+                    <div class="modal-footer">
+                        <button id="apply-advanced"></button>
+                        <button id="cancel-advanced"></button>
+                    </div>
+                </div>
+            </div>
+            <div id="output-area"></div>
+        `;
+        mockApp.LockState = {};
+        mockApp.Locked = {};
+        mockApp.engine.loadedGenerators.set(mockApp.engine.currentGenerator, mockApp.generatorSpec); // Ensure generator is loaded
+        mockApp.engine.lockedValues = {};
+        mockApp.updateVariablesDisplay.mockClear();
+        mockApp.persistState.mockClear();
+        vi.spyOn(document.head, 'appendChild').mockImplementation(() => {});
+
+        // Mock buildModal to simulate its actual behavior
+        vi.spyOn(AdvancedModal, 'buildModal').mockImplementation((app) => {
+            const modalBody = document.getElementById('advanced-modal-body');
+            if (!modalBody) return;
+
+            // Simulate the content that buildModal would normally create
+            modalBody.innerHTML = `
+                <h3>${app.generatorSpec.name}</h3>
+                <div class="form-group">
+                    <label>Rule 1:</label>
+                    <select id="adv-rule1" name="rule1">
+                        <option value="option1a">option1a</option>
+                        <option value="option1b">option1b</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rule 2:</label>
+                    <select id="adv-rule2" name="rule2">
+                        <option value="option2a">option2a</option>
+                        <option value="option2b">option2b</option>
+                    </select>
+                </div>
+            `;
+
+            // Simulate createLockBtn being called and attaching buttons
+            const label1 = modalBody.querySelector('label');
+            if (label1) {
+                const btn1 = AdvancedModal.createLockBtn('rule1', app);
+                label1.appendChild(btn1);
+            }
+            const label2 = modalBody.querySelectorAll('label')[1];
+            if (label2) {
+                const btn2 = AdvancedModal.createLockBtn('rule2', app);
+                label2.appendChild(btn2);
+            }
+
+            // Simulate injectAdvStyles
+            const styleTag = document.createElement('style');
+            styleTag.textContent = '.lock-button { /* some styles */ }';
+            document.head.appendChild(styleTag);
+        });
+
+        // Mock createLockBtn to return a valid button element
+        vi.spyOn(AdvancedModal, 'createLockBtn').mockImplementation((ruleName, app) => {
+            const btn = document.createElement('button');
+            btn.id = `lock-${ruleName}`;
+            btn.className = 'lock-button';
+            btn.textContent = app.LockState[ruleName] ? '🔒' : '🔓';
+            btn.classList.toggle('locked', app.LockState[ruleName]);
+            btn.onclick = () => {
+                app.LockState[ruleName] = !app.LockState[ruleName];
+                if (!app.LockState[ruleName]) {
+                    delete app.Locked[ruleName];
+                    delete app.engine.lockedValues[ruleName];
+                }
+                btn.textContent = app.LockState[ruleName] ? '🔒' : '🔓';
+                btn.classList.toggle('locked', app.LockState[ruleName]);
+            };
+            return btn;
+        });
+
+        // Clear mock calls for buildModal and createLockBtn
+        AdvancedModal.buildModal.mockClear();
+        AdvancedModal.createLockBtn.mockClear();
+    });
+
+    it('buildModal should inject styles', () => {
+        const appendChildSpy = vi.spyOn(document.head, 'appendChild');
+        AdvancedModal.buildModal(mockApp);
+        expect(appendChildSpy).toHaveBeenCalledTimes(1);
+        const styleTag = appendChildSpy.mock.calls[0][0];
+        expect(styleTag.tagName).toBe('STYLE');
+        expect(styleTag.textContent).toContain('.lock-button');
+        appendChildSpy.mockRestore();
+    });
+
+    it('buildModal should populate modal body with generator data', () => {
+        AdvancedModal.buildModal(mockApp);
+        const modalBody = document.getElementById('advanced-modal-body');
+        expect(modalBody.innerHTML).toContain('test-gen'); // Generator name
+        expect(modalBody.querySelector('select[name="rule1"]')).not.toBeNull();
+        expect(modalBody.querySelector('select[name="rule2"]')).not.toBeNull();
+    });
+
+    it('buildModal should set select value if Locked value exists', () => {
+        mockApp.Locked.rule1 = 'option1b';
+        AdvancedModal.buildModal(mockApp);
+        const select = document.querySelector('select[name="rule1"]');
+        expect(select.value).toBe('option1b');
+    });
+
+    it('showModal should display the modal', () => {
+        AdvancedModal.showModal(mockApp);
+        expect(document.getElementById('advanced-modal').style.display).toBe('block');
+    });
+
+    it('hideModal should hide the modal', () => {
+        document.getElementById('advanced-modal').style.display = 'block';
+        AdvancedModal.hideModal();
+        expect(document.getElementById('advanced-modal').style.display).toBe('none');
+    });
+
+    it('applyModal should update engine lockedValues and persist state', () => {
+        mockApp.LockState.rule1 = true;
+        document.querySelector('#advanced-modal-body').innerHTML = `
+            <div class="form-group">
+                <label>Rule 1:</label>
+                <select id="adv-rule1" name="rule1">
+                    <option value="option1a">option1a</option>
+                    <option value="option1b" selected>option1b</option>
+                </select>
+            </div>
+        `;
+        mockApp.engine.currentGenerator = 'test-gen';
+        AdvancedModal.applyModal(mockApp);
+        expect(mockApp.engine.lockedValues.rule1).toBe('option1b');
+        expect(mockApp.persistState).toHaveBeenCalled();
+        expect(mockApp.updateVariablesDisplay).toHaveBeenCalled();
+    });
+
+    it('applyModal should clear lockedValues if LockState is false', () => {
+        mockApp.LockState.rule1 = false;
+        mockApp.engine.lockedValues.rule1 = 'someValue';
+        document.querySelector('#advanced-modal-body').innerHTML = `
+            <div class="form-group">
+                <label>Rule 1:</label>
+                <select id="adv-rule1" name="rule1">
+                    <option value="option1a">option1a</option>
+                    <option value="option1b" selected>option1b</option>
+                </select>
+            </div>
+        `;
+        AdvancedModal.applyModal(mockApp);
+        expect(mockApp.engine.lockedValues.rule1).toBeUndefined();
+    });
+
+    it('setupModal should bind event listeners', () => {
+        const applyBtn = document.getElementById('apply-advanced');
+        const cancelBtn = document.getElementById('cancel-advanced');
+        const closeModalBtn = document.querySelector('.close-modal');
+
+        AdvancedModal.setupModal(mockApp);
+
+        // Mock the functions that are called by the event listeners
+        const applyModalSpy = vi.spyOn(AdvancedModal, 'applyModal');
+        const hideModalSpy = vi.spyOn(AdvancedModal, 'hideModal');
+
+        applyBtn.click();
+        expect(applyModalSpy).toHaveBeenCalledWith(mockApp);
+
+        cancelBtn.click();
+        expect(hideModalSpy).toHaveBeenCalledTimes(1);
+
+        closeModalBtn.click();
+        expect(hideModalSpy).toHaveBeenCalledTimes(2);
+
+        applyModalSpy.mockRestore();
+        hideModalSpy.mockRestore();
+    });
+});

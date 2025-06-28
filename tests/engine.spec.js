@@ -1,4 +1,4 @@
-import RandomizerEngine from '../RandomizerEngine.js';
+import RandomizerEngine from '@/RandomizerEngine.js';
 
 const mockGenerator = {
   metadata: { name: 'mock' },
