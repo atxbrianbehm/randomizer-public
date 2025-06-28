@@ -23,7 +23,7 @@ jobs:
       # For this static project we simply upload everything except node_modules and dotfiles we don't need.
       - name: Prepare site content
         run: |
-          mkdir public
+          mkdir -p public
           rsync -av --exclude '.git*' --exclude 'node_modules' --exclude 'public' ./ ./public/
 
       - name: Upload Pages artifact
