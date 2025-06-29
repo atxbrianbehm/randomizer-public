@@ -116,7 +116,8 @@ export function buildModal(app) {
     select.id = `adv-${ruleKey}`;
     select.name = ruleKey;
     // always enabled; on change auto-lock
-    select.disabled = !app.LockState[ruleKey]; // Set disabled state based on LockState
+    // Disable the select when the rule is already locked, otherwise keep it interactive
+    select.disabled = app.LockState[ruleKey];
     select.onchange = () => {
       app.LockState[ruleKey] = true;
       app.Locked[ruleKey] = select.value;
