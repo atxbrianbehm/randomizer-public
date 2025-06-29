@@ -11,8 +11,7 @@ const __dirname = dirname(__filename);
 // - Outputs production bundle to `dist/`.
 
 export default defineConfig({
-  // Needed for GitHub Pages deployment under /randomizer-public/
-  base: '/randomizer-public/',
+
   root: '.',
   resolve: {
     alias: {
