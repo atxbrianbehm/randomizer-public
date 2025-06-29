@@ -1098,6 +1098,8 @@ select.form-control {
   font-weight: var(--font-weight-medium);
 }
 #advanced-modal .advanced-row select {
+  flex: 1 1 180px; /* narrower default */
+  max-width: 220px;
   flex: 2 1 220px;
   padding: 0.4rem 0.6rem;
   border-radius: var(--radius-sm);
