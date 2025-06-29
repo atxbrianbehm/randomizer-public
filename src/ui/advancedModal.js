@@ -92,7 +92,34 @@ export function buildModal(app) {
   gridWrap.style.rowGap = '0.75rem';
   modalBody.appendChild(gridWrap);
 
+  let currentStage = null;
   lockableRules.forEach(ruleKey => {
+    // Detect Stage grouping by prefix e.g. Stage_1_, Stage_2_
+    const stageMatch = ruleKey.match(/^Stage_(\d+)_/i);
+    const stageName = stageMatch ? `Stage ${stageMatch[1]}` : null;
+    if (stageName && stageName !== currentStage) {
+      // Start a new stage-box section
+      currentStage = stageName;
+      const stageBox = document.createElement('div');
+      stageBox.className = 'stage-box';
+      stageBox.style.gridColumn = '1 / -1';
+      const stageHeader = document.createElement('h4');
+      stageHeader.textContent = stageName;
+      stageHeader.style.margin = '0 0 0.5rem 0';
+      stageBox.appendChild(stageHeader);
+      gridWrap.appendChild(stageBox);
+      // Inner container for controls
+      var stageGrid = document.createElement('div');
+      stageGrid.style.display = 'grid';
+      stageGrid.style.gridTemplateColumns = '1fr 1fr';
+      stageGrid.style.columnGap = '1rem';
+      stageGrid.style.rowGap = '0.5rem';
+      stageBox.appendChild(stageGrid);
+    }
+    // Skip the grouping key itself e.g. Stage_1_sermon – we don't need a dropdown for entire sermon
+    if (stageMatch && /_sermon$/i.test(ruleKey)) return;
+
+    const container = currentStage ? stageGrid : gridWrap;
     const ruleArr = grammar[ruleKey] || [];
     // Skip if no options
     if (!Array.isArray(ruleArr) || ruleArr.length === 0) return;
