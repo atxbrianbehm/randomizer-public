@@ -27,7 +27,10 @@
 export function deriveBasePath(url) {
   const trimmed = url.startsWith('/') ? url.slice(1) : url;
   const baseName = trimmed.replace(/\.json$/i, '');
-  return `/generators/${baseName}/`;
+  // Files in the publicDir are served at site root, so the directory containing
+  // foo_generator.json will be available at /foo_generator/.
+  // Therefore strip the .json and add a trailing slash only.
+  return `/${baseName}/`;
 }
 
 // Recursively walk a generator spec and inline any objects of the form

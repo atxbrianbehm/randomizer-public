@@ -288,7 +288,7 @@ pre {
   font-family: var(--font-family-mono);
   font-size: calc(var(--font-size-base) * 0.95);
   background-color: var(--color-secondary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-base);
 }
 
 code {
@@ -368,7 +368,7 @@ pre code {
 .btn--sm {
   padding: var(--space-4) var(--space-12);
   font-size: var(--font-size-sm);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-base);
 }
 
 .btn--lg {
@@ -856,7 +856,7 @@ select.form-control {
   padding: var(--space-4) var(--space-8);
   margin-bottom: var(--space-4);
   background: var(--color-secondary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-base);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
 }
@@ -1072,41 +1072,80 @@ select.form-control {
 /* Advanced Modal Styles */
 /* Enhancements specific to the Advanced Options generator modal */
 #advanced-modal .modal-content {
-  width: 96%;
-  max-width: 760px;
-  max-height: 80vh;
+  width: 90vw;
+  max-width: 1100px;
+  max-height: 85vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  font-size: 0.92rem;
 }
+
 #advanced-modal #advanced-modal-body {
   max-height: none;
   overflow: visible;
 }
+
 #advanced-modal .stage-box {
   background: var(--color-background);
   padding: var(--space-12);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
+  margin-bottom: var(--space-16);
 }
+
 #advanced-modal .advanced-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.7rem;
   margin-bottom: var(--space-12);
 }
+
 #advanced-modal .advanced-row label {
   flex: 1 0 140px;
   font-weight: var(--font-weight-medium);
 }
-#advanced-modal .advanced-row select {
-  flex: 1 1 180px; /* narrower default */
-  max-width: 220px;
-  flex: 2 1 220px;
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--radius-sm);
+
+#advanced-modal .advanced-row select,
+#advanced-modal .advanced-row select,
+#advanced-modal .advanced-row input[type="text"] {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  height: 3.5rem;
+  padding: 1rem 1rem;
+  border-radius: 8px; /* extra rounding */
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem; /* space for custom arrow */
+  padding-left: 1rem;
+
+
+  /* Larger up & down caret icon (16px, thicker stroke) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 4 18 9'%3E%3C/polyline%3E%3Cpolyline points='6 15 12 20 18 15'%3E%3C/polyline%3E%3C/svg%3E");
+  background-position: calc(100% - 0.9rem) 50%;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
+
+#advanced-modal .advanced-row select:hover,
+#advanced-modal .advanced-row input[type="text"]:hover {
+  border-color: var(--color-primary);
+}
+
+#advanced-modal .advanced-row select:focus,
+#advanced-modal .advanced-row input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(0, 173, 181, 0.35);
+}
+
 #advanced-modal .lock-button {
   background: none;
   border: none;
@@ -1116,6 +1155,13 @@ select.form-control {
   margin-left: 0.35rem;
   transition: color 0.15s ease-in-out;
 }
+#advanced-modal .advanced-row select:focus,
+#advanced-modal .advanced-row input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(0, 173, 181, 0.4);
+}
+
 #advanced-modal .lock-button.locked {
   color: var(--color-warning);
 }
@@ -1187,8 +1233,11 @@ select.form-control {
 }
 .advanced-row select {
   flex: 2 1 160px;
-  padding: 0.3rem 0.5rem;
-  border-radius: 5px;
+  height: 3.5rem;
+  min-height: 3.5rem;
+  line-height: 1.4;
+  padding: 1rem 1rem;
+  border-radius: var(--radius-base);
   border: 1px solid var(--color-border, #444);
   background: var(--color-bg2, #181818);
   color: var(--color-fg, #fff);
@@ -1213,7 +1262,7 @@ select.form-control {
 }
 .modal-apply, .modal-cancel {
   padding: 0.5rem 1.2rem;
-  border-radius: 5px;
+  border-radius: var(--radius-base);
   border: none;
   font-size: 1rem;
   font-weight: 600;

@@ -8,7 +8,11 @@ export default function bindEvents(app) {
 
     const generateBtn = q('#generate-btn');
     if (generateBtn) {
-        generateBtn.onclick = () => app.generateText();
+        generateBtn.onclick = () => {
+        const countInput = document.getElementById('generation-count');
+        const count = countInput ? Math.max(1, parseInt(countInput.value, 10) || 1) : 1;
+        app.generateText(count);
+    };
     }
 
     const resetBtn = q('#reset-btn');

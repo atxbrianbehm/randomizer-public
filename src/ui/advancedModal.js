@@ -17,10 +17,11 @@ function injectAdvStyles() {
     .stage-box { background: var(--color-bg2); }
     /* modal scrollbar */
     .modal-content::-webkit-scrollbar { width: 10px; }
-    .modal-content::-webkit-scrollbar-track { background: var(--color-bg2); }
-    .modal-content::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 5px; }
+    .modal-content::-webkit-scrollbar-track { background: var(--color-secondary); }
+    .modal-content::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 5px; }
+    .modal-content::-webkit-scrollbar-thumb:hover { background: var(--color-primary-hover); }
     @supports (scrollbar-width: thin) {
-      .modal-content { scrollbar-width: thin; scrollbar-color: var(--color-border) var(--color-bg2); }
+      .modal-content { scrollbar-width: thin; scrollbar-color: var(--color-primary) var(--color-secondary); }
     }
   `;
   if (document && document.head) {
@@ -87,12 +88,13 @@ export function buildModal(app) {
 
   const gridWrap = document.createElement('div');
   gridWrap.style.display = 'grid';
-  gridWrap.style.gridTemplateColumns = '1fr 1fr';
+  gridWrap.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1fr)';
   gridWrap.style.columnGap = '1.5rem';
   gridWrap.style.rowGap = '0.75rem';
   modalBody.appendChild(gridWrap);
 
   let currentStage = null;
+  let stageGrid = null; // scoped outside loop so subsequent rules can access
   lockableRules.forEach(ruleKey => {
     // Detect Stage grouping by prefix e.g. Stage_1_, Stage_2_
     const stageMatch = ruleKey.match(/^Stage_(\d+)_/i);
@@ -109,9 +111,9 @@ export function buildModal(app) {
       stageBox.appendChild(stageHeader);
       gridWrap.appendChild(stageBox);
       // Inner container for controls
-      var stageGrid = document.createElement('div');
+      stageGrid = document.createElement('div');
       stageGrid.style.display = 'grid';
-      stageGrid.style.gridTemplateColumns = '1fr 1fr';
+      stageGrid.style.gridTemplateColumns = 'minmax(0,1fr) minmax(0,1fr)';
       stageGrid.style.columnGap = '1rem';
       stageGrid.style.rowGap = '0.5rem';
       stageBox.appendChild(stageGrid);
@@ -119,6 +121,7 @@ export function buildModal(app) {
     // Skip the grouping key itself e.g. Stage_1_sermon – we don't need a dropdown for entire sermon
     if (stageMatch && /_sermon$/i.test(ruleKey)) return;
 
+    // Determine the container: if currently inside a stage section use its inner grid, otherwise the root gridWrap
     const container = currentStage ? stageGrid : gridWrap;
     const ruleArr = grammar[ruleKey] || [];
     // Skip if no options
@@ -129,14 +132,12 @@ export function buildModal(app) {
     const label = document.createElement('label');
     label.textContent = humanLabel(ruleKey, app.generatorSpec) + ':';
     label.className = 'adv-label';
-    // add lock toggle
     const lockBtn = createLockBtn(ruleKey, app);
     lockBtn.style.marginLeft = '6px';
     label.appendChild(lockBtn);
 
     const field = document.createElement('div');
-    field.style.display = 'flex';
-    field.style.flexDirection = 'column';
+    field.className = 'advanced-row';
     field.appendChild(label);
 
     const select = document.createElement('select');
@@ -163,14 +164,22 @@ export function buildModal(app) {
     });
     if (app.Locked[ruleKey]) select.value = app.Locked[ruleKey];
     field.appendChild(select);
-    gridWrap.appendChild(field);
+    container.appendChild(field);
   });
 }
 
 export function showModal(app) {
   if (typeof document === 'undefined') return;
   const modal = document.getElementById('advanced-modal');
-  buildModal(app);
+  try {
+    buildModal(app);
+  } catch (err) {
+    console.error('[advancedModal] build failed', err);
+    const body = document.getElementById('advanced-modal-body');
+    if (body) {
+      body.innerHTML = '<p style="color:var(--color-error)">Advanced options failed to load.</p>';
+    }
+  }
   if (!modal) return;
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
