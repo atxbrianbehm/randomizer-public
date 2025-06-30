@@ -287,7 +287,7 @@ _Last updated: 2025-06-25 10:52 CT_
 ### HTML / CSS
 - [x] Update `index.html` to load `src/main.js` via `<script type="module">`.
 - [ ] Verify all IDs/classes referenced in JS exist in HTML.
-- [ ] Dark-mode and modal styling touch-ups.
+- [x] Dark-mode and modal styling touch-ups.
 
 ### Testing
 - [x] Create `vitest.config.js` with JSDOM environment and alias config.
