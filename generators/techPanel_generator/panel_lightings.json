@@ -1,0 +1,9 @@
+[
+  { "label": "Dimly Lit (Spot Glows from Indicators)", "value": "Dimly Lit with Spot Glows from Active Indicators" },
+  { "label": "Harsh Overhead Industrial Lighting", "value": "Harsh Overhead Industrial Lighting" },
+  { "label": "Soft Internal Glow (Backlit Panels/Buttons)", "value": "Soft Internal Glow from Backlit Panels/Buttons" },
+  { "label": "Flickering or Unreliable Light Sources", "value": "Flickering or Unreliable Light Sources" },
+  { "label": "No Dedicated Panel Lighting (Relies on Ambient)", "value": "No Dedicated Panel Lighting (Relies on Ambient)" },
+  { "label": "Warm Incandescent Bulb Illumination", "value": "Warm Incandescent Bulb Illumination" },
+  { "label": "Neon Accents or Underglow", "value": "Neon Accents or Underglow" }
+]

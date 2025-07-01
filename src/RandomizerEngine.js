@@ -165,12 +165,11 @@ export default class RandomizerEngine {
         // Ignore placeholder/root segments that lack metadata. These usually represent
         // top-level rules such as "origin" that already combine other segments and would
         // otherwise result in duplicate text (e.g. "cat in space cat in space").
-        const segs = segments.filter((s) => s && s._meta);
-        if (segs.length === 0) {
-            // Nothing with metadata – fall back to simple join
-            return segments.map((s) => s.text).join(' ');
+        const segs = segments.filter(s => s && s._meta);
+        if (segs.length === 0 || segs.length !== segments.length) {
+            // If no metadata, or some segments lack metadata (risk of truncation), return simple concatenation.
+            return segments.map(s => s.text).join(' ');
         }
-        // (moved above)
 
         const generator = this.loadedGenerators.get(generatorName);
         if (!generator) return segments.map((s) => s.text).join(' ');
@@ -184,7 +183,11 @@ export default class RandomizerEngine {
         const orderMap = new Map(slotOrder.map((s, i) => [s, i]));
 
         // Enrich each segment with slot + connector info
-        const enriched = segs.map((seg) => {
+        // Special case: if generator uses a full-text template segment, just return it
+    const templateSeg = segs.find(s => s._meta?.slot === 'template');
+    if (templateSeg) return templateSeg.text;
+
+    const enriched = segs.map((seg) => {
             const meta = seg._meta;
             return {
                 text: seg.text,
@@ -512,62 +515,59 @@ export default class RandomizerEngine {
         return result;
     }
 
-    // Process text with variable substitution and rule expansion
+    // Process text with variable substitution and rule expansion (supports nested placeholders)
     processText(text, context) {
         if (!text) return '';
 
-        // Rule and modifier regex: #ruleName.mod1.mod2#
-        const rule_modifier_regex = /#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#/g;
+        const RULE_REGEX = /#([a-zA-Z_][a-zA-Z0-9_]*)(?:\.([a-zA-Z0-9_.]+))?#/g;
+        const VAR_REGEX  = /#([a-zA-Z_][a-zA-Z0-9_]*)#/g;
 
-        // First expand rules and apply modifiers
-        text = text.replace(rule_modifier_regex, (match, ruleName, modsStr) => {
-            const generator = this.loadedGenerators.get(context.generatorName);
-            let expandedText = "";
+        let iterations = 0;
+        let prev;
 
-            if (generator && generator.grammar[ruleName]) {
-                const ruleObj = generator.grammar[ruleName];
-                const meta = (Array.isArray(ruleObj) && ruleObj[0]?._meta) ? ruleObj[0]._meta : (ruleObj && typeof ruleObj === 'object' && ruleObj._meta) ? ruleObj._meta : null;
-                expandedText = this.expandRule(generator, ruleName, context);
-            } else {
-                // If ruleName is not in grammar, it might be a variable.
-                // So, we don't return match yet, let variable substitution handle it.
-                // However, if modifiers were present, they are lost, which is intended.
-                return match; // Keep original if not a rule
-            }
+        // First, iteratively expand grammar rules (and modifiers) until no more are found or safety limit hit
+        do {
+            prev = text;
+            text = text.replace(RULE_REGEX, (match, ruleName, modsStr) => {
+                const generator = this.loadedGenerators.get(context.generatorName);
+                if (!generator || !generator.grammar[ruleName]) {
+                    // Not a grammar rule – keep for variable substitution later
+                    return match;
+                }
 
-            if (modsStr) {
-                const modifierNames = modsStr.split('.');
-                for (const modName of modifierNames) {
-                    const fn = this.modifiers[modName];
-                    if (fn) {
-                        try {
-                            expandedText = fn(expandedText);
-                        } catch (e) {
-                            console.warn(`Error applying modifier '${modName}' to text '${expandedText}':`, e);
-                            // Keep text as is before modifier error
+                // Expand the rule
+                let expanded = this.expandRule(generator, ruleName, context);
+
+                // Apply any modifiers chained to the rule token
+                if (modsStr) {
+                    for (const modName of modsStr.split('.')) {
+                        const fn = this.modifiers[modName];
+                        if (typeof fn === 'function') {
+                            try {
+                                expanded = fn(expanded);
+                            } catch (e) {
+                                console.warn(`Modifier '${modName}' error on '${expanded}':`, e);
+                            }
+                        } else {
+                            console.warn(`Modifier '${modName}' not found.`);
                         }
-                    } else {
-                        console.warn(`Warning: Modifier '${modName}' not found.`);
                     }
                 }
-            }
-            return expandedText;
-        });
+                return expanded;
+            });
+            iterations += 1;
+        } while (text.includes('#') && text !== prev && iterations < 10);
 
-        // Then variable substitution on any remaining placeholders (e.g. #varName# without modifiers)
-        // This regex should not conflict with the rule_modifier_regex because rules are processed first.
-        const variable_regex = /#([a-zA-Z_][a-zA-Z0-9_]*)#/g;
-        text = text.replace(variable_regex, (match, varName) => {
-            // Check if it was already processed as a rule; if so, it won't be a simple #varName# anymore.
-            // This check is somewhat implicit: if it still matches '#varName#', it wasn't a rule.
+        if (iterations >= 10) {
+            console.warn('processText reached safety iteration limit (possible cyclic rule reference).');
+        }
 
+        // After all grammar placeholders are resolved, perform variable substitution once
+        text = text.replace(VAR_REGEX, (match, varName) => {
             const fullVarName = `${context.generatorName}.${varName}`;
-            let value = context.variables[varName]; // Check context specific vars first
-            if (value === undefined) {
-                 value = this.variables.get(fullVarName); // Check global engine vars
-            }
-
-            return value !== undefined ? value : match; // Keep original if not found
+            let value = context.variables[varName];
+            if (value === undefined) value = this.variables.get(fullVarName);
+            return value !== undefined ? value : match;
         });
 
         return text;

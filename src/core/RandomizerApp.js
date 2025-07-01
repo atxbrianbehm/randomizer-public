@@ -201,9 +201,62 @@ export class RandomizerApp {
             }
             const card = document.createElement('div');
             card.className = 'prompt-card';
+
+            // Paragraph containing the generated prompt. Adds click-to-copy behaviour.
             const p = document.createElement('p');
             p.textContent = promptText;
+            p.className = 'generated-text';
+            p.onclick = () => {
+                if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                    navigator.clipboard.writeText(promptText).then(() => {
+                        p.classList.add('flash');
+                        setTimeout(() => p.classList.remove('flash'), 400);
+                    });
+                }
+            };
             card.appendChild(p);
+
+            // --- Prompt card actions (copy + edit) ---
+            const actions = document.createElement('div');
+            actions.className = 'prompt-actions';
+
+            // Copy button (alternative to clicking the paragraph)
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn tooltip';
+            copyBtn.textContent = '📋';
+            copyBtn.setAttribute('data-tip', 'Copy prompt');
+            copyBtn.onclick = () => {
+                if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                    navigator.clipboard.writeText(promptText).then(() => {
+                        copyBtn.classList.add('copied');
+                        copyBtn.textContent = '✅';
+                        setTimeout(() => {
+                            copyBtn.classList.remove('copied');
+                            copyBtn.textContent = '📋';
+                        }, 1200);
+                    });
+                }
+            };
+            actions.appendChild(copyBtn);
+
+            // Ellipsis / edit button to open Prompt Editor
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn tooltip';
+            editBtn.textContent = '…';
+            editBtn.setAttribute('data-tip', 'Edit / rearrange');
+            editBtn.onclick = () => {
+                openPromptEditor({
+                    rawText: promptText,
+                    segments: null,
+                    onSave: (updated) => {
+                        promptText = updated;
+                        p.textContent = updated;
+                    }
+                });
+            };
+            actions.appendChild(editBtn);
+
+            card.appendChild(actions);
             output.appendChild(card);
         }
     }

@@ -1,0 +1,9 @@
+[
+  { "label": "Toggle Switches & Levers", "value": "Toggle Switches & Levers" },
+  { "label": "Rotary Dials & Knobs", "value": "Rotary Dials & Knobs" },
+  { "label": "Mechanical Keypads", "value": "Mechanical Keypads" },
+  { "label": "Touch Panels", "value": "Touch Panels" },
+  { "label": "Trackballs & Joysticks", "value": "Trackballs & Joysticks" },
+  { "label": "Slider Pots", "value": "Slider Pots" },
+  { "label": "Multi-Function Buttons", "value": "Multi-Function Buttons" }
+]

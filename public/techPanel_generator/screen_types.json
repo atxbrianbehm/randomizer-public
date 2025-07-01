@@ -1,0 +1,9 @@
+[
+  { "label": "Cathode Ray Tube (CRT)", "value": "CRT" },
+  { "label": "Plasma Display", "value": "Plasma Display" },
+  { "label": "Monochrome LCD", "value": "Monochrome LCD" },
+  { "label": "LED Matrix", "value": "LED Matrix" },
+  { "label": "Analog Gauge Cluster", "value": "Analog Gauge Cluster" },
+  { "label": "Oscilloscope/Vector Display", "value": "Oscilloscope/Vector Display" },
+  { "label": "Holographic Overlay", "value": "Holographic Overlay" }
+]

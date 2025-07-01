@@ -1,0 +1,6 @@
+[
+  { "label": "Pristine (Factory New)", "value": "Pristine" },
+  { "label": "Lightly Used (Minor Scuffs)", "value": "Lightly Used" },
+  { "label": "Battle-Worn (Heavy Scratches, Patina)", "value": "Battle-Worn" },
+  { "label": "Jury-Rigged (Obvious Repairs)", "value": "Jury-Rigged" }
+]

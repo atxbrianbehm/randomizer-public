@@ -1,0 +1,9 @@
+[
+  { "label": "Stenciled Lettering (Military, Industrial)", "value": "Stenciled Lettering (Military, Industrial)" },
+  { "label": "Engraved Metal or Plastic Plaques", "value": "Engraved Metal or Plastic Plaques" },
+  { "label": "Dymo Embossed Tape Labels (Ad-hoc, Worn)", "value": "Dymo Embossed Tape Labels (Ad-hoc, Worn)" },
+  { "label": "Cryptic Symbols or Alien Glyphs", "value": "Cryptic Symbols or Alien Glyphs" },
+  { "label": "Minimal/No Labels (Assumed User Knowledge)", "value": "Minimal/No Labels (Assumed User Knowledge)" },
+  { "label": "Handwritten or Scratched-in Labels", "value": "Handwritten or Scratched-in Labels" },
+  { "label": "Elegant Art Deco Lettering", "value": "Elegant Art Deco Lettering" }
+]

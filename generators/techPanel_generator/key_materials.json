@@ -1,0 +1,11 @@
+[
+  { "label": "Painted Metal", "value": "Painted Metal (chipped, worn)" },
+  { "label": "Bare Metal", "value": "Bare Industrial Metal (scratched, oxidized)" },
+  { "label": "Aged Plastic", "value": "Aged Plastic/ABS (yellowed, scuffed)" },
+  { "label": "Bakelite/Catalin", "value": "Bakelite or Catalin Accents" },
+  { "label": "Rubber Elements", "value": "Rubberized Elements (cracked, grimy)" },
+  { "label": "Wood Inlays", "value": "Polished Wood Inlays or Paneling" },
+  { "label": "Heavy Steel", "value": "Heavy-Gauge Steel with Visible Welds" },
+  { "label": "Cast Iron", "value": "Cast Iron Components" },
+  { "label": "Formica", "value": "Textured Formica Surfaces" }
+]

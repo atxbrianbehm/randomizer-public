@@ -1,0 +1,5 @@
+[
+  { "label": "Minimal (Clean, Sparse)", "value": "Minimal" },
+  { "label": "Moderate (Some Surface Detail)", "value": "Moderate" },
+  { "label": "High (Busy, Cluttered)", "value": "High" }
+]

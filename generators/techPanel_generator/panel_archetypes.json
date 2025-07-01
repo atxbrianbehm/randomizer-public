@@ -1,0 +1,10 @@
+[
+  { "label": "Cockpit Control Surface (Fighter, Shuttle)", "value": "Cockpit Control Surface" },
+  { "label": "Bridge/Command Console (Capital Ship, Ops)", "value": "Bridge/Command Center Console" },
+  { "label": "Machinery/Engineering Panel (Engine Room, Reactor)", "value": "Machinery/Engineering Panel" },
+  { "label": "Data Terminal Interface (Info Access, Logs)", "value": "Data Terminal Interface" },
+  { "label": "Handheld Device (Scanner, Commlink, Tricorder-like)", "value": "Handheld Device" },
+  { "label": "Wall-Mounted Utility Panel (Life Support, Door Control)", "value": "Wall-Mounted Utility Panel" },
+  { "label": "Mainframe Access Station (Bulky Computer Interface)", "value": "Mainframe Access Station" },
+  { "label": "Laboratory Equipment Interface (Scientific Instruments)", "value": "Laboratory Equipment Interface" }
+]

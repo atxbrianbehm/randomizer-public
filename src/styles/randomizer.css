@@ -145,6 +145,66 @@
   }
 }
 
+.prompt-card {
+  position: relative;
+  padding: var(--space-16);
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-base);
+  margin-bottom: var(--space-16);
+  box-shadow: var(--shadow-xs);
+}
+
+.prompt-card p {
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.prompt-actions {
+  position: absolute;
+  top: var(--space-8);
+  right: var(--space-8);
+  display: flex;
+  gap: var(--space-6);
+}
+
+.prompt-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  padding: var(--space-4);
+  line-height: 1;
+}
+
+.copy-btn.copied {
+  color: var(--color-success);
+}
+
+.flash {
+  animation: flash-bg 0.4s ease-in-out;
+}
+
+@keyframes flash-bg {
+  0% { background: var(--color-secondary); }
+  100% { background: transparent; }
+}
+
+.prompt-actions .tooltip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: -1.8rem;
+  right: 0;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 /* Data attribute for manual theme switching */
 [data-color-scheme="dark"] {
   --color-background: rgba(31, 33, 33, 1);

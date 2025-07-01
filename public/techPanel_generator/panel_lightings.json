@@ -1,0 +1,8 @@
+[
+  { "label": "Incandescent Bulbs", "value": "Incandescent Bulbs" },
+  { "label": "LED Strips", "value": "LED Strips" },
+  { "label": "Electroluminescent Panels", "value": "Electroluminescent Panels" },
+  { "label": "Backlit Acrylic", "value": "Backlit Acrylic" },
+  { "label": "Fiber Optic Bundles", "value": "Fiber Optic Bundles" },
+  { "label": "Edge-Lit Glass", "value": "Edge-Lit Glass" }
+]

@@ -38,6 +38,32 @@ export function deriveBasePath(url) {
 // given basePath and merging it (preserving optional _meta).
 export async function resolveIncludes(node, basePath) {
   if (Array.isArray(node)) {
+    // Patch: If array is [{_meta}, {$include: ...}], merge included array after _meta
+    if (
+      node.length === 2 &&
+      node[0] && typeof node[0] === 'object' && node[0]._meta &&
+      node[1] && typeof node[1] === 'object' && node[1].$include
+    ) {
+      const metaObj = node[0];
+      const includeObj = node[1];
+      const includePath = includeObj['$include'].startsWith('/')
+          ? includeObj['$include']
+          : `/${includeObj['$include']}`;
+      try {
+        const resp = await fetch(includePath);
+        if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status}`);
+        const includedJson = await resp.json();
+        const resolvedIncluded = await resolveIncludes(includedJson, basePath);
+        if (Array.isArray(resolvedIncluded)) {
+          return [metaObj, ...resolvedIncluded];
+        }
+        return [metaObj, resolvedIncluded];
+      } catch (e) {
+        console.error('[resolveIncludes] failed', includePath, e);
+        return node; // fallback to original node so generation can continue
+      }
+    }
+    // Default: recursively resolve all items
     const resolved = [];
     for (const item of node) {
       resolved.push(await resolveIncludes(item, basePath));
@@ -48,7 +74,9 @@ export async function resolveIncludes(node, basePath) {
   if (node && typeof node === 'object') {
     // If the node itself is an include directive
     if (Object.prototype.hasOwnProperty.call(node, '$include')) {
-      const includePath = `${basePath}${node['$include']}`;
+      const includePath = node['$include'].startsWith('/')
+          ? node['$include']
+          : `/${node['$include']}`;
       try {
         const resp = await fetch(includePath);
         if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status}`);

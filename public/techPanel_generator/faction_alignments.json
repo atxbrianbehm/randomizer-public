@@ -1,0 +1,9 @@
+[
+  { "label": "Federation/Alliance", "value": "Federation/Alliance" },
+  { "label": "Empire/Imperium", "value": "Empire/Imperium" },
+  { "label": "Independent/Free Port", "value": "Independent/Free Port" },
+  { "label": "Corporate Conglomerate", "value": "Corporate Conglomerate" },
+  { "label": "Pirate/Outlaw", "value": "Pirate/Outlaw" },
+  { "label": "Religious Order", "value": "Religious Order" },
+  { "label": "Alien Civilization", "value": "Alien Civilization" }
+]
