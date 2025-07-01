@@ -187,7 +187,7 @@
       "fallback": ""
     },
     "determine_cluster_or_single": [
-      {"$include": "evergreen_tree_includes/single_tree_description.json", "weight": 75, "actions": {"set": {"is_cluster": false, "cluster_size": 1}}},
+      {"$include": "evergreen_tree_includes/refactored_single_tree_choice.json"},
       {"text": "#generate_cluster_description#", "weight": 25, "actions": [{"set": {"is_cluster": true}}, {"rule": "#_set_cluster_details#"}]}
     ],
     "_set_cluster_details": [
@@ -235,8 +235,7 @@
           "conditions": {"cluster_type": {"$eq": "single_species"}}
         },
         {
-          "$include": "evergreen_tree_includes/cluster_description.json", 
-          "conditions": {"cluster_type": {"$eq": "mixed_species_simple"}}
+          "$include": "evergreen_tree_includes/refactored_mixed_cluster_option.json"
         }
       ],
       "fallback": "A group of evergreen trees is present."

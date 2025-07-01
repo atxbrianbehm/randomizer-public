@@ -19,10 +19,7 @@
   },
   "grammar": {
     "pick_species": {
-      "$include": "/deciduous_tree_includes/species.json",
-      "actions": [
-        {"set_variable_from_selected_text": "tree_species_name"}
-      ]
+      "$include": "/deciduous_tree_includes/refactored_pick_species_rule.json"
     },
     "pick_season": {"$include": "/deciduous_tree_includes/seasons.json"},
     "pick_age_size": {"$include": "/deciduous_tree_includes/age_sizes.json"},

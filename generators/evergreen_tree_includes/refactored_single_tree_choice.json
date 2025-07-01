@@ -1,0 +1,14 @@
+{
+  "choices": [
+    {
+      "text": "A #tree_species_name.a_an# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."
+    }
+  ],
+  "weight": 75,
+  "actions": {
+    "set": {
+      "is_cluster": false,
+      "cluster_size": 1
+    }
+  }
+}
