@@ -38,45 +38,57 @@ export function deriveBasePath(url) {
 // given basePath and merging it (preserving optional _meta).
 export async function resolveIncludes(node, basePath) {
   if (Array.isArray(node)) {
-    // Patch: If array is [{_meta}, {$include: ...}], merge included array after _meta
-    if (
-      node.length === 2 &&
-      node[0] && typeof node[0] === 'object' && node[0]._meta &&
-      node[1] && typeof node[1] === 'object' && node[1].$include
-    ) {
-      const metaObj = node[0];
-      const includeObj = node[1];
-      const includePath = includeObj['$include'].startsWith('/')
+    const newArray = [];
+    for (let i = 0; i < node.length; i++) {
+      const currentItem = node[i];
+      const nextItem = node[i + 1];
+
+      // Check for the [{_meta: ...}, {$include: ...}] pattern
+      if (
+        currentItem && typeof currentItem === 'object' && currentItem._meta &&
+        nextItem && typeof nextItem === 'object' && nextItem.$include
+      ) {
+        const metaObj = currentItem;
+        const includeObj = nextItem;
+        const includePath = includeObj['$include'].startsWith('/')
           ? includeObj['$include']
-          : `/${includeObj['$include']}`;
-      try {
-        const resp = await fetch(includePath);
-        if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status}`);
-        const includedJson = await resp.json();
-        const resolvedIncluded = await resolveIncludes(includedJson, basePath);
-        if (Array.isArray(resolvedIncluded)) {
-          return [metaObj, ...resolvedIncluded];
+          : `/${includeObj['$include']}`; // Ensure leading slash
+
+        try {
+          const resp = await fetch(includePath);
+          if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status} for ${includePath}`);
+          const includedJson = await resp.json();
+          const resolvedIncludedContent = await resolveIncludes(includedJson, basePath);
+
+          newArray.push(metaObj); // Push the _meta object
+          if (Array.isArray(resolvedIncludedContent)) {
+            newArray.push(...resolvedIncludedContent); // Spread if it's an array
+          } else {
+            newArray.push(resolvedIncludedContent); // Push as single item
+          }
+          i++; // Increment i to skip the nextItem (the $include object) as it has been processed
+        } catch (e) {
+          console.error(`[resolveIncludes] Failed to process $include with _meta for ${includePath}:`, e);
+          newArray.push(currentItem); // Push current item (meta) on error
+          newArray.push(nextItem);    // Push next item (include) on error
+          i++; // Still increment, as we've considered both
         }
-        return [metaObj, resolvedIncluded];
-      } catch (e) {
-        console.error('[resolveIncludes] failed', includePath, e);
-        return node; // fallback to original node so generation can continue
+      } else {
+        // For all other items, or standalone $include objects, resolve normally.
+        // An $include object not preceded by _meta will be handled by the object recursion part if it's standalone,
+        // or by this recursive call if it's just an element in an array.
+        newArray.push(await resolveIncludes(currentItem, basePath));
       }
     }
-    // Default: recursively resolve all items
-    const resolved = [];
-    for (const item of node) {
-      resolved.push(await resolveIncludes(item, basePath));
-    }
-    return resolved;
+    return newArray;
   }
 
   if (node && typeof node === 'object') {
     // If the node itself is an include directive
     if (Object.prototype.hasOwnProperty.call(node, '$include')) {
       const includePath = node['$include'].startsWith('/')
-          ? node['$include']
-          : `/${node['$include']}`;
+        ? node['$include']
+        : `/${node['$include']}`; // Ensure leading slash
       try {
         const resp = await fetch(includePath);
         if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status}`);

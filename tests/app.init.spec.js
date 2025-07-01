@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { loadGenerators } from '../src/services/generatorLoader.js';
-import RandomizerEngine from '../src/RandomizerEngine.js';
+import RandomizerEngine from '@/RandomizerEngine.js';
 
 describe('Generator Loading', () => {
   let engine;

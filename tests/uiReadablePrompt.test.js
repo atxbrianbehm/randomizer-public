@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import RandomizerEngine from '../src/RandomizerEngine.js';
+import RandomizerEngine from '@/RandomizerEngine.js';
 
 function createMockGenerator() {
   return {
