@@ -1,0 +1,252 @@
+{
+  "metadata": {
+    "name": "Evergreen Tree Prompt Generator",
+    "version": "0.1.0",
+    "description": "Generates descriptive prompts for various evergreen trees in different settings and seasons, including small clusters.",
+    "author": "Jules",
+    "category": "creative",
+    "tags": ["nature", "trees", "prompts", "creative writing", "art", "evergreen", "conifer", "clusters"]
+  },
+  "variables": {
+    "current_season": {"type": "string", "default": "winter", "description": "Tracks the current season for conditional logic."},
+    "tree_age_category": {"type": "string", "default": "mature", "description": "Tracks the general age/size category of the tree."},
+    "tree_species_name": {"type": "string", "default": "pine", "description": "Stores the chosen primary species name. Ideally set by pick_species."},
+    "setting_type": {"type": "string", "default": "forest", "description": "Stores the type of setting chosen."},
+    "is_cluster": {"type": "boolean", "default": false, "description": "True if generating a cluster of trees."},
+    "cluster_size": {"type": "number", "default": 1, "description": "Number of trees in the cluster (2-4 if is_cluster is true)."},
+    "cluster_type": {"type": "string", "default": "single_species", "description": "Type of cluster: 'single_species' or 'mixed_species_simple'."},
+    "secondary_species_name": {"type": "string", "default": "", "description": "Placeholder for secondary species text in mixed clusters."}
+  },
+  "grammar": {
+    "pick_species": {
+      "species": [
+        {"text": "pine", "weight": 15},
+        {"text": "spruce", "weight": 10},
+        {"text": "fir", "weight": 10},
+        {"text": "cedar", "weight": 8},
+        {"text": "cypress", "weight": 8},
+        {"text": "arborvitae", "weight": 6},
+        {"text": "juniper", "weight": 6},
+        {"text": "yew", "weight": 4},
+        {"text": "hemlock", "weight": 4},
+        {"text": "redwood", "weight": 3},
+        {"text": "sequoia", "weight": 2},
+        {"text": "dawn redwood", "weight": 1}
+      ],
+      "actions": [
+        {"set_variable_from_selected_text": "tree_species_name"}
+      ]
+    },
+    "pick_season": {
+      "seasons": [
+        {"text": "spring", "weight": 25},
+        {"text": "summer", "weight": 25},
+        {"text": "autumn", "weight": 20},
+        {"text": "winter", "weight": 30}
+      ]
+    },
+    "pick_age_size": {
+      "age_sizes": [
+        {"text": "young", "weight": 20},
+        {"text": "immature", "weight": 15},
+        {"text": "mature", "weight": 30},
+        {"text": "ancient", "weight": 20},
+        {"text": "towering", "weight": 10},
+        {"text": "gnarled", "weight": 5}
+      ]
+    },
+    "pick_setting": {
+      "settings": [
+        {"text": "forest", "weight": 30},
+        {"text": "mountain slope", "weight": 15},
+        {"text": "ancient grove", "weight": 10},
+        {"text": "sacred site", "weight": 10},
+        {"text": "backyard", "weight": 5},
+        {"text": "park", "weight": 5},
+        {"text": "garden", "weight": 5},
+        {"text": "woodland edge", "weight": 5},
+        {"text": "meadow", "weight": 5}
+      ]
+    },
+    "pick_leaf_attribute": {
+      "leaf_attributes": [
+        {"text": "dark green", "weight": 20},
+        {"text": "light green", "weight": 15},
+        {"text": "bluish-green", "weight": 10},
+        {"text": "silvery-green", "weight": 5},
+        {"text": "golden", "weight": 5},
+        {"text": "bronze", "weight": 5},
+        {"text": "needles", "weight": 10},
+        {"text": "scales", "weight": 5},
+        {"text": "broad", "weight": 5},
+        {"text": "narrow", "weight": 5}
+      ]
+    },
+    "pick_bark_attribute": {
+      "bark_attributes": [
+        {"text": "rough", "weight": 20},
+        {"text": "smooth", "weight": 15},
+        {"text": "scaly", "weight": 10},
+        {"text": "fibrous", "weight": 5},
+        {"text": "peeling", "weight": 5},
+        {"text": "gray", "weight": 5},
+        {"text": "brown", "weight": 5},
+        {"text": "reddish-brown", "weight": 5},
+        {"text": "silvery", "weight": 5}
+      ]
+    },
+    "pick_overall_shape": {
+      "overall_shapes": [
+        {"text": "tall and slender", "weight": 20},
+        {"text": "broad and spreading", "weight": 15},
+        {"text": "columnar", "weight": 10},
+        {"text": "pyramidal", "weight": 10},
+        {"text": "irregular", "weight": 10},
+        {"text": "weeping", "weight": 5},
+        {"text": "umbrella-shaped", "weight": 5},
+        {"text": "cascading", "weight": 5}
+      ]
+    },
+    "pick_cluster_descriptor": {
+      "cluster_descriptors": [
+        {"text": "a small group of", "weight": 20},
+        {"text": "a cluster of", "weight": 15},
+        {"text": "a stand of", "weight": 10},
+        {"text": "a copse of", "weight": 10},
+        {"text": "a thicket of", "weight": 5},
+        {"text": "a grove of", "weight": 5},
+        {"text": "a few", "weight": 5}
+      ]
+    },
+    "pick_ancient_mystic_feature": {
+      "ancient_mystic_features": [
+        {"text": "with a door carved into its trunk", "weight": 10},
+        {"text": "surrounded by a ring of mushrooms", "weight": 10},
+        {"text": "with a glowing aura", "weight": 10},
+        {"text": "covered in ancient carvings", "weight": 10},
+        {"text": "with a hollowed-out interior", "weight": 5},
+        {"text": "surrounded by a halo of light", "weight": 5},
+        {"text": "with a strange, pulsating energy", "weight": 5}
+      ]
+    },
+    "pick_spring_detail": {
+      "spring_details": [
+        {"text": "new growth bursting forth from its branches", "weight": 20},
+        {"text": "its branches adorned with bright green needles", "weight": 15},
+        {"text": "a carpet of wildflowers blooming at its base", "weight": 10},
+        {"text": "its trunk covered in a vibrant, green moss", "weight": 10},
+        {"text": "a gentle, warm light emanating from within", "weight": 5},
+        {"text": "the sweet scent of blooming flowers wafting from its branches", "weight": 5}
+      ]
+    },
+    "pick_summer_detail": {
+      "summer_details": [
+        {"text": "its leaves a vibrant, emerald green", "weight": 20},
+        {"text": "a haven for birds and insects", "weight": 15},
+        {"text": "its branches providing a cool, shaded canopy", "weight": 10},
+        {"text": "its trunk strong and sturdy, a testament to its age", "weight": 10},
+        {"text": "a soft, warm breeze rustling its leaves", "weight": 5},
+        {"text": "the sound of children's laughter carrying from beneath its branches", "weight": 5}
+      ]
+    },
+    "pick_winter_detail": {
+      "winter_details": [
+        {"text": "its branches bare, etched against the sky like a delicate pen and ink drawing", "weight": 20},
+        {"text": "a dusting of snow covering its limbs", "weight": 15},
+        {"text": "its trunk a sturdy, snow-covered pillar", "weight": 10},
+        {"text": "a haven for winter birds, seeking shelter from the cold", "weight": 10},
+        {"text": "a soft, serene silence surrounding it", "weight": 5},
+        {"text": "the sound of snow crunching beneath the feet of those who approach", "weight": 5}
+      ]
+    },
+    "generate_leaf_description": [
+      "its #pick_leaf_attribute#",
+      "characteristic #pick_leaf_attribute#",
+      "foliage described as #pick_leaf_attribute#"
+    ],
+    "seasonal_details_logic": {
+      "type": "conditional",
+      "options": [
+        {"text": "#pick_spring_detail#", "conditions": {"current_season": {"$eq": "spring"}}},
+        {"text": "#pick_summer_detail#", "conditions": {"current_season": {"$eq": "summer"}}},
+        {"text": "#pick_winter_detail#", "conditions": {"current_season": {"$eq": "winter"}}},
+        {"text": "its year-round foliage providing a touch of green", "conditions": {"current_season": {"$eq": "autumn"}}}
+      ],
+      "fallback": "displaying its steadfast greenery"
+    },
+    "optional_ancient_feature_logic": {
+      "type": "conditional",
+      "options": [{
+        "text": ". #pick_ancient_mystic_feature#",
+        "conditions": {
+          "$and": [
+            {"tree_age_category": {"$eq": "ancient"}},
+            {"setting_type": {"$in": ["mountain_slope", "ancient_grove", "sacred_site"]}}
+          ]}
+      }],
+      "fallback": ""
+    },
+    "determine_cluster_or_single": [
+      {"$include": "evergreen_tree_includes/single_tree_description.json", "weight": 75, "actions": {"set": {"is_cluster": false, "cluster_size": 1}}},
+      {"text": "#generate_cluster_description#", "weight": 25, "actions": [{"set": {"is_cluster": true}}, {"rule": "#_set_cluster_details#"}]}
+    ],
+    "_set_cluster_details": [
+      {"text": "", "weight": 28, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 2}}},
+      {"text": "", "weight": 28, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 3}}},
+      {"text": "", "weight": 14, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 4}}},
+      {"text": "", "weight": 18, "actions": {"set": {"cluster_type": "mixed_species_simple", "cluster_size": 2}}},
+      {"text": "", "weight": 12, "actions": {"set": {"cluster_type": "mixed_species_simple", "cluster_size": 3}}}
+    ],
+    "@generate_single_tree_description": [
+      {"rule_once": "#pick_species#"},
+      "A #tree_species_name.a_an# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."
+    ],
+    "cluster_size_numeric_text": {
+      "type": "conditional",
+      "options": [
+        {"text": "two", "conditions": {"cluster_size": {"$eq": 2}}},
+        {"text": "three", "conditions": {"cluster_size": {"$eq": 3}}},
+        {"text": "four", "conditions": {"cluster_size": {"$eq": 4}}}
+      ],
+      "fallback": "several"
+    },
+    "pick_different_species_text": {
+      "species": [
+        {"text": "pine", "weight": 15},
+        {"text": "spruce", "weight": 10},
+        {"text": "fir", "weight": 10},
+        {"text": "cedar", "weight": 8},
+        {"text": "cypress", "weight": 8},
+        {"text": "arborvitae", "weight": 6},
+        {"text": "juniper", "weight": 6},
+        {"text": "yew", "weight": 4},
+        {"text": "hemlock", "weight": 4},
+        {"text": "redwood", "weight": 3},
+        {"text": "sequoia", "weight": 2},
+        {"text": "dawn redwood", "weight": 1}
+      ]
+    },
+    "generate_cluster_description": {
+      "type": "conditional",
+      "options": [
+        {
+          "actions": [{"rule_once":"#pick_species#"}],
+          "text": "#pick_cluster_descriptor# #cluster_size_numeric_text# #tree_species_name.plural# grow together. They are generally #pick_age_size#, sharing a common #pick_overall_shape#, and located #pick_setting#. As #pick_season# progresses, they jointly display #generate_leaf_description# and similar #pick_bark_attribute#. They reflect the season with #seasonal_details_logic##optional_ancient_feature_logic#.",
+          "conditions": {"cluster_type": {"$eq": "single_species"}}
+        },
+        {
+          "$include": "evergreen_tree_includes/cluster_description.json", 
+          "conditions": {"cluster_type": {"$eq": "mixed_species_simple"}}
+        }
+      ],
+      "fallback": "A group of evergreen trees is present."
+    },
+    "debug_vars": [
+      "Cluster: #is_cluster#, Size: #cluster_size#, Type: #cluster_type#. Season: #current_season#, Age Category: #tree_age_category#, Species: #tree_species_name#, Setting: #setting_type#, Secondary Species: #secondary_species_name#"
+    ]
+  },
+  "entry_points": {
+    "default": "#determine_cluster_or_single#",
+    "debug": "#debug_vars#"
+  }
+}
