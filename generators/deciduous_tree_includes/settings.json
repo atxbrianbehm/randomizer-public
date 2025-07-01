@@ -1,0 +1,17 @@
+[
+  {"text": "in a dense forest", "weight": 15, "actions": {"set": {"setting_type": "forest"}}},
+  {"text": "at the edge of a sun-dappled woodland", "weight": 12, "actions": {"set": {"setting_type": "woodland_edge"}}},
+  {"text": "standing solitary in a vast, open field", "weight": 10, "actions": {"set": {"setting_type": "field_solitary"}}},
+  {"text": "alongside a gently flowing riverbank", "weight": 8, "actions": {"set": {"setting_type": "riverside"}}},
+  {"text": "in a quiet suburban park", "weight": 7, "actions": {"set": {"setting_type": "park"}}},
+  {"text": "lining a bustling city street", "weight": 5, "actions": {"set": {"setting_type": "urban_street"}}},
+  {"text": "high on a windswept hillside", "weight": 6, "actions": {"set": {"setting_type": "hillside"}}},
+  {"text": "in a forgotten, overgrown garden", "weight": 4, "actions": {"set": {"setting_type": "garden_overgrown"}}},
+  {"text": "within a misty valley", "weight": 5, "actions": {"set": {"setting_type": "valley_misty"}}},
+  {"text": "on a small island in the middle of a calm lake", "weight": 2, "actions": {"set": {"setting_type": "lake_island"}}, "notes": "Rare setting"},
+  {"text": "clinging to the edge of a rocky cliff", "weight": 3, "actions": {"set": {"setting_type": "cliff_edge"}}},
+  {"text": "in a quiet churchyard", "weight": 3, "actions": {"set": {"setting_type": "churchyard"}}},
+  {"text": "at the heart of an ancient stone circle", "weight": 1, "actions": {"set": {"setting_type": "stone_circle"}}, "notes": "Very rare, mystical setting"},
+  {"text": "sprouting from a crack in an old stone wall", "weight": 2, "actions": {"set": {"setting_type": "wall_crack"}}},
+  {"text": "in a place where ley lines converge, humming with subtle energy", "weight": 0.5, "actions": {"set": {"setting_type": "ley_lines"}}, "notes": "Surprise element - very rare mystical setting"}
+]

@@ -1,0 +1,5 @@
+[
+  {
+    "text": "#pick_cluster_descriptor# #cluster_size_numeric_text# #tree_species_name# trees, each #pick_age_size# with #pick_overall_shape#, clustered in #pick_season# #pick_setting#. The trees exhibit #generate_leaf_description# and #pick_bark_attribute_generic#. Notable features: #seasonal_details_logic##pick_ancient_mystic_feature#."
+  }
+]

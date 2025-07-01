@@ -1,0 +1,26 @@
+[
+  {"text": "long, slender needles", "weight": 10, "category": "needle_shape"},
+  {"text": "short, sharp needles", "weight": 10, "category": "needle_shape"},
+  {"text": "flat, soft needles", "weight": 8, "category": "needle_shape"},
+  {"text": "needles arranged in clusters", "weight": 7, "category": "needle_arrangement"},
+  {"text": "needles that are individually attached to the branch", "weight": 7, "category": "needle_arrangement"},
+  {"text": "tiny, overlapping scale-like leaves", "weight": 10, "category": "scale_shape"},
+  {"text": "flattened, fern-like sprays of foliage", "weight": 8, "category": "scale_arrangement"},
+  {"text": "awl-shaped, pointed leaves", "weight": 6, "category": "other_leaf_shape"},
+
+  {"text": "deep green foliage", "weight": 15, "category": "color"},
+  {"text": "blue-green needles", "weight": 10, "category": "color"},
+  {"text": "silvery-blue foliage", "weight": 7, "category": "color"},
+  {"text": "bright green new growth", "weight": 12, "category": "color_detail"},
+  {"text": "dark, almost black-green needles", "weight": 6, "category": "color"},
+  {"text": "yellow-green foliage", "weight": 5, "category": "color"},
+
+  {"text": "resinous and fragrant needles", "weight": 9, "category": "texture_scent"},
+  {"text": "stiff and prickly needles", "weight": 8, "category": "texture_scent"},
+  {"text": "soft, brush-like foliage", "weight": 7, "category": "texture_scent"},
+  {"text": "waxy coated needles", "weight": 6, "category": "texture_scent"},
+
+  {"text": "dense evergreen canopy", "weight": 10, "category": "general"},
+  {"text": "year-round green needles", "weight": 10, "category": "general"},
+  {"text": "aromatic evergreen foliage", "weight": 8, "category": "general"}
+]
