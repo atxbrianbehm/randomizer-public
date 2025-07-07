@@ -9,18 +9,15 @@ function createMockGenerator() {
     },
     grammar: {
       subject: [
-        { _meta: { slot: 'subject', connector: '', priority: 1 } },
-        '#subject_text#',
+        { _meta: { slot: 'subject', connector: '', priority: 1 }, text: '#subject_text#' },
       ],
       subject_text: ['retro console'],
       condition: [
-        { _meta: { slot: 'condition', connector: 'with', priority: 2 } },
-        '#condition_text#',
+        { _meta: { slot: 'condition', connector: 'with', priority: 2 }, text: '#condition_text#' },
       ],
       condition_text: ['heavy wear'],
       purpose: [
-        { _meta: { slot: 'purpose', connector: 'for', priority: 3 } },
-        '#purpose_text#',
+        { _meta: { slot: 'purpose', connector: 'for', priority: 3 }, text: '#purpose_text#' },
       ],
       purpose_text: ['controlling engines'],
     },

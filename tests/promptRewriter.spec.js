@@ -9,12 +9,12 @@ const gen = {
   grammar: {
     origin: ['#subject# #theme#'],
     subject: [
-      { _meta: { slot: 'subject', connector: '' }, value: 'cat' },
-      { _meta: { slot: 'subject', connector: '' }, value: 'dog' }
+      { _meta: { slot: 'subject', connector: '' }, text: 'cat' },
+      { _meta: { slot: 'subject', connector: '' }, text: 'dog' }
     ],
     theme: [
-      { _meta: { slot: 'theme', connector: ' in ' }, value: 'space' },
-      { _meta: { slot: 'theme', connector: ' under ' }, value: 'water' }
+      { _meta: { slot: 'theme', connector: ' in ' }, text: 'space' },
+      { _meta: { slot: 'theme', connector: ' under ' }, text: 'water' }
     ]
   },
   entry_points: { default: 'origin' }
