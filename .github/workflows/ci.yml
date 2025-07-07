@@ -46,8 +46,11 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_DISABLE_GIT: 1
         with:
+          slug: atxbrianbehm/randomizer-public
           files: ./coverage/v8/coverage-final.json
           flags: unittests
           fail_ci_if_error: false
