@@ -63,11 +63,11 @@
       "options": [
         {"text": " #pick_ancient_mystic_feature#", "conditions": {"tree_age_category": {"$eq": "ancient"}}}
       ],
-      "fallback": ""
+      "fallback": " "
     },
     "generate_single_tree_description": [
       {"rule_once": "#pick_species#"},
-      "A #tree_species_name# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute_generic#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."
+      {"_meta": { "slot": "template" },"text": "A #tree_species_name# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute_generic#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."}
     ],
     "cluster_size_numeric_text": {
       "type": "conditional",
@@ -82,8 +82,9 @@
       "type": "conditional",
       "options": [
         {
+          "_meta": {"slot": "template"},
           "actions": [{"rule_once":"#pick_species#"}],
-          "text": "#pick_cluster_descriptor# #cluster_size_numeric_text# #tree_species_name.plural# grow together. They are generally #pick_age_size#, sharing a common #pick_overall_shape#, and located #pick_setting#. As #pick_season# progresses, they jointly display #generate_leaf_description# and similar #pick_bark_attribute_generic#. They reflect the season with #seasonal_details_logic##optional_ancient_feature_logic#."
+          "text": "#pick_cluster_descriptor# #cluster_size_numeric_text# #tree_species_name# trees grow together. They are generally #pick_age_size#, sharing a common #pick_overall_shape#, and located #pick_setting#. As #pick_season# progresses, they jointly display #generate_leaf_description# and similar #pick_bark_attribute_generic#. They reflect the season with #seasonal_details_logic##optional_ancient_feature_logic#."
         },
         {
           "text": "#generate_single_tree_description# Nearby, #pick_species# other deciduous, of a different kind, contributes to the small stand. It is a #pick_age_size# specimen.",
@@ -97,7 +98,7 @@
     ]
   },
   "entry_points": {
-    "default": "#generate_single_tree_description#",
+    "default": "generate_single_tree_description",
     "debug": "#debug_vars#"
   }
 }

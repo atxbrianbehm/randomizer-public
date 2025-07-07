@@ -5,6 +5,76 @@
 - Integrated tasks and notes from other project plans; archived redundant/old plans.
 - Reflects current status of Randomizer refactor, build, and new generator integration.
 
+## Optimized Plan (2025-07-07)
+
+### 1. Testing & Documentation Hardening
+- [ ] Increase unit test coverage to ≥90%
+- [ ] Add snapshot tests for prompt readability
+- [ ] Implement CI workflow: lint → test → build → size-budget check → upload coverage
+- [ ] Expand `LLM_Content_Development_Guide.md` with examples, modifier reference, persistence schema, and debug overlay tips
+- [ ] Update README badges (coverage, CI, bundle size)
+- [ ] Update CHANGELOG for v1.1.0
+- [ ] Add pre-commit hook for lint+tests
+- [ ] Add `npm run watch:test` script for TDD loop
+
+### 2. Documentation & Developer Experience
+- [ ] Audit and update README and developer guides
+- [ ] Write updated LLM guide for assembling generators
+- [ ] Identify further code-refactor opportunities and log in `docs/refactor_opportunities.md`
+
+### 3. Folder Restructure & Source Migration
+- [ ] `src/services/generatorLoader.js`
+  - [ ] Extract `fetchGeneratorSpec()` helper (wrap fetch/error-handling)
+  - [ ] Move registration logic into `registerGenerator()` util
+  - [ ] Add JSDoc comments & unit tests
+- [ ] `src/main.js` cleanup
+  - [ ] Abstract lockable list into `constants.js`
+  - [ ] Wrap DOM queries in `ui/query.js` helper
+  - [ ] Remove redundant code & unused event listeners
+  - [ ] Add/update JSDoc for all `RandomizerApp` methods
+- [ ] Asset moves
+  - [ ] Move `randomizer.css` → `src/styles/randomizer.css`
+  - [ ] Relocate preview images → `public/preview/`
+- [ ] Imports
+  - [ ] Update paths to use `@/` alias and run ESLint autofix
+
+### 4. New Generator – Anachronistic Tech Panel
+- [ ] Convert provided JSON → `generators/anachronisticTechPanel.json`
+- [ ] Optimize preview image ≤150 KB
+- [ ] Import in `generators/index.js` & dropdown label "Tech Panel (Retro-Future)"
+- [ ] Add multi-select UI for `panelArchetype`, `aestheticInfluence`
+- [ ] Display color-palette swatches
+- [ ] Update `RandomizerEngine.generate()` for nested arrays
+- [ ] Extend variable-lock rules to cover new categories
+- [ ] Snapshot test sample prompt & validate error handling
+- [ ] Add README section with usage & example image
+
+### 5. Advanced Options Modal Refactor
+- [ ] Add `getLockableRules(generatorName)` in `RandomizerEngine`
+- [ ] Compute dynamic `lockableRules` on generator select
+- [ ] Refactor modal builder to auto-generate UI
+- [ ] Sync dropdown states with `engine.lockedValues`
+- [ ] Remove legacy `LOCKABLE_FIELDS` logic
+- [ ] Unit tests for lockable rule detection & modal logic
+- [ ] Polish: alphabetical sort, search/filter, persist locks in `localStorage`
+
+### 6. Expand Existing Generators
+- [ ] Generator A: +12 `possibleCharacters`; add `tone` grammar (6 moods)
+- [ ] Generator B: expand `adjectives` to 30 items; add `lighting` category
+- [ ] Generate new 512×512 thumbnails
+- [ ] Increment `version` & update CHANGELOG
+
+### 7. Verification & QA
+- [ ] Manual smoke-test scenarios (prompts, theme toggle, variable lock)
+- [ ] Ensure dev bundle <200 KB gzip
+- [ ] Run Lighthouse a11y audit and hit ≥90 score
+
+### 8. Milestone Close-Out
+- [ ] Update `CHANGELOG.md`
+- [ ] Tag git release `v1.1.0`
+
+---
+
 ## Task List
 ### Active Tasks
 
