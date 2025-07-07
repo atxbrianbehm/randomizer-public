@@ -44,9 +44,8 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-             - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          files: coverage/v8/coverage-final.json   # adjust if path differs
-          flags: unittests                         # optional label
-          fail_ci_if_error: false
+          files: ./coverage/v8/coverage-final.json
+          flags: unittests
+          fail_ci_if_error: true
