@@ -1,0 +1,13 @@
+[
+  {"text": "its leaves turning a brilliant fiery red", "weight": 10, "species_affinity": ["Maple", "Oak (some types)", "Sumac"]},
+  {"text": "ablaze with leaves of golden yellow", "weight": 12, "species_affinity": ["Birch", "Aspen", "Ginkgo", "Elm", "Beech"]},
+  {"text": "a tapestry of rich orange and warm russet tones in its foliage", "weight": 9, "species_affinity": ["Maple", "Oak", "Beech"]},
+  {"text": "its leaves a deep, burnished bronze", "weight": 7, "species_affinity": ["Beech", "Oak"]},
+  {"text": "displaying a mix of yellow, orange, and red leaves simultaneously", "weight": 8},
+  {"text": "its leaves a muted brown, ready to fall", "weight": 6, "notes": "Late autumn or less vibrant species"},
+  {"text": "a stunning cloak of crimson leaves", "weight": 7, "species_affinity": ["Maple", "Cherry"]},
+  {"text": "glowing with vibrant orange foliage", "weight": 9, "species_affinity": ["Maple", "Rowan"]},
+  {"text": "its leaves turning a subtle, pale yellow before dropping", "weight": 5},
+  {"text": "a mix of green leaves stubbornly clinging on, alongside patches of early autumn color", "weight": 4, "notes": "Early autumn"},
+  {"text": "deep purple and burgundy hues painting its leaves", "weight": 3, "species_affinity": ["some Maples", "some Oaks", "Ash"]}
+]

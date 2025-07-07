@@ -1,0 +1,11 @@
+[
+  {"text": "a young sapling, just beginning its journey", "weight": 10, "actions": {"set": {"tree_age_category": "young"}}},
+  {"text": "a vigorously growing young tree, full of potential", "weight": 15, "actions": {"set": {"tree_age_category": "young_mature"}}},
+  {"text": "a sturdy, mature specimen, well-established", "weight": 20, "actions": {"set": {"tree_age_category": "mature"}}},
+  {"text": "an old-growth tree, having stood for many decades", "weight": 15, "actions": {"set": {"tree_age_category": "old_growth"}}},
+  {"text": "an ancient, venerable tree, a landmark of the forest", "weight": 10, "actions": {"set": {"tree_age_category": "ancient"}}},
+  {"text": "a small, dwarf variety, compact in stature", "weight": 8, "actions": {"set": {"tree_age_category": "dwarf"}}},
+  {"text": "a towering giant, reaching impressive heights", "weight": 7, "actions": {"set": {"tree_age_category": "giant"}}},
+  {"text": "a slender, pole-sized tree", "weight": 6, "actions": {"set": {"tree_age_category": "young_mature"}}},
+  {"text": "a thick-trunked, substantial tree", "weight": 9, "actions": {"set": {"tree_age_category": "mature"}}}
+]

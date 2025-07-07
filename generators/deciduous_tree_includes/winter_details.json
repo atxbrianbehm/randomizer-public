@@ -1,0 +1,10 @@
+[
+  {"text": "its bare branches stark against the grey winter sky", "weight": 15},
+  {"text": "a light dusting of snow clinging to its naked limbs", "weight": 12},
+  {"text": "its silhouette intricate and skeletal in the cold air", "weight": 10},
+  {"text": "dried leaves still rustling on a few of its branches", "weight": 7},
+  {"text": "standing dormant, patiently waiting for spring", "weight": 9},
+  {"text": "icicles hanging from its lower branches", "weight": 5, "conditions": {"setting_type": {"$in": ["hillside", "valley_misty", "cliff_edge", "riverside"]}}},
+  {"text": "its dark bark prominent now that its leaves have fallen", "weight": 8},
+  {"text": "a few stubborn, shriveled fruits or seedpods still attached", "weight": 4, "conditions": {"has_fruit_or_flowers_in_spring": {"$eq": true}}}
+]

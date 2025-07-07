@@ -1,0 +1,16 @@
+[
+  {"text": "its bark smooth and light grey", "weight": 10},
+  {"text": "its bark rough and deeply furrowed, a dark brown color", "weight": 10},
+  {"text": "its bark shaggy, peeling away in irregular plates", "weight": 7},
+  {"text": "its bark papery and peeling, revealing lighter layers beneath", "weight": 8, "notes": "Common for Birch"},
+  {"text": "its bark grey and regularly fissured", "weight": 9},
+  {"text": "its bark scaly and a rich reddish-brown", "weight": 6, "notes": "Common for Cherry"},
+  {"text": "its bark thick and corky to the touch", "weight": 4},
+  {"text": "featuring a distinctive diamond pattern on its bark", "weight": 5, "notes": "Common for Aspen"},
+  {"text": "with patches of vibrant green moss clinging to its bark", "weight": 12},
+  {"text": "adorned with splotches of grey-green lichen", "weight": 10},
+  {"text": "its bark having a subtle silvery sheen", "weight": 6},
+  {"text": "its bark so dark it appears almost black, especially when wet", "weight": 5},
+  {"text": "a tiny, perfectly carved miniature door almost hidden at its base", "weight": 0.2, "notes": "Surprise element - very rare"},
+  {"text": "strange, almost geometric patterns seem to naturally form in its bark grain", "weight": 0.3, "notes": "Surprise element - very rare"}
+]

@@ -1,0 +1,12 @@
+[
+  {"text": "Its gnarled branches seem to whisper secrets of the old world", "weight": 10, "setting_type": ["ancient_grove", "sacred_site"]},
+  {"text": "A local legend claims it is a guardian of the forest", "weight": 9, "setting_type": ["ancient_grove", "mountain_slope"]},
+  {"text": "Its immense trunk suggests centuries of silent witness", "weight": 8},
+  {"text": "The air around it feels still and charged with an unseen energy", "weight": 7, "setting_type": ["sacred_site"]},
+  {"text": "Known as a 'spirit tree' by local inhabitants", "weight": 6},
+  {"text": "Its roots delve deep, as if drawing power from the earth itself", "weight": 7},
+  {"text": "Believed to be a marker on an ancient ley line", "weight": 5, "setting_type": ["sacred_site", "ancient_grove"]},
+  {"text": "A faint, almost imperceptible hum seems to emanate from its core", "weight": 4},
+  {"text": "It stands as a primeval sentinel, unchanged by the passing ages", "weight": 9},
+  {"text": "Said to offer visions to those who meditate beneath its boughs", "weight": 3, "setting_type": ["sacred_site"]}
+]

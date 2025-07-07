@@ -1,0 +1,22 @@
+[
+  {"text_shape": "deeply lobed leaves", "weight": 10, "category": "shape"},
+  {"text_shape": "ovate, pointed leaves", "weight": 10, "category": "shape"},
+  {"text_shape": "long, elliptical leaves", "weight": 8, "category": "shape"},
+  {"text_shape": "leaves with finely serrated edges", "weight": 10, "category": "edge"},
+  {"text_shape": "leaves with coarsely toothed edges", "weight": 8, "category": "edge"},
+  {"text_shape": "heart-shaped (cordate) leaves", "weight": 5, "category": "shape"},
+  {"text_shape": "compound leaves, made of many small leaflets", "weight": 7, "category": "structure"},
+  {"text_shape": "unique fan-shaped leaves", "weight": 2, "category": "shape", "notes": "Primarily for Ginkgo"},
+
+  {"text_summer_color": "vibrant green foliage", "weight": 15, "category": "summer_color"},
+  {"text_summer_color": "a canopy of deep green leaves", "weight": 15, "category": "summer_color"},
+  {"text_summer_color": "light green, almost translucent leaves", "weight": 8, "category": "summer_color"},
+  {"text_summer_color": "a showing of cool blue-green leaves", "weight": 5, "category": "summer_color"},
+
+  {"text_texture": "smooth and slightly waxy leaves", "weight": 7, "category": "texture"},
+  {"text_texture": "soft and slightly downy leaves", "weight": 7, "category": "texture"},
+  {"text_texture": "thin, delicate leaves that flutter in the breeze", "weight": 9, "category": "texture"},
+
+  {"text_general": "distinctive leaves", "weight": 5, "category": "general"},
+  {"text_general": "characteristic foliage", "weight": 5, "category": "general"}
+]

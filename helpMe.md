@@ -1,9 +1,39 @@
-# Current State of Randomizer Project
+# Randomizer Project - JSON Include Path Error
 
-**Date:** June 27, 2025
+**Date:** July 1, 2025
 
-**Problem:**
-The `npm test` command is consistently failing with an "Error: Failed to parse source for import analysis because the content contains invalid JS syntax" in `src/main.js`. This error specifically points to the import of `RandomizerEngine.js` within `src/main.js`.
+**Current Issue: JSON Include Path Resolution in Generator Loader**
+
+The Randomizer generator loader is experiencing issues with resolving `$include` arrays in the generator configuration. This affects the proper loading of options in the Anachronistic Tech Panel Generator.
+
+## Problem Description
+
+The `resolveIncludes` function in `generatorLoader.js` is designed to recursively inline `$include` arrays, but it has a limitation in its current implementation:
+
+1. It expects `$include` to be the only property (except possibly `_meta`) in an array entry
+2. After modularizing the Anachronistic Tech Panel Generator, grammar rules now use a different format: `[{_meta: ...}, {$include: ...}]`
+3. The current implementation expects to replace a single object, not an array element
+4. This mismatch causes the loader to fail when inlining options, resulting in `[NO VALID OPTIONS]` being displayed
+
+## Technical Details
+
+- **Location:** `src/services/generatorLoader.js`
+- **Function:** `resolveIncludes`
+- **Current Behavior:** Only handles `$include` as a direct property of an object
+- **Required Change:** Needs to support arrays containing `{_meta: ...}` and `{$include: ...}` entries
+
+## Impact
+
+- Affects all generator configurations that use the new array-based include syntax
+- Results in missing or invalid options in the UI
+- Particularly impacts the Anachronistic Tech Panel Generator
+
+## Next Steps
+
+The `resolveIncludes` function needs to be updated to:
+1. Detect and handle arrays containing both `_meta` and `$include` entries
+2. Properly merge included arrays while preserving the `_meta` information
+3. Maintain backward compatibility with existing generator configurations
 
 **Actions Taken So Far:**
 

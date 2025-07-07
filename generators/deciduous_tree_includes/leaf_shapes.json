@@ -1,0 +1,8 @@
+[
+  {"text": "deeply lobed leaves", "weight": 10},
+  {"text": "ovate, pointed leaves", "weight": 10},
+  {"text": "long, elliptical leaves", "weight": 8},
+  {"text": "heart-shaped (cordate) leaves", "weight": 5},
+  {"text": "compound leaves, made of many small leaflets", "weight": 7},
+  {"text": "unique fan-shaped leaves", "weight": 2, "notes": "Primarily for Ginkgo"}
+]

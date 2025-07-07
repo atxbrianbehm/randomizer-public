@@ -1,0 +1,9 @@
+[
+  {"text": "tiny, fresh buds appearing on its branches", "weight": 10},
+  {"text": "delicate new leaves unfurling in a soft green", "weight": 10},
+  {"text": "a scattering of small, hopeful blossoms on its twigs", "weight": 7, "conditions": {"has_fruit_or_flowers_in_spring": {"$eq": true}}},
+  {"text": "its branches covered in a haze of pale green as new life emerges", "weight": 8},
+  {"text": "the very first tender leaves just beginning to show", "weight": 6},
+  {"text": "catkins dangling from its branches like delicate ornaments", "weight": 5, "notes": "e.g. for Birch, Alder, some Willows"},
+  {"text": "a faint, sweet scent of new growth around it", "weight": 4}
+]

@@ -194,7 +194,12 @@ export class RandomizerApp {
             let promptText = '';
             try {
                 const detail = this.engine.generateDetailed(this.currentGeneratorId, { entryPoint, target });
-                promptText = detail.readable || detail.raw;
+                const genMeta = this.engine.loadedGenerators.get(this.currentGeneratorId)?.metadata || {};
+                if (genMeta.displayMode === 'rawOnly') {
+                    promptText = detail.raw;
+                } else {
+                    promptText = detail.readable || detail.raw;
+                }
             } catch (err) {
                 console.error('Prompt generation failed', err);
                 promptText = '[Generation error]';

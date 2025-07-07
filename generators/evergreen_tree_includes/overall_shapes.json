@@ -1,0 +1,12 @@
+[
+  {"text": "a classic conical shape, tapering towards the top", "weight": 15},
+  {"text": "a tall, narrow columnar form", "weight": 12},
+  {"text": "a broad, pyramidal silhouette", "weight": 10},
+  {"text": "a somewhat irregular, picturesque shape sculpted by wind and weather", "weight": 8, "condition": "exposed_setting"},
+  {"text": "a dense, rounded or dome-like crown", "weight": 7},
+  {"text": "a slender, spire-like form", "weight": 9},
+  {"text": "a low-growing, spreading habit", "weight": 6, "age_category": ["young", "shrub-like"]},
+  {"text": "an open, layered branching structure", "weight": 7},
+  {"text": "a majestic, wide-spreading form", "weight": 5, "age_category": ["ancient", "mature"]},
+  {"text": "a weeping or pendulous branching habit", "weight": 4, "species_specific": ["weeping_varieties"]}
+]

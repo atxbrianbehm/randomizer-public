@@ -1,0 +1,12 @@
+[
+  {"text": "Pine", "weight": 10, "attributes": ["needles in clusters", "pinecones"], "regions": ["Global"]},
+  {"text": "Fir", "weight": 8, "attributes": ["short flat needles", "upright cones"], "regions": ["North America", "Europe", "Asia", "North Africa"]},
+  {"text": "Spruce", "weight": 8, "attributes": ["sharp square needles", "hanging cones"], "regions": ["Northern Hemisphere"]},
+  {"text": "Cedar", "weight": 7, "attributes": ["scale-like leaves or short needles", "barrel-shaped cones"], "regions": ["Himalayas", "Mediterranean", "Americas"]},
+  {"text": "Juniper", "weight": 6, "attributes": ["scale-like or awl-shaped leaves", "berry-like cones"], "regions": ["Northern Hemisphere"]},
+  {"text": "Yew", "weight": 4, "attributes": ["flat dark-green needles", "red berry-like arils (toxic seeds)"], "regions": ["Europe", "North Africa", "Asia", "North America"]},
+  {"text": "Cypress", "weight": 5, "attributes": ["scale-like leaves", "small woody cones"], "regions": ["Temperate and subtropical regions worldwide"]},
+  {"text": "Hemlock", "weight": 3, "attributes": ["short flat needles with two white bands beneath", "small ovoid cones"], "regions": ["North America", "Asia"]},
+  {"text": "Larch", "weight": 2, "attributes": ["deciduous conifer, needles turn yellow and drop in autumn", "small cones"], "notes": "Though a conifer, it's deciduous. Included for variety if desired.", "regions": ["Cool temperate Northern Hemisphere"]},
+  {"text": "Redwood", "weight": 1, "attributes": ["tallest trees, scale-like or awl-shaped leaves", "small woody cones"], "regions": ["Coastal California and Oregon"]}
+]

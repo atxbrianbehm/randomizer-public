@@ -1,0 +1,9 @@
+[
+  { "label": "Galactic Empire / Authoritarian Corp (Stark, Uniform)", "value": "Galactic Empire / Authoritarian Corporate" },
+  { "label": "Rebel Alliance / Resistance (Utilitarian, Retrofitted)", "value": "Rebel Alliance / Resistance Movement" },
+  { "label": "Civilian / Fringe Smuggler (Customized, Worn, Jury-Rigged)", "value": "Civilian / Fringe Smuggler" },
+  { "label": "Heavy Industrial / Utilitarian (Robust, Functional, No Frills)", "value": "Heavy Industrial / Utilitarian" },
+  { "label": "Ancient / Enigmatic Forerunner (Mysterious, Dated but Advanced)", "value": "Ancient / Enigmatic Forerunner Tech" },
+  { "label": "Scientific / Research Institute (Precise, Purpose-Built, Sterile)", "value": "Scientific / Research Institute" },
+  { "label": "Luxury / High-End Commercial (Polished, Ergonomic)", "value": "Luxury / High-End Commercial" }
+]

@@ -1,0 +1,14 @@
+[
+  {"text": "thick, deeply furrowed bark", "weight": 10},
+  {"text": "scaly, plated bark", "weight": 9},
+  {"text": "smooth, resinous bark when young, becoming fissured with age", "weight": 8},
+  {"text": "reddish-brown, fibrous bark", "weight": 7},
+  {"text": "dark grey to black bark, often with resin blisters", "weight": 7},
+  {"text": "thin, papery bark that peels in strips", "weight": 6},
+  {"text": "cinnamon-colored, shredding bark", "weight": 5},
+  {"text": "light gray, relatively smooth bark", "weight": 4},
+  {"text": "bark that is patterned with small, irregular plates", "weight": 6},
+  {"text": "rough and rugged bark, showing great age", "weight": 8},
+  {"text": "bark encrusted with patches of moss or lichen", "weight": 5, "notes": "Adds to visual interest"},
+  {"text": "bark that exudes a sticky resin", "weight": 7}
+]

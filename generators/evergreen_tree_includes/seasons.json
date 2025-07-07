@@ -1,0 +1,9 @@
+[
+  {"text": "the crisp air of early spring", "weight": 10, "actions": {"set": {"current_season": "spring"}}},
+  {"text": "the warmth of mid-summer", "weight": 10, "actions": {"set": {"current_season": "summer"}}},
+  {"text": "the cool days of autumn", "weight": 10, "actions": {"set": {"current_season": "autumn"}}},
+  {"text": "the quiet hush of winter", "weight": 10, "actions": {"set": {"current_season": "winter"}}},
+  {"text": "a bright, sunny day", "weight": 5, "notes": "Generic, can be combined with season"},
+  {"text": "a cool, misty morning", "weight": 5, "notes": "Generic, can be combined with season"},
+  {"text": "the still of twilight", "weight": 5, "notes": "Generic, can be combined with season"}
+]

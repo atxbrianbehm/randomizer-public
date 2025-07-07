@@ -1,0 +1,10 @@
+[
+  { "label": "Toggle Switches", "value": "Toggle Switches (Bat-handle, Paddle, Guarded)" },
+  { "label": "Chunky Buttons", "value": "Chunky Illuminated Push-buttons (Square, Round)" },
+  { "label": "Rotary Dials", "value": "Rotary Dials (Knurled Metal, Bakelite, Pointer Knob)" },
+  { "label": "Industrial Levers", "value": "Industrial Levers (Large Throw, Gated)" },
+  { "label": "Sliders", "value": "Sliders/Potentiometers (with Visible Tracks)" },
+  { "label": "Physical Keypads", "value": "Physical Keypads (Membrane, Sculpted, Clicky)" },
+  { "label": "Valve Wheels", "value": "Valve Wheels / Crank Handles" },
+  { "label": "Knife Switches", "value": "Knife Switches (Exposed Contacts)" }
+]

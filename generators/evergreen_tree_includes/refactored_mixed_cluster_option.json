@@ -1,0 +1,6 @@
+{
+  "text": "#pick_cluster_descriptor# #cluster_size_numeric_text# #tree_species_name# trees, each #pick_age_size# with #pick_overall_shape#, clustered in #pick_season# #pick_setting#. The trees exhibit #generate_leaf_description# and #pick_bark_attribute#. Notable features: #seasonal_details_logic##optional_ancient_feature_logic#.",
+  "conditions": {
+    "cluster_type": { "$eq": "mixed_species_simple" }
+  }
+}

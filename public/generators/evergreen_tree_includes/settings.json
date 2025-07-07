@@ -1,0 +1,14 @@
+[
+  {"text": "in a dense, coniferous forest", "weight": 15, "actions": {"set": {"setting_type": "forest"}}},
+  {"text": "on a rugged mountain slope", "weight": 12, "actions": {"set": {"setting_type": "mountain_slope"}}},
+  {"text": "along the edge of a misty valley", "weight": 10, "actions": {"set": {"setting_type": "valley_edge"}}},
+  {"text": "standing solitary in an open clearing", "weight": 8, "actions": {"set": {"setting_type": "clearing_solitary"}}},
+  {"text": "as part of a managed timber plantation", "weight": 5, "actions": {"set": {"setting_type": "plantation"}}},
+  {"text": "near a snow-fed alpine lake", "weight": 7, "actions": {"set": {"setting_type": "alpine_lake"}}},
+  {"text": "in a quiet, secluded grove", "weight": 9, "actions": {"set": {"setting_type": "secluded_grove"}}},
+  {"text": "lining a windswept coastal bluff", "weight": 6, "actions": {"set": {"setting_type": "coastal_bluff"}}},
+  {"text": "within an ancient, primeval forest", "weight": 7, "actions": {"set": {"setting_type": "ancient_grove"}}},
+  {"text": "at a sacred site or a place of natural power", "weight": 4, "actions": {"set": {"setting_type": "sacred_site"}}},
+  {"text": "in a suburban backyard, providing year-round greenery", "weight": 3, "actions": {"set": {"setting_type": "suburban_backyard"}}},
+  {"text": "as a decorative tree in a park or garden", "weight": 4, "actions": {"set": {"setting_type": "park_garden"}}}
+]

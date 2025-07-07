@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "name": "Anachronistic Tech Panel Generator",
+    "version": "1.0.0",
+    "previewImage": "anachro_pack_thumb.png",
+    "description": "Generates detailed, stylized prompts for retro-futuristic technology panels and interfaces.",
+    "author": "Gemini",
+    "created": "2025-06-25",
+    "category": "creative",
+    "tags": ["sci-fi", "retrofuturism", "art prompt", "world-building", "anachronistic"]
+  },
+  "assets": {},
+  "variables": {
+    "possibleTechFunctions": [
+      "Navigation and Astrogation Computer", "Primary Weapons Systems Control", "Shield Modulation & Emitter Array",
+      "Engine Core Diagnostics & Output Regulation", "Atmospheric Life Support Systems", "Internal Security Grid Monitoring",
+      "Subspace Communications Array", "Hyperspace Jump Calculation & Trajectory Plotting", "Multi-spectral Sensor Array Analysis",
+      "Automated Targeting Computer Interface", "Emergency Power Distribution Matrix", "Robotic Repair Sequencer & Drone Control",
+      "Cryo-Stasis Pod Monitoring & Revival Sequence", "Airlock Cycle & Pressure Control", "Tractor Beam Emitter Strength & Targeting",
+      "Planetary Geological Scanner Interface", "AI Core Interface & Logic Matrix", "Waste Reclamation & Repurposing System",
+      "Hydroponics Bay Climate Control", "Gravity Plating Calibration Unit", "Cloaking Device Emitter & Power Regulation",
+      "Teleportation Matrix Coordinates & Safety Interlocks", "Time-Space Distortion Field Stabilizer", "Exotic Matter Containment Field Controls"
+    ]
+  },
+  "grammar": {
+    "panelArchetype": [
+      { "_meta": { "slot": "subject", "connector": "", "priority": 1 } },
+      { "$include": "techPanel_generator/panel_archetypes.json" }
+    ],
+    "aestheticInfluence": [
+      { "_meta": { "slot": "theme", "connector": "styled in", "priority": 4 } },
+      { "$include": "techPanel_generator/aesthetic_influences.json" }
+    ],
+    "factionAlignment": [
+      { "_meta": { "slot": "faction", "connector": "operating under", "priority": 2 } },
+      { "$include": "techPanel_generator/faction_alignments.json" }
+    ],
+    "wearLevel": [
+      { "_meta": { "slot": "condition", "connector": "", "priority": 5 } },
+      { "$include": "techPanel_generator/wear_levels.json" }
+    ],
+    "primaryColorPalette": [
+      { "_meta": { "slot": "color_palettes", "connector": "with", "priority": 6 } },
+      { "$include": "techPanel_generator/primary_color_palettes.json" }
+    ],
+    "keyMaterials": [
+      { "_meta": { "slot": "materials", "connector": "over", "priority": 7 } },
+      { "$include": "techPanel_generator/key_materials.json" }
+    ],
+    "screenType": [
+      { "_meta": { "slot": "displays", "connector": "featuring", "priority": 8 } },
+      { "$include": "techPanel_generator/screen_types.json" }
+    ],
+    "dominantControls": [
+      { "_meta": { "slot": "controls", "connector": "and", "priority": 9 } },
+      { "$include": "techPanel_generator/dominant_controls.json" }
+    ],
+    "greebleDensity": [
+      { "_meta": { "slot": "density", "connector": "", "priority": 10 } },
+      { "$include": "techPanel_generator/greeble_densities.json" }
+    ],
+    "labelingStyle": [
+      { "_meta": { "slot": "markings", "connector": "marked by", "priority": 11 } },
+      { "$include": "techPanel_generator/labeling_styles.json" }
+    ],
+    "panelLighting": [
+      { "_meta": { "slot": "lighting", "connector": "bathed in", "priority": 12 } },
+      { "$include": "techPanel_generator/panel_lightings.json" }
+    ],
+    "techFunction": [
+      { "_meta": { "slot": "purpose", "connector": "built for", "priority": 3 } },
+      { "$include": "tech_functions.json" }
+    ],
+    "promptTemplate": [
+      { "_meta": { "slot": "template", "connector": "", "priority": 0 } },
+      "A #wearLevel# #panelArchetype# built for #techFunction# — styled in #aestheticInfluence# and operating under #factionAlignment# control. The finish is #primaryColorPalette# with #keyMaterials#, equipped with a #screenType# and #dominantControls#. Surfaces show #greebleDensity# detailing, #labelingStyle#, and #panelLighting# lighting, shown in a clean front-on top-down view.",
+      "This #panelArchetype# panel, now #wearLevel#, belongs to a #factionAlignment# faction. Designed with #aestheticInfluence# aesthetics, it sports #primaryColorPalette# tones over #keyMaterials#, featuring #screenType#, #dominantControls#, and #panelLighting#. Function: #techFunction#. Rendered in a front-on top-down perspective.",
+      "#aestheticInfluence# meets utility in this #wearLevel# #panelArchetype# dedicated to #techFunction#. Materials include #keyMaterials# with #primaryColorPalette# accents. Controls: #dominantControls# beside a #screenType# display, bathed in #panelLighting# and marked by #labelingStyle#. Greeble density: #greebleDensity#. Presented as a front-on top-down view."
+    ]
+  },
+  "uiConfig": {
+    "multiSelect": ["keyMaterials", "screenType", "dominantControls"]
+  },
+  "entry_points": {
+    "default": "promptTemplate"
+  }
+}

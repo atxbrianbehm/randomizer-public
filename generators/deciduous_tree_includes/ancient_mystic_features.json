@@ -1,0 +1,9 @@
+[
+  {"text": "Its ancient bark seems to faintly glow with an inner light.", "weight": 10},
+  {"text": "Barely visible runes, almost worn away by time, are carved into its trunk.", "weight": 10},
+  {"text": "A palpable aura of stillness and age emanates from it.", "weight": 8},
+  {"text": "The air around it feels unusually warm and calm.", "weight": 6},
+  {"text": "Small, bioluminescent fungi cling to its roots, casting an ethereal glow at dusk.", "weight": 5, "notes": "More likely if setting is dark/forest"},
+  {"text": "Legend says it whispers secrets to those who listen closely on a full moon.", "weight": 3, "notes": "Flavor text, less direct observation"},
+  {"text": "Its roots delve deep into the earth, perhaps tapping into some forgotten magic.", "weight": 7}
+]

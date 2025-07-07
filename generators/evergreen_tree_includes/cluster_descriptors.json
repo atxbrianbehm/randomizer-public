@@ -1,0 +1,11 @@
+[
+  {"text": "A dense stand of", "weight": 10},
+  {"text": "A small, close-knit group of", "weight": 9},
+  {"text": "A towering grove of", "weight": 8, "age_category": ["mature", "old_growth", "giant"]},
+  {"text": "A scattered copse of", "weight": 7},
+  {"text": "A uniform planting of", "weight": 6, "setting_type": ["plantation", "park_garden"]},
+  {"text": "A naturalistic cluster of", "weight": 9},
+  {"text": "A protective circle of", "weight": 5, "setting_type": ["secluded_grove", "sacred_site"]},
+  {"text": "A line of", "weight": 4, "notes": "e.g. windbreak or property line"},
+  {"text": "An impressive congregation of", "weight": 7}
+]
