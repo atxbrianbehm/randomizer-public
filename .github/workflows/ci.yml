@@ -46,5 +46,9 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+                - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage/v8/coverage-final.json   # path to report
+          flags: unittests                         # optional label
           fail_ci_if_error: false
