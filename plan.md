@@ -10,7 +10,7 @@
 ### 1. Testing & Documentation Hardening
 - [ ] Increase unit test coverage to ≥90%
 - [ ] Add snapshot tests for prompt readability
-- [ ] Implement CI workflow: lint → test → build → size-budget check → upload coverage
+- [x] Implement CI workflow: lint → test → build → size-budget check → upload coverage
 - [ ] Expand `LLM_Content_Development_Guide.md` with examples, modifier reference, persistence schema, and debug overlay tips
 - [ ] Update README badges (coverage, CI, bundle size)
 - [ ] Update CHANGELOG for v1.1.0
@@ -68,6 +68,13 @@
 - [ ] Manual smoke-test scenarios (prompts, theme toggle, variable lock)
 - [ ] Ensure dev bundle <200 KB gzip
 - [ ] Run Lighthouse a11y audit and hit ≥90 score
+
+### Immediate Next Steps (2025-07-07)
+- [ ] Add edge-case & error-handling tests for engine and generatorLoader
+- [ ] Increase overall coverage to ≥50 % on way to 90 %
+- [ ] Add `npm run watch:test` and pre-commit lint+test hook
+- [ ] Stub expanded sections in `LLM_Content_Development_Guide.md`
+- [ ] Decide fate of unused helpers in `src/core/RandomizerApp.js` (delete or keep for refactor)
 
 ### 8. Milestone Close-Out
 - [ ] Update `CHANGELOG.md`
