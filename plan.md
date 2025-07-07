@@ -210,6 +210,15 @@ The goal is to replace the hard-coded lockable-fields modal with a generator-awa
 
 ## Completed Tasks (archived)
 
+### 1970s Opera Character Generator Integration (Completed)
+- Legacy Opera character generator code converted into `generators/opera_character_generator.json` using the modern JSON grammar schema.
+- Added `displayMode: "rawOnly"` metadata flag and updated front-end to respect it, eliminating duplicate prompt rendering.
+- Patched `RandomizerEngine` (Python & JS) to support object-wrapped option lists and empty-string options.
+- Integrated generator into dropdown via `public/generators/index.js` and `src/config/generatorIndex.js`.
+- Created `docs/opera_character_generator.md` for documentation.
+- Verified prompt generation on back-end and front-end; committed and pushed to GitHub.
+
+
 ### Project setup 
 - npm initialisation, dependency installation and npm scripts.
 
@@ -234,6 +243,18 @@ The goal is to replace the hard-coded lockable-fields modal with a generator-awa
 
 ---
 _Last updated: 2025-06-25 10:52 CT_
+
+---
+
+## Consolidated Notes from Secondary Plans
+
+### 1970s Opera Character Generator Refactor & Integration (historical notes)
+- User provided legacy HTML/JS for a 1970s Opera Character Generator.
+- Refactored into JSON generator `opera_character_generator.json`.
+- Engine patched for object-wrapped option lists and empty-string safeguards.
+- Added `displayMode: "rawOnly"` to metadata and UI logic to prevent duplicate text.
+- Generator fully integrated, documented, and tested both back-end & front-end.
+
 
 ## Goals
 1. Modularize the front-end codebase (split `app.js`, rely on `RandomizerEngine.js`).
