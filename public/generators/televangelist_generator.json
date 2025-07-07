@@ -1,0 +1,583 @@
+{
+  "metadata": {
+    "name": "Televangelist Generator",
+    "version": "2.0.0",
+    "description": "Generates elaborate, humorous televangelist scenarios with modular content.",
+    "author": "Comedy Content Creator",
+    "created": "2025-06-21",
+    "category": "comedy",
+    "tags": [
+      "humor",
+      "satire",
+      "television",
+      "religion"
+    ],
+    "previewImage": "televangelistPackThumb.png"
+  },
+  "assets": {
+    "images": [
+      "golden_throne.jpg",
+      "money_pile.png",
+      "holy_light.gif"
+    ],
+    "audio": [
+      "hallelujah.mp3",
+      "organ_music.wav"
+    ],
+    "fonts": [
+      "biblical_serif.ttf"
+    ],
+    "styles": {
+      "background": "linear-gradient(gold, white)",
+      "text_color": "#8B4513",
+      "highlight_color": "#FFD700"
+    }
+  },
+  "variables": {
+    "donation_amount": {
+      "type": "number",
+      "default": 100,
+      "description": "Current donation amount being requested"
+    },
+    "viewer_count": {
+      "type": "number",
+      "default": 1000,
+      "description": "Number of viewers watching"
+    },
+    "miracle_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of miracles performed this session"
+    },
+    "career_stage": {
+      "type": "number",
+      "default": 1,
+      "description": "Current stage of the televangelist's career (1-5)"
+    },
+    "preacher_emotion": {
+      "type": "string",
+      "default": "hopeful",
+      "description": "Current emotional state of the preacher"
+    },
+    "scandal_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Level of scandal faced by the ministry"
+    },
+    "follower_loyalty": {
+      "type": "number",
+      "default": 100,
+      "description": "Loyalty of followers (0-100)"
+    },
+    "divine_favor": {
+      "type": "number",
+      "default": 50,
+      "description": "Level of divine favor (0-100)"
+    },
+    "ministry_assets": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of ministry assets (jets, mansions, etc.)"
+    },
+    "prophecy_fulfilled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a major prophecy has been fulfilled"
+    },
+    "last_miracle_type": {
+      "type": "string",
+      "default": "healing",
+      "description": "Type of the last miracle performed"
+    },
+    "opposition_strength": {
+      "type": "number",
+      "default": 0,
+      "description": "Strength of opposition against the ministry"
+    },
+    "rebranding_success": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the rebranding effort was successful"
+    },
+    "legacy_impact": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall impact of the televangelist's legacy"
+    },
+    "current_offering_type": {
+      "type": "string",
+      "default": "seed_faith",
+      "description": "Type of offering being requested"
+    },
+    "divine_intervention_needed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether divine intervention is needed"
+    },
+    "media_attention": {
+      "type": "number",
+      "default": 1,
+      "description": "Level of media attention (1-5)"
+    },
+    "spiritual_warfare_intensity": {
+      "type": "number",
+      "default": 0,
+      "description": "Intensity of spiritual warfare"
+    },
+    "new_revelation_unveiled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a new revelation has been unveiled"
+    },
+    "global_reach": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the ministry has achieved global reach"
+    },
+    "disciple_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of disciples trained"
+    },
+    "heavenly_rewards_promised": {
+      "type": "string",
+      "default": "eternal life",
+      "description": "Type of heavenly rewards promised"
+    },
+    "earthly_blessings_promised": {
+      "type": "string",
+      "default": "financial prosperity",
+      "description": "Type of earthly blessings promised"
+    },
+    "testimony_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of testimonies received"
+    },
+    "divine_mandate_clarity": {
+      "type": "number",
+      "default": 1,
+      "description": "Clarity of divine mandate (1-5)"
+    },
+    "spiritual_gifts_manifested": {
+      "type": "string",
+      "default": "healing",
+      "description": "Type of spiritual gifts manifested"
+    },
+    "prophetic_word_accuracy": {
+      "type": "number",
+      "default": 1,
+      "description": "Accuracy of prophetic words (1-5)"
+    },
+    "faith_level_required": {
+      "type": "number",
+      "default": 1,
+      "description": "Level of faith required for blessings (1-5)"
+    },
+    "seed_faith_amount": {
+      "type": "number",
+      "default": 100,
+      "description": "Amount for seed faith offering"
+    },
+    "miracle_frequency": {
+      "type": "number",
+      "default": 1,
+      "description": "Frequency of miracles (1-5)"
+    },
+    "divine_intervention_type": {
+      "type": "string",
+      "default": "financial",
+      "description": "Type of divine intervention"
+    },
+    "spiritual_breakthrough_imminent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a spiritual breakthrough is imminent"
+    },
+    "heavenly_vision_clarity": {
+      "type": "number",
+      "default": 1,
+      "description": "Clarity of heavenly vision (1-5)"
+    },
+    "apostolic_anointing_level": {
+      "type": "number",
+      "default": 1,
+      "description": "Level of apostolic anointing (1-5)"
+    },
+    "global_crusade_planned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a global crusade is planned"
+    },
+    "divine_strategy_revealed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a divine strategy has been revealed"
+    },
+    "end_times_prophecy_focus": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the focus is on end times prophecy"
+    },
+    "prosperity_gospel_emphasis": {
+      "type": "number",
+      "default": 1,
+      "description": "Emphasis on prosperity gospel (1-5)"
+    },
+    "healing_revival_focus": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the focus is on healing revival"
+    },
+    "social_justice_stance": {
+      "type": "string",
+      "default": "neutral",
+      "description": "Stance on social justice issues"
+    },
+    "political_influence_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Level of political influence"
+    },
+    "media_empire_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Size of media empire (0-5)"
+    },
+    "charitable_giving_percentage": {
+      "type": "number",
+      "default": 0,
+      "description": "Percentage of income given to charity"
+    },
+    "personal_sacrifice_made": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a personal sacrifice has been made"
+    },
+    "spiritual_legacy_secured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether spiritual legacy is secured"
+    }
+  },
+  "grammar": {
+    "greeting": [
+      { "_meta": { "slot": "subject", "connector": "", "priority": 1 } },
+      "Blessed viewers!",
+      "Children of the light!",
+      "Faithful flock!",
+      "Beloved congregation!"
+    ],
+    "platforms": { "_meta": { "slot": "platform", "priority": 7 }, "$include": "platforms.json" },
+    "mediaContexts": { "_meta": { "slot": "media_context", "priority": 8 }, "$include": "mediaContexts.json" },
+    "downfalls": { "_meta": { "slot": "downfall", "priority": 9 }, "$include": "downfalls.json" },
+    "taglines": { "_meta": { "slot": "tagline", "priority": 10 }, "$include": "taglines.json" },
+    "divine_title": [
+      { "_meta": { "slot": "actor_title", "connector": "", "priority": 2 } },
+      {
+        "text": "Reverend",
+        "weight": 3
+      },
+      {
+        "text": "Pastor",
+        "weight": 3
+      },
+      {
+        "text": "Minister",
+        "weight": 2
+      },
+      {
+        "text": "Prophet",
+        "weight": 1
+      },
+      {
+        "text": "Archbishop",
+        "weight": 1
+      }
+    ],
+    "preacher_name": [
+      { "_meta": { "slot": "actor_name", "connector": "", "priority": 3 } },
+      "Blessington",
+      "Prosperity",
+      "Goldenshower",
+      "Moneybags",
+      "Wealthworth",
+      "Cashmere"
+    ],
+    "urgent_need": [
+      { "_meta": { "slot": "purpose", "connector": "for", "priority": 4 } },
+      {
+        "text": "the Lord's private jet",
+        "weight": 5
+      },
+      {
+        "text": "a new crystal cathedral",
+        "weight": 4
+      },
+      {
+        "text": "holy water imported from Jordan",
+        "weight": 3
+      },
+      {
+        "text": "diamond-encrusted prayer wheels",
+        "weight": 2
+      },
+      {
+        "text": "a solid gold pulpit",
+        "weight": 1
+      }
+    ],
+    "divine_consequence": [
+      { "_meta": { "slot": "positive_consequence", "connector": "so", "priority": 5 } },
+      "your crops will flourish",
+      "wealth will rain upon you",
+      "angels will guard your wallet",
+      "prosperity will multiply tenfold",
+      "divine financial blessings will overflow"
+    ],
+    "negative_consequence": [
+      { "_meta": { "slot": "negative_consequence", "connector": "beware of", "priority": 6 } },
+      {
+        "text": "financial drought",
+        "weight": 3
+      },
+      {
+        "text": "spiritual bankruptcy",
+        "weight": 3
+      },
+      {
+        "text": "cursed credit score",
+        "weight": 2
+      },
+      {
+        "text": "heavenly audit",
+        "weight": 1
+      }
+    ],
+    "money_request": {
+      "_meta": { "slot": "template", "priority": 0 },
+      "type": "conditional",
+      "options": [
+        {
+          "text": "Send just $#donation_amount# and #divine_consequence#!",
+          "conditions": {
+            "donation_amount": {
+              "$lt": 200
+            }
+          },
+          "actions": {
+            "set": {
+              "donation_amount": {
+                "$multiply": 2
+              }
+            }
+          }
+        },
+        {
+          "text": "The Lord requires $#donation_amount# for #urgent_need#!",
+          "conditions": {
+            "donation_amount": {
+              "$gte": 200
+            }
+          },
+          "actions": {
+            "increment": {
+              "miracle_count": 1
+            }
+          }
+        }
+      ],
+      "fallback": "Donations of any amount are blessed!"
+    },
+    "humble_origin": [
+      "I remember a time when I had nothing but a dream and a rusty microphone, as a humble #preacher_occupation#.",
+      "My ministry began in a small, leaky garage, with only a handful of faithful souls, and I, a simple #preacher_occupation#.",
+      "The Lord called me from the humblest of beginnings, a simple #preacher_occupation#."
+    ],
+    "preacher_occupation": { "$include": "preacher_occupations.json" },
+    "initial_message": [
+      "My message was simple: faith can move mountains, even molehills!",
+      "I preached about the power of a mustard seed, and how it can grow into a mighty oak of prosperity.",
+      "The Lord revealed to me a truth: your blessings are tied to your giving."
+    ],
+    "small_miracle": [
+      "Just last week, a viewer sent in their last $10, and their broken washing machine was instantly repaired!",
+      "A faithful sister, who sowed a seed of $20, found a forgotten $50 bill in an old coat!",
+      "Through prayer and a humble offering, a family's lost pet returned home, unharmed!"
+    ],
+    "first_call_to_action": [
+      "Now, if you believe in the power of small beginnings, sow a seed of $#seed_faith_amount#!",
+      "Help us reach just a few more souls! Send your best offering of $#seed_faith_amount# today!",
+      "For just $#seed_faith_amount#, you can be a part of this divine movement!"
+    ],
+    "stage_1_sermon": [
+      "#greeting# I am #divine_title# #preacher_name#. #humble_origin# #initial_message# #small_miracle# #first_call_to_action#"
+    ],
+    "ministry_expansion_claim": [
+      "Our ministry is expanding, reaching millions across the globe!",
+      "The Lord has blessed us with unprecedented growth, touching lives in every continent!",
+      "From humble beginnings, we are now a beacon of hope to countless souls worldwide!"
+    ],
+    "new_asset_acquisition": [
+      "We've just acquired a new #ministry_asset_type# to further God's work!",
+      "The Lord has provided us with a magnificent #ministry_asset_type# for His glory!",
+      "Through your generous giving, we now have a state-of-the-art #ministry_asset_type#!"
+    ],
+    "ministry_asset_type": [
+      "private jet",
+      "mega-church complex",
+      "satellite broadcasting station",
+      "luxury yacht"
+    ],
+    "grand_promise": [
+      "Sow a seed today, and watch as your #earthly_blessings_promised# manifest tenfold!",
+      "With your faithful contribution, you will unlock #heavenly_rewards_promised# beyond your wildest dreams!",
+      "Expect a #divine_intervention_type# miracle in your life when you give generously!"
+    ],
+    "increased_offering_request": [
+      "We need your most generous offering of $#donation_amount# to continue this divine expansion!",
+      "The Lord is calling for a sacrificial gift of $#donation_amount# to build His kingdom!",
+      "For just $#donation_amount#, you can secure your place in this global revival!"
+    ],
+    "stage_2_sermon": [
+      "#greeting# I am #divine_title# #preacher_name#. #ministry_expansion_claim# #new_asset_acquisition# #grand_promise# #increased_offering_request#"
+    ],
+    "crisis_event": [
+      "We are facing a storm of #scandal_type#!",
+      "The enemy has launched a vicious attack with #scandal_type#!",
+      "A dark cloud of #scandal_type# threatens to engulf our ministry!"
+    ],
+    "scandal_type": [
+      "false accusations",
+      "a financial audit",
+      "a health scare",
+      "media persecution"
+    ],
+    "scandal_impact": [
+      "Our #follower_loyalty# is being tested, but our faith remains unshaken!",
+      "The #media_attention# is intense, but God is greater!",
+      "We are under #opposition_strength# like never before, but victory is at hand!"
+    ],
+    "divine_intervention_plea": [
+      "Only a mighty move of God can deliver us from this #crisis_event#!",
+      "We need a #divine_intervention_type# breakthrough, a miracle of epic proportions!",
+      "The Lord has shown me that #spiritual_breakthrough_imminent# is upon us, but we must act!"
+    ],
+    "grand_vision_unveiling": {
+      "type": "conditional",
+      "options": [
+        {
+          "text": "I've received a #heavenly_vision_clarity# vision for a #global_crusade_planned# that will shake the nations! We are called to build a #media_empire_size# media empire!",
+          "conditions": {
+            "global_crusade_planned": {"$eq": true},
+            "divine_strategy_revealed": {"$eq": true}
+          }
+        },
+        {
+          "text": "The Lord has revealed a #divine_strategy_revealed# to overcome all adversity and usher in a new era!",
+          "conditions": {
+            "divine_strategy_revealed": {"$eq": true}
+          }
+        },
+        {
+          "text": "We are called to build a #media_empire_size# that will reach every corner of the earth!",
+          "conditions": {
+            "media_empire_size": {"$gt": 0}
+          }
+        }
+      ],
+      "fallback": "The Lord has a plan, and it is grand!"
+    },
+    "sacrificial_offering_request": [
+      "To overcome this crisis and fund this grand vision, we need a sacrificial offering of $#donation_amount# from every faithful believer!",
+      "The Lord is calling for a #personal_sacrifice_made# from you today, a seed of $#donation_amount# that will unlock unprecedented blessings!",
+      "This is not a time for small giving! We need $#donation_amount# to secure our #spiritual_legacy_secured#!"
+    ],
+    "stage_3_sermon": [
+      "#greeting# I am #divine_title# #preacher_name#. #crisis_event# #scandal_impact# #divine_intervention_plea# #grand_vision_unveiling# #sacrificial_offering_request#"
+    ],
+    "rebirth_claim": [
+      "Through the ashes of adversity, our ministry has risen, stronger than ever!",
+      "The Lord has delivered us from the jaws of #scandal_type#, and we stand victorious!",
+      "What the enemy meant for evil, God has turned for good, and our #follower_loyalty# is soaring!"
+    ],
+    "new_message_focus": {
+      "type": "conditional",
+      "options": [
+        {
+          "text": "My friends, I've received a fresh anointing, a new word for this generation: a divine revelation!",
+          "conditions": {"new_revelation_unveiled": {"$eq": true}}
+        },
+        {
+          "text": "We are entering a season of spiritual breakthrough, where spiritual gifts will be commonplace!",
+          "conditions": {"spiritual_breakthrough_imminent": {"$eq": true}}
+        },
+        {
+          "text": "The Lord has called us to a healing revival that will sweep across the land!",
+          "conditions": {"healing_revival_focus": {"$eq": true}}
+        }
+      ],
+      "fallback": "The Lord is doing a new thing!"
+    },
+    "renewed_plea_intensity": [
+      "Now, more than ever, we need your unwavering support! Your seed of $#donation_amount# will secure your #heavenly_rewards_promised#!",
+      "This is a critical moment! Stand with us with your most generous offering of $#donation_amount#, and witness #earthly_blessings_promised#!",
+      "The harvest is plentiful, but the laborers are few! Send your best gift of $#donation_amount# and become a #disciple_count# maker!"
+    ],
+    "stage_4_sermon": [
+      "#greeting# I am #divine_title# #preacher_name#. #rebirth_claim# #new_message_focus# #renewed_plea_intensity#"
+    ],
+    "legacy_reflection": [
+      "As I reflect on this incredible journey, I see the hand of God in every step, every miracle, every offering. This is my legacy.",
+      "My life has been a testament to His faithfulness, and your generosity has made it all possible. This is our shared legacy.",
+      "We've built a #media_empire_size# media empire for the Lord, and secured a #spiritual_legacy_secured# spiritual legacy for generations to come."
+    ],
+    "final_offering_call": [
+      "Now, as we approach the culmination of this divine work, I ask for one final, ultimate offering of $#donation_amount#!",
+      "This is your last chance to sow into this fertile ground! A seed of $#donation_amount# will ensure your place in eternity!",
+      "For the glory of God, and the future of this ministry, I call upon you to give your very best, a final offering of $#donation_amount#!"
+    ],
+    "stage_5_sermon": [
+      "#greeting# I am #divine_title# #preacher_name#. #legacy_reflection# #final_offering_call#"
+    ],
+    "main_sermon_orchestrator": {
+      "type": "conditional",
+      "options": [
+        {
+          "text": "#stage_1_sermon#",
+          "conditions": {"career_stage": {"$eq": 1}},
+          "actions": {"set": {"career_stage": 2}}
+        },
+        {
+          "text": "#stage_2_sermon#",
+          "conditions": {"career_stage": {"$eq": 2}},
+          "actions": {"set": {"career_stage": 3, "media_attention": 3, "ministry_assets": 2, "follower_loyalty": 90}}
+        },
+        {
+          "text": "#stage_3_sermon#",
+          "conditions": {"career_stage": {"$eq": 3}},
+          "actions": {"set": {"career_stage": 4, "scandal_level": 1, "opposition_strength": 3, "media_attention": 5, "divine_favor": 30, "scandal_type": "false accusations", "follower_loyalty": 50, "media_empire_size": 3, "heavenly_vision_clarity": 4, "global_crusade_planned": true, "divine_strategy_revealed": true}}
+        },
+        {
+          "text": "#stage_4_sermon#",
+          "conditions": {"career_stage": {"$eq": 4}},
+          "actions": {"set": {"career_stage": 5, "scandal_level": 0, "rebranding_success": true, "follower_loyalty": 100, "divine_favor": 80, "new_revelation_unveiled": true, "spiritual_breakthrough_imminent": true, "scandal_type": "resolved crisis", "healing_revival_focus": true}}
+        },
+        {
+          "text": "#stage_5_sermon#",
+          "conditions": {"career_stage": {"$eq": 5}},
+          "actions": {"set": {"career_stage": 1, "legacy_impact": 100, "spiritual_legacy_secured": true, "media_empire_size": 5, "charitable_giving_percentage": 10, "personal_sacrifice_made": true}} 
+        }
+      ],
+      "fallback": "The Lord works in mysterious ways. Please reset the career_stage variable."
+    }
+  },
+  "entry_points": {
+    "default": "main_sermon_orchestrator",
+    "stage_1": "stage_1_sermon",
+    "stage_2": "stage_2_sermon",
+    "stage_3": "stage_3_sermon",
+    "stage_4": "stage_4_sermon",
+    "stage_5": "stage_5_sermon"
+  }
+}

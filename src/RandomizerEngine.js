@@ -368,6 +368,26 @@ export default class RandomizerEngine {
         } else if (rule && typeof rule === 'object' && rule.type) {
             // Complex rule with explicit type field
             expandedText = this.processComplexRule(generator, rule, context);
+        } else if (rule && typeof rule === 'object') {
+            // Handle objects that wrap their options in a single array field (e.g., { species:[...], actions:[...] })
+            const listFields = Object.values(rule).filter(v => Array.isArray(v));
+            if (listFields.length) {
+                let options = listFields[0];
+                const topActions = rule.actions;
+                if (topActions) {
+                    options = options.map(opt => {
+                        if (typeof opt === 'object') {
+                            const merged = { ...opt };
+                            merged.actions = merged.actions ? merged.actions.concat(topActions) : topActions;
+                            return merged;
+                        }
+                        return { text: opt, actions: topActions };
+                    });
+                }
+                expandedText = this.selectFromArray(options, context);
+            } else {
+                expandedText = '[INVALID RULE FORMAT]';
+            }
         } else {
             expandedText = '[INVALID RULE FORMAT]';
         }
@@ -389,7 +409,7 @@ export default class RandomizerEngine {
             if (typeof option === 'string') {
                 weightedOptions.push({ text: option, weight: 1 });
                 totalWeight += 1;
-            } else if (option.text || option.value) {
+            } else if (Object.prototype.hasOwnProperty.call(option, 'text') || Object.prototype.hasOwnProperty.call(option, 'value')) {
                 const textVal = option.text || option.value;
                 const weight = option.weight || 1;
                 if (this.checkConditions(option.conditions, context)) {

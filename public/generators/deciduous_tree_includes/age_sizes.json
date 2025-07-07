@@ -1,0 +1,48 @@
+[
+  {
+    "text": "young sapling",
+    "weight": 10,
+    "actions": {"set": {"tree_age_category": "young"}}
+  },
+  {
+    "text": "slender young tree",
+    "weight": 15,
+    "actions": {"set": {"tree_age_category": "young"}}
+  },
+  {
+    "text": "mature tree",
+    "weight": 20,
+    "actions": {"set": {"tree_age_category": "mature"}}
+  },
+  {
+    "text": "large, well-established tree",
+    "weight": 15,
+    "actions": {"set": {"tree_age_category": "mature"}}
+  },
+  {
+    "text": "towering old tree",
+    "weight": 10,
+    "actions": {"set": {"tree_age_category": "ancient"}}
+  },
+  {
+    "text": "ancient, gnarled tree",
+    "weight": 8,
+    "actions": {"set": {"tree_age_category": "ancient"}}
+  },
+  {
+    "text": "sturdy, medium-sized tree",
+    "weight": 12,
+    "actions": {"set": {"tree_age_category": "mature"}}
+  },
+  {
+    "text": "small, somewhat stunted tree",
+    "weight": 5,
+    "actions": {"set": {"tree_age_category": "small_stunted"}},
+    "notes": "Could be due to environment or species"
+  },
+  {
+    "text": "sprawling, wide-canopied veteran",
+    "weight": 5,
+    "actions": {"set": {"tree_age_category": "ancient"}}
+  }
+]

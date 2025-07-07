@@ -1,0 +1,10 @@
+[
+  { "label": "Star Wars Core (Used Future, 70s Analog)", "value": "Star Wars Core" },
+  { "label": "Cassette Futurism (Alien, Blade Runner - 70s/80s CRTs)", "value": "Cassette Futurism" },
+  { "label": "Dieselpunk (Fallout, Sky Captain - Interwar/WWII, Gritty)", "value": "Dieselpunk" },
+  { "label": "Atompunk/Raygun Gothic (Jetsons, Forbidden Planet - 50s/60s)", "value": "Atompunk/Raygun Gothic" },
+  { "label": "Decopunk (Bioshock - Art Deco, Luxurious Machines)", "value": "Decopunk" },
+  { "label": "Soviet Retrofuturism (Constructivist, Monumental)", "value": "Soviet Retrofuturism" },
+  { "label": "Valvepunk/Clockpunk (Early Industrial, Brass, Valves)", "value": "Valvepunk/Clockpunk" },
+  { "label": "Formica Futurism (Googie, Populuxe - Late 50s/Early 60s)", "value": "Formica Futurism" }
+]

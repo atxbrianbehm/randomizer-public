@@ -1,0 +1,8 @@
+[
+  { "label": "Pristine (New Old Stock - retro design, mint condition)", "value": "Pristine (New Old Stock)" },
+  { "label": "Lightly Used (Minor scuffs, dust, fingerprints)", "value": "Lightly Used" },
+  { "label": "Moderately Worn (Visible scratches, grime, faded labels)", "value": "Moderately Worn" },
+  { "label": "Heavily Used / Jury-Rigged (Damage, patches, makeshift repairs)", "value": "Heavily Used / Jury-Rigged" },
+  { "label": "Battle-Scarred / Field Repaired (Impact marks, welds)", "value": "Battle-Scarred / Field Repaired" },
+  { "label": "Overgrown / Reclaimed by Nature (Dust, vines, rust, decay)", "value": "Overgrown / Reclaimed by Nature" }
+]

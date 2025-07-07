@@ -19,7 +19,10 @@
   },
   "grammar": {
     "pick_species": {
-      "$include": "/deciduous_tree_includes/refactored_pick_species_rule.json"
+      "$include": "/deciduous_tree_includes/species.json",
+      "actions": [
+        {"set_variable_from_selected_text": "tree_species_name"}
+      ]
     },
     "pick_season": {"$include": "/deciduous_tree_includes/seasons.json"},
     "pick_age_size": {"$include": "/deciduous_tree_includes/age_sizes.json"},
@@ -65,9 +68,9 @@
       ],
       "fallback": ""
     },
-    "generate_single_tree_description": [
+    "@generate_single_tree_description": [
       {"rule_once": "#pick_species#"},
-      "A #tree_species_name# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute_generic#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."
+      "A #tree_species_name.a_an# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute_generic#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."
     ],
     "cluster_size_numeric_text": {
       "type": "conditional",
@@ -86,7 +89,7 @@
           "text": "#pick_cluster_descriptor# #cluster_size_numeric_text# #tree_species_name.plural# grow together. They are generally #pick_age_size#, sharing a common #pick_overall_shape#, and located #pick_setting#. As #pick_season# progresses, they jointly display #generate_leaf_description# and similar #pick_bark_attribute_generic#. They reflect the season with #seasonal_details_logic##optional_ancient_feature_logic#."
         },
         {
-          "text": "#generate_single_tree_description# Nearby, #pick_species# other deciduous, of a different kind, contributes to the small stand. It is a #pick_age_size# specimen.",
+          "text": "#@generate_single_tree_description# Nearby, #pick_species.a_an# other deciduous, of a different kind, contributes to the small stand. It is a #pick_age_size# specimen.",
           "conditions": {"cluster_type": {"$eq": "mixed_species_simple"}}
         }
       ],
@@ -97,7 +100,7 @@
     ]
   },
   "entry_points": {
-    "default": "#generate_single_tree_description#",
+    "default": "#@generate_single_tree_description#",
     "debug": "#debug_vars#"
   }
 }

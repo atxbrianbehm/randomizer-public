@@ -1,0 +1,10 @@
+[
+  { "label": "Monochrome CRT", "value": "Monochrome CRT (Green/Amber/Blue-Gray Text)" },
+  { "label": "Vector Display", "value": "Basic Vector Graphics Display (Flickering Lines)" },
+  { "label": "Nixie/Panaplex", "value": "Nixie Tube or Panaplex Readouts" },
+  { "label": "LED Segments", "value": "Red/Green LED Segment Displays" },
+  { "label": "Annunciator Lights", "value": "Backlit Annunciator Panels (Status Lights)" },
+  { "label": "No Screen", "value": "No Screen (Physical Gauges & Indicators Only)" },
+  { "label": "Oscilloscope", "value": "Oscilloscope-style Waveform Display" },
+  { "label": "Early Plasma", "value": "Early Plasma Display (Orange Glow)" }
+]

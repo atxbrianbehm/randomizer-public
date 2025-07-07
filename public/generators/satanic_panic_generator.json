@@ -1,0 +1,168 @@
+{
+  "metadata": {
+    "name": "1980s Satanic Panic Generator",
+    "version": "1.0.0",
+    "description": "Generates absurd 1980s-style satanic panic conspiracy theories",
+    "author": "Historical Satire Writer",
+    "created": "2025-06-21",
+    "category": "historical-comedy",
+    "tags": [
+      "1980s",
+      "moral-panic",
+      "conspiracy",
+      "satire",
+      "history"
+    ]
+  },
+  "assets": {
+    "images": [
+      "vhs_static.gif",
+      "80s_news_desk.jpg",
+      "worried_parent.png"
+    ],
+    "audio": [
+      "dramatic_sting.wav",
+      "80s_news_theme.mp3"
+    ],
+    "fonts": [
+      "80s_computer.ttf"
+    ],
+    "styles": {
+      "background": "#000080",
+      "text_color": "#FFFF00",
+      "warning_color": "#FF0000"
+    }
+  },
+  "variables": {
+    "panic_level": {
+      "type": "number",
+      "default": 1,
+      "description": "Current level of moral panic (1-10)"
+    },
+    "year": {
+      "type": "number",
+      "default": 1985,
+      "description": "Year of the panic"
+    }
+  },
+  "grammar": {
+    "innocent_activity": [
+      { "_meta": { "slot": "activity", "connector": "", "priority": 3 } },
+      {
+        "text": "playing Dungeons & Dragons",
+        "weight": 5
+      },
+      {
+        "text": "listening to heavy metal",
+        "weight": 4
+      },
+      {
+        "text": "reading fantasy novels",
+        "weight": 3
+      },
+      {
+        "text": "playing video games",
+        "weight": 3
+      },
+      {
+        "text": "watching cartoons",
+        "weight": 2
+      },
+      {
+        "text": "collecting Pokemon cards",
+        "weight": 1
+      }
+    ],
+    "evil_transformation": [
+      { "_meta": { "slot": "consequence", "connector": "leads to", "priority": 4 } },
+      "summoning demons",
+      "joining secret cults",
+      "sacrificing homework to dark forces",
+      "speaking in ancient tongues during math class",
+      "drawing pentagrams in notebook margins"
+    ],
+    "concerned_authority": [
+      { "_meta": { "slot": "actor", "connector": "warns", "priority": 2 } },
+      {
+        "text": "local pastor",
+        "weight": 4
+      },
+      {
+        "text": "school principal",
+        "weight": 3
+      },
+      {
+        "text": "PTA president",
+        "weight": 3
+      },
+      {
+        "text": "concerned mother",
+        "weight": 5
+      },
+      {
+        "text": "television psychologist",
+        "weight": 2
+      }
+    ],
+    "absurd_evidence": [
+      { "_meta": { "slot": "evidence", "connector": "about", "priority": 5 } },
+      "backwards messages in Saturday morning cartoons",
+      "satanic symbols in breakfast cereal",
+      "demonic possession via calculator displays",
+      "subliminal messages in elevator music",
+      "occult rituals disguised as gym class"
+    ],
+    "dramatic_claim": [
+      { "_meta": { "slot": "subject", "connector": "", "priority": 1 } },
+      {
+        "text": "SHOCKING",
+        "weight": 3
+      },
+      {
+        "text": "TERRIFYING",
+        "weight": 3
+      },
+      {
+        "text": "UNPRECEDENTED",
+        "weight": 2
+      },
+      {
+        "text": "MIND-BLOWING",
+        "weight": 2
+      },
+      {
+        "text": "EARTH-SHATTERING",
+        "weight": 1
+      }
+    ],
+    "panic_headline": {
+      "_meta": { "slot": "template", "priority": 0 },
+      "type": "weighted",
+      "options": [
+        "#dramatic_claim#: Local #concerned_authority# warns that #innocent_activity# leads to #evil_transformation#!",
+        "BREAKING: #absurd_evidence# discovered in suburban neighborhood!",
+        "PARENTS BEWARE: Your children's #innocent_activity# hobby may be #evil_transformation#!",
+        "#concerned_authority# reveals #dramatic_claim# truth about #absurd_evidence#!"
+      ],
+      "weights": [
+        4,
+        3,
+        5,
+        3
+      ]
+    },
+    "expert_quote": [
+      { "_meta": { "slot": "quote", "connector": "", "priority": 6 } },
+      "According to my research, #innocent_activity# is clearly a gateway to #evil_transformation#",
+      "The signs are everywhere - #absurd_evidence# proves the influence is real",
+      "As a #concerned_authority#, I've seen firsthand how #innocent_activity# corrupts our youth"
+    ]
+  },
+  "entry_points": {
+    "default": "panic_headline",
+    "alternatives": [
+      "expert_quote",
+      "dramatic_claim"
+    ]
+  }
+}

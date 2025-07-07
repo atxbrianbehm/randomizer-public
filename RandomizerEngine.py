@@ -205,12 +205,40 @@ class RandomizerEngine:
 
         rule = generator['grammar'][rule_name]
 
+        # If rule is just a raw string, treat it as text to process
+        if isinstance(rule, str):
+            return self._process_text(rule, context)
+
         if isinstance(rule, list):
             # Simple array of options
             return self._select_from_array(rule, context)
         elif isinstance(rule, dict) and 'type' in rule:
             # Complex rule with type
             return self._process_complex_rule(generator, rule, context)
+        elif isinstance(rule, dict):
+            # Handle objects that wrap their options in a single-array field (e.g. {"species": [...], "actions": [...]})
+            list_fields = [v for v in rule.values() if isinstance(v, list)]
+            if list_fields:
+                # If multiple list fields exist, assume the first one contains the options
+                options = list_fields[0]
+                # Temporarily merge any top-level actions with each option so _select_from_array can fire them
+                top_actions = rule.get('actions')
+                if top_actions:
+                    # Ensure each option is a dict so we can merge actions safely
+                    merged_opts = []
+                    for opt in options:
+                        if isinstance(opt, dict):
+                            # Merge but preserve existing actions at option level
+                            existing_actions = opt.get('actions')
+                            if existing_actions:
+                                opt['actions'] = existing_actions + top_actions
+                            else:
+                                opt['actions'] = top_actions
+                            merged_opts.append(opt)
+                        else:
+                            merged_opts.append({'text': opt, 'actions': top_actions})
+                    options = merged_opts
+                return self._select_from_array(options, context)
 
         return '[INVALID RULE FORMAT]'
 
@@ -279,8 +307,10 @@ class RandomizerEngine:
                 self._execute_actions(option.get('actions'), context)
                 return self._process_text(option['text'], context)
 
-        fallback = rule.get('fallback')
-        return self._process_text(fallback, context) if fallback else '[NO CONDITIONS MET]'
+        # Use fallback even if it is an empty string; only display error if fallback key missing
+        if 'fallback' in rule:
+            return self._process_text(rule.get('fallback', ''), context)
+        return '[NO CONDITIONS MET]'
 
     def _process_sequential_rule(self, generator, rule, context):
         """Process sequential rules"""

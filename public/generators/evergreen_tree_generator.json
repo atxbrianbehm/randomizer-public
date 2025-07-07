@@ -187,11 +187,9 @@
       "fallback": ""
     },
     "determine_cluster_or_single": [
-  {"text": "#generate_single_tree_description#", "weight": 75,
-   "actions": {"set": {"is_cluster": false, "cluster_size": 1}}},
-  {"text": "#generate_cluster_description#", "weight": 25,
-   "actions": [{"set": {"is_cluster": true}}, {"rule": "#_set_cluster_details#"}]}
-],
+      {"$include": "evergreen_tree_includes/single_tree_description.json", "weight": 75, "actions": {"set": {"is_cluster": false, "cluster_size": 1}}},
+      {"text": "#generate_cluster_description#", "weight": 25, "actions": [{"set": {"is_cluster": true}}, {"rule": "#_set_cluster_details#"}]}
+    ],
     "_set_cluster_details": [
       {"text": "", "weight": 28, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 2}}},
       {"text": "", "weight": 28, "actions": {"set": {"cluster_type": "single_species", "cluster_size": 3}}},
@@ -199,8 +197,10 @@
       {"text": "", "weight": 18, "actions": {"set": {"cluster_type": "mixed_species_simple", "cluster_size": 2}}},
       {"text": "", "weight": 12, "actions": {"set": {"cluster_type": "mixed_species_simple", "cluster_size": 3}}}
     ],
-    "generate_single_tree_description":
-  "A #pick_species# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#.",
+    "@generate_single_tree_description": [
+      {"rule_once": "#pick_species#"},
+      "A #tree_species_name.a_an# tree, noted as #pick_age_size# with #pick_overall_shape#, stands in #pick_season# #pick_setting#. The tree exhibits #generate_leaf_description# and #pick_bark_attribute#. It shows signs of the season with #seasonal_details_logic##optional_ancient_feature_logic#."
+    ],
     "cluster_size_numeric_text": {
       "type": "conditional",
       "options": [
@@ -235,7 +235,8 @@
           "conditions": {"cluster_type": {"$eq": "single_species"}}
         },
         {
-          "$include": "evergreen_tree_includes/refactored_mixed_cluster_option.json"
+          "$include": "evergreen_tree_includes/cluster_description.json", 
+          "conditions": {"cluster_type": {"$eq": "mixed_species_simple"}}
         }
       ],
       "fallback": "A group of evergreen trees is present."

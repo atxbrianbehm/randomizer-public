@@ -187,7 +187,9 @@ export async function loadGenerators(engine, files) {
 export async function loadDefaultGenerators(engine) {
   const defaultFiles = [
     '/televangelist_generator.json',
-    '/satanic_panic_generator.json'
+    '/satanic_panic_generator.json',
+    '/deciduous_tree_generator.json',
+    '/evergreen_tree_generator.json'
   ];
   return loadGenerators(engine, defaultFiles);
 }

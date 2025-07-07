@@ -1,0 +1,7 @@
+[
+  { "label": "None (Smooth, unbroken surfaces)", "value": "None" },
+  { "label": "Low (Clean surfaces, minimal detailing, panel lines)", "value": "Low" },
+  { "label": "Medium (Some visual complexity, small vents, exposed fasteners)", "value": "Medium" },
+  { "label": "High (Dense, intricate surface details, visible wiring)", "value": "High" },
+  { "label": "Extreme (Overlapping layers of greebles, kitbashed look)", "value": "Extreme" }
+]

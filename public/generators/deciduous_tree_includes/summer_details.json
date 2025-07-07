@@ -1,0 +1,9 @@
+[
+  {"text": "a full, lush canopy providing deep shade", "weight": 15},
+  {"text": "its leaves a vibrant, healthy green in the summer sun", "weight": 12},
+  {"text": "dappled sunlight filtering through its dense foliage", "weight": 10},
+  {"text": "its leaves rustling gently in the warm summer breeze", "weight": 8},
+  {"text": "the air around it humming with the sound of insects", "weight": 6},
+  {"text": "looking sturdy and verdant in the height of summer", "weight": 7},
+  {"text": "unripe fruits or seedpods beginning to form among the leaves", "weight": 5, "conditions": {"has_fruit_or_flowers_in_spring": {"$eq": true}}}
+]
