@@ -14,21 +14,14 @@ describe('buildReadablePrompt snapshots', () => {
     engine = new RandomizerEngine();
   });
 
-  it('renders connectors & slot order correctly', async () => {
-    const gen = {
-      metadata: { name: 'connector-gen' },
-      grammar: {
-        origin: [
-          { _meta: { slot: 'subject', connector: '' }, text: 'cat' },
-          { _meta: { slot: 'condition', connector: ' in ' }, text: 'space' },
-          { _meta: { slot: 'purpose', connector: ' under ' }, text: 'water' }
-        ]
-      },
-      entry_points: { default: 'origin' }
-    };
-    await load(engine, gen);
-    const { readable } = engine.generateDetailed();
-    expect(readable).toMatchSnapshot();
+  it('renders connectors & slot order correctly', () => {
+    const segments = [
+      { _meta: { slot: 'subject', connector: '' }, text: 'cat' },
+      { _meta: { slot: 'condition', connector: ' in ' }, text: 'space' },
+      { _meta: { slot: 'purpose', connector: ' under ' }, text: 'water' }
+    ];
+    const readable = engine.buildReadablePrompt('connector-gen', segments);
+    expect(readable).toBe('cat in space under water');
   });
 
   it('returns template segment verbatim', async () => {
