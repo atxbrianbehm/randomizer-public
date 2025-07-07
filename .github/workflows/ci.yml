@@ -40,3 +40,10 @@ jobs:
           if [ "$SIZE" -gt 204800 ]; then
             echo "Bundle exceeds 200 KB limit" && exit 1
           fi
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: true
