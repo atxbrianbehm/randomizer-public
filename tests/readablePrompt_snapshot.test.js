@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import RandomizerEngine from '@/RandomizerEngine.js';
+import RandomizerEngine from '../src/RandomizerEngine.js';
 
 function load(engine, generator) {
   return engine.loadGenerator(generator).then((name) => {
