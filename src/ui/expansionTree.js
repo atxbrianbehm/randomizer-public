@@ -69,7 +69,13 @@ function renderNodes(parentElement, segments, rawText) {
 
 let originalOutputHtml = '';
 
-function highlightText(startIndex, endIndex, rawText) {
+/**
+ * Highlights the text in the output area.
+ * @param {number} startIndex - The start index of the text to highlight.
+ * @param {number} endIndex - The end index of the text to highlight.
+ * @param {string} _rawText - The raw generated text (unused).
+ */
+function highlightText(startIndex, endIndex, _rawText) {
     const outputArea = q('#output-area');
     if (!outputArea) return;
 

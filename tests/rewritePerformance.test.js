@@ -1,11 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import RandomizerEngine from '@/RandomizerEngine.js';
 
-function segmentsFor(promptText) {
-  // naive split into words as dummy segments for perf test
-  return promptText.split(' ').map((w, i) => ({ key: `w${i}`, text: w }));
-}
-
 describe('buildReadablePrompt performance', () => {
   const engine = new RandomizerEngine();
   // minimal generator, no meta lookup during ordering (skip overhead) – we only test function speed

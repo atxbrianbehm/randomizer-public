@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { humanLabel, extractValues, isMultiSelect, buildModal } from '@/ui/advancedModal.js';
+import { humanLabel, extractValues, buildModal } from '@/ui/advancedModal.js';
 
 function createMockApp() {
   // Minimal mock matching fields referenced in advancedModal.js
