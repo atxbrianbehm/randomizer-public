@@ -48,24 +48,28 @@ describe('RandomizerEngine core expansion', () => {
     const gen = {
       metadata: { name: 'cond' },
       grammar: {
-        origin: [
-          {
-            _meta: { slot: 'template' },
-            options: [
-              {
-                conditions: { $eq: { '#{fuel}': 0 } },
-                text: 'out of fuel',
-                actions: { set: { fuel: 100 } }
+        origin: {
+          type: 'conditional',
+          options: [
+            {
+              text: 'out of fuel',
+              conditions: {
+                fuel: { '$eq': 0 }
               },
-              {
-                conditions: {},
-                text: 'flying',
-                actions: { decrement: { fuel: 10 } }
+              actions: {
+                set: { fuel: 100 }
               }
-            ],
-            fallback: 'idle'
-          }
-        ]
+            },
+            {
+              text: 'flying',
+              conditions: {},
+              actions: {
+                decrement: { fuel: 10 }
+              }
+            }
+          ],
+          fallback: 'idle'
+        }
       },
       variables: { fuel: { default: 0 } },
       entry_points: { default: 'origin' }
