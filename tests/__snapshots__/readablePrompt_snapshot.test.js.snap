@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildReadablePrompt snapshots > renders connectors & slot order correctly 1`] = `"space"`;
+
+exports[`buildReadablePrompt snapshots > returns template segment verbatim 1`] = `"A lone wolf howls at night."`;
