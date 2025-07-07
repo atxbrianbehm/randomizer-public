@@ -1,5 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`buildReadablePrompt snapshots > renders connectors & slot order correctly 1`] = `"cat in space under water"`;
+exports[`buildReadablePrompt snapshots > renders connectors & slot order correctly 1`] = `"water"`;
 
 exports[`buildReadablePrompt snapshots > returns template segment verbatim 1`] = `"A lone wolf howls at night."`;
