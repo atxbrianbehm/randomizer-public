@@ -12,7 +12,13 @@ export default defineConfig({
     setupFiles: [],
     include: ['tests/**/*.js'],
     coverage: {
-      reporter: ['text', 'html']
+      reporter: ['text', 'html'],
+      threshold: {
+        statements: 25,
+        lines: 25,
+        functions: 25,
+        branches: 25
+      }
     }
   },
   resolve: {

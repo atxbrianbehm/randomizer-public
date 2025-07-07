@@ -29,3 +29,14 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Size budget check (200 KB gzipped)
+        run: |
+          SIZE=$(find dist/assets -type f -name "*.js" -exec gzip -c {} + | wc -c)
+          echo "Bundle size (gzipped): $SIZE bytes"
+          if [ "$SIZE" -gt 204800 ]; then
+            echo "Bundle exceeds 200 KB limit" && exit 1
+          fi
