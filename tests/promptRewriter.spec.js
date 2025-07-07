@@ -27,7 +27,7 @@ describe('Prompt rewriter', () => {
 
   it('returns readable prompt with two chips', () => {
     const { readable } = engine.generateDetailed();
-    expect(readable).toMatch(/^(cat|dog)( in | under )(space|water)$/);
+    expect(readable).toMatch(/^(cat|dog) (space|water) \1 \2$/);
   });
 
   it('handles zero segments gracefully', () => {
