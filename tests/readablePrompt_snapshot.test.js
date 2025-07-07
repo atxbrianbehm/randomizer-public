@@ -14,7 +14,15 @@ describe('buildReadablePrompt snapshots', () => {
     engine = new RandomizerEngine();
   });
 
-  it('renders connectors & slot order correctly', () => {
+  it('renders connectors & slot order correctly', async () => {
+    // Load a minimal generator so buildReadablePrompt can access metadata
+    const gen = {
+      metadata: { name: 'connector-gen' },
+      grammar: { dummy: [] },
+      entry_points: { default: 'dummy' }
+    };
+    await load(engine, gen);
+
     const segments = [
       { _meta: { slot: 'subject', connector: '' }, text: 'cat' },
       { _meta: { slot: 'condition', connector: ' in ' }, text: 'space' },
