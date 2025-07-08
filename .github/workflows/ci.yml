@@ -51,6 +51,7 @@ jobs:
           CODECOV_DISABLE_GIT: 1
         with:
           slug: atxbrianbehm/randomizer-public
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/v8/coverage-final.json
           flags: unittests
           fail_ci_if_error: false
