@@ -12,7 +12,9 @@ export default defineConfig({
     setupFiles: [],
     include: ['tests/**/*.js'],
     coverage: {
-      reporter: ['text', 'html'],
+      provider: 'v8',
+      reportsDirectory: 'coverage',
+      reporter: ['text', 'html', 'json'],
       threshold: {
         statements: 25,
         lines: 25,
