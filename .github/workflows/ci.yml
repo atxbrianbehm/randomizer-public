@@ -54,4 +54,4 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/v8/coverage-final.json
           flags: unittests
-          fail_ci_if_error: false
+          fail_ci_if_error: true
