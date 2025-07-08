@@ -361,6 +361,18 @@ _Last updated: 2025-06-25 10:52 CT_
 - Generator fully integrated, documented, and tested both back-end & front-end.
 
 
+### Advanced Modal Dialogue Rendering CSS Bug (historical notes)
+- Advanced modal rows were missing CSS class hookups; `.advanced-row` added to markup.
+- Dropdown arrow icons replaced with caret icons, responsive to theme.
+- Scrollbar styling updated for theme contrast.
+- Confirmed rendering across browsers; issue resolved.
+
+### Generator Lab Submodule (historical notes)
+- Created `experiments/generator-lab` submodule for isolated generator authoring and tests.
+- Copied existing generators into lab repo with minimal harness.
+- Included authoring guides and system design docs.
+- Pending CI/lint setup and workflow documentation for promotion to main repo.
+
 ## Goals
 1. Modularize the front-end codebase (split `app.js`, rely on `RandomizerEngine.js`).
 2. Introduce Vite for fast dev server and production bundle.
