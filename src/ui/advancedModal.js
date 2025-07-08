@@ -57,8 +57,16 @@ export function createLockBtn(key, app) {
   btn.onclick = () => {
     const newState = !app.LockState[key];
     app.LockState[key] = newState;
-    // When unlocking, also clear stored value
-    if (!app.LockState[key]) {
+    const sel = document.getElementById(`adv-${key}`);
+    if (newState) {
+      // capture current selection as locked value
+      if (sel) {
+        app.Locked[key] = sel.value;
+        app.engine.lockedValues = app.engine.lockedValues || {};
+        app.engine.lockedValues[key] = sel.value;
+      }
+    } else {
+      // unlocking -> clear
       delete app.Locked[key];
       delete app.engine.lockedValues[key];
     }
@@ -123,8 +131,18 @@ export function buildModal(app) {
 
     // Determine the container: if currently inside a stage section use its inner grid, otherwise the root gridWrap
     const container = currentStage ? stageGrid : gridWrap;
-    const ruleArr = grammar[ruleKey] || [];
-    // Skip if no options
+    // Support both direct array rules (Tech Panel style) and object-wrapped rules (Opera style)
+    let ruleArr = grammar[ruleKey];
+    if (Array.isArray(ruleArr)) {
+      // ok
+    } else if (ruleArr && typeof ruleArr === 'object') {
+      // find first property that is an array (e.g., { ages: [...] })
+      const firstArr = Object.values(ruleArr).find(v => Array.isArray(v));
+      ruleArr = firstArr || [];
+    } else {
+      ruleArr = [];
+    }
+    // Skip if still not an array or empty
     if (!Array.isArray(ruleArr) || ruleArr.length === 0) return;
     // Extract user-facing options (skip _meta objects)
     const options = ruleArr.filter(it => typeof it === 'string' || (typeof it === 'object' && (it.value || it.text))).map(it => typeof it === 'string' ? it : (it.label || it.value || it.text));
@@ -227,6 +245,11 @@ export function applyModal(app) {
       if (sel) {
         app.engine.lockedValues[key] = sel.value;
         app.Locked[key] = sel.value;
+        if (key === 'pick_gender') {
+          // Update engine variable so pronouns match locked gender
+          const g = sel.value.includes('man') ? 'male' : 'female';
+          app.engine.variables.set?.(`${app.engine.currentGenerator || app.currentGenerator}.gender`, g);
+        }
       }
     } else {
       delete app.engine.lockedValues[key];

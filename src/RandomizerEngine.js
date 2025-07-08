@@ -702,8 +702,14 @@ export default class RandomizerEngine {
         const generator = this.loadedGenerators.get(name);
         if (!generator || !generator.grammar) return [];
 
+        // Priority 1: explicit list in generator.metadata.lockableRules
+        const metaLockable = generator?.metadata?.lockableRules;
+        if (Array.isArray(metaLockable) && metaLockable.length) {
+            return [...metaLockable];
+        }
+        // Priority 2: uiConfig lockable/lockableExclude
         const uiConfig = generator.uiConfig || {};
-        const explicitLockable = uiConfig.lockable || null; // optional whitelist/blacklist arrays
+        const explicitLockable = uiConfig.lockable || null; // optional whitelist (if provided)
         const blacklist = uiConfig.lockableExclude || [];
 
         const result = [];

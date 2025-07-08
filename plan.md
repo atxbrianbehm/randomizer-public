@@ -11,6 +11,12 @@
   - Obsolete artifacts deleted (`coverage/`, `dist/`, `__pycache__/`, demo zip, Lighthouse report).
   - Documentation files and architecture diagram moved into `docs/`.
   - Project root now clean; ready for next development phase.
+  - 2025-07-08 Opera generator lockable UI fix: Advanced Options modal now supports both array and object-wrapped rules; locked values persist.
+  - 2025-07-08 Opera generator: Gender-aware prompt logic added (pronoun tokens, locked gender support).
+  - 2025-07-08 Opera generator: v0.2.0 JSON integrated, old generator files removed.
+  - 2025-07-08 Opera generator: Deleted stale copies (`public/generators/`, `generators/`, `dist/`); dropdown should now list generator.
+  - 2025-07-08 Opera generator: Male attire restriction bug fixed (gender sets appropriate attire_type).
+
 
 ## Optimized Plan (2025-07-07)
 
@@ -103,7 +109,7 @@
     - [ ] Bring unit test coverage to ≥90 %
     - [ ] Add snapshot tests for prompt readability
   - [ ] Continuous Integration
-    - [ ] Add workflow: lint → test → build → size-budget check → upload coverage
+    - [x] Add workflow: lint → test → build → size-budget check → upload coverage
   - [ ] Documentation
     - [ ] Expand `LLM_Content_Development_Guide.md` with:
       - [ ] Metadata spec & examples
@@ -134,9 +140,9 @@
     - [x] Eliminate unused event listeners (`onGenerateClick`, `onHelpClick`) – none found.
     - [x] Extract `generateText` body to `services/textGenerator.js` (thin wrapper in class).
     - [x] Write Vitest unit tests for new helper functions.
-    - [ ] Add/update JSDoc for all RandomizerApp class methods.
     - [x] Replace direct `document.querySelector` calls with UI helpers.
-    - [ ] Delete unused event listeners (`onGenerateClick`, `onHelpClick`).
+    - [x] Delete unused event listeners (`onGenerateClick`, `onHelpClick`).
+    - [ ] Add JSDoc for all RandomizerApp class methods.
   - [ ] Source moves
     - [ ] Move `randomizer.css` → `src/styles/randomizer.css`.
     - [ ] Relocate preview images → `public/preview/`.
@@ -217,8 +223,7 @@
 - QA, accessibility, and polish tasks completed.
 
 ## Current Goal
-Begin Phase 5 – Debug Overlay / Expansion Tree
-Complete active tasks from the consolidated project plan.
+Verify Opera generator now appears in dropdown and test UI/prompt generation (male & female, locked variables). After confirmation, bump generator version to 0.2.0 and commit.
 
 ### 3. Verification & QA
 - [ ] Manual smoke-test scenarios
@@ -285,6 +290,22 @@ The goal is to replace the hard-coded lockable-fields modal with a generator-awa
 - **Common**
   - [ ] Generate new 512×512 thumbnails.
   - [ ] Increment `version` & add CHANGELOG entry.
+
+### Opera Character Generator Enhancements
+  - Phase 1 – Analysis & Design
+    - [ ] Review current `opera_character_generator.json` structure
+    - [ ] Identify categories suitable for locking (e.g., `character`, `setting`, `tone`)
+  - Phase 2 – Locking Support
+    - [ ] Mark lockable rules in generator metadata or register via `getLockableRules`
+    - [ ] Ensure advanced-options modal lists Opera categories
+    - [ ] Persist locked values and write Vitest snapshot test for locked prompt
+  - Phase 3 – $include Refactor
+    - [ ] Extract large/overlapping arrays into `/generators/includes/opera/*.json`
+    - [ ] Replace arrays in Opera generator with `$include` directives
+    - [ ] Confirm `generatorLoader` correctly resolves nested includes (unit test)
+  - Phase 4 – Docs & Versioning
+    - [ ] Update README/LLM guide with Opera locking instructions and examples
+    - [ ] Bump generator `version` and add CHANGELOG entry
 
 ### 6. Milestone close-out
 - [ ] Update `CHANGELOG.md`.
