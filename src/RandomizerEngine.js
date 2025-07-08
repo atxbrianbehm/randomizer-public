@@ -455,7 +455,7 @@ export default class RandomizerEngine {
     // Process weighted rules
     processWeightedRule(generator, rule, context) {
         const options = rule.options;
-        const weights = rule.weights || options.map(() => 1);
+        const weights = rule.weights || options.map(opt => (typeof opt === 'object' && typeof opt.weight === 'number') ? opt.weight : 1);
 
         let totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
         let random = this._prng ? this._prng() * totalWeight : Math.random() * totalWeight;
@@ -463,11 +463,25 @@ export default class RandomizerEngine {
         for (let i = 0; i < options.length; i++) {
             random -= weights[i];
             if (random <= 0) {
-                return this.processText(options[i], context);
+                const selected = options[i];
+                if (typeof selected === 'object' && selected !== null) {
+                    if (selected.actions) {
+                        this.executeActions(selected.actions, context);
+                    }
+                    return this.processText(selected.text, context);
+                }
+                return this.processText(selected, context);
             }
         }
 
-        return this.processText(options[0], context);
+        const first = options[0];
+        if (typeof first === 'object' && first !== null) {
+            if (first.actions) {
+                this.executeActions(first.actions, context);
+            }
+            return this.processText(first.text, context);
+        }
+        return this.processText(first, context);
     }
 
     // Process conditional rules
@@ -628,7 +642,13 @@ export default class RandomizerEngine {
 
     // Execute actions
     executeActions(actions, context) {
-        if (!actions) return;
+        if (Array.isArray(actions)) {
+            for (const act of actions) {
+                this.executeActions(act, context);
+            }
+            return;
+        }
+        if (!actions || typeof actions !== 'object') return;
 
         if (actions.set) {
             for (const [varName, value] of Object.entries(actions.set)) {

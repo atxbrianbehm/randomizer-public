@@ -36,10 +36,10 @@
     "social_status": {"type": "string", "default": "wealthy socialite", "description": "Social status of the character."}
   },
   "grammar": {
-    "pick_gender": {
-      "genders": [
-        {"text": "woman", "weight": 10, "actions": [{"set": {"gender": "female"}}, {"set": {"attire_type": "gown"}}]},
-        {"text": "man", "weight": 10, "actions": [{"set": {"gender": "male"}}, {"set": {"attire_type": "tuxedo"}}]}
+    "pick_gender": {"type": "weighted", "options": [
+
+        {"text": "woman", "weight": 10, "actions": [{"set": {"gender": "female", "attire_type": "gown"}}]},
+        {"text": "man", "weight": 10, "actions": [{"set": {"gender": "male", "attire_type": "tuxedo"}}]}
       ]
     },
     "pick_attire": {
@@ -58,8 +58,7 @@
       {"text": "in their 50s", "weight": 20},
       {"text": "a wealthy student", "weight": 4},
       {"text": "a young professional", "weight": 6},
-      {"text": "middle-aged", "weight": 15},
-      {"text": "a senior socialite", "weight": 18}
+      {"text": "middle-aged", "weight": 15}
     ]},
     "pick_build": {"builds": [
       {"text": "tall and slender", "weight": 10},
@@ -71,7 +70,7 @@
       {"text": "petite", "weight": 10},
       {"text": "broad-shouldered", "weight": 10},
       {"text": "lanky", "weight": 10},
-      {"text": "curvaceous", "weight": 10},
+      {"text": "curvaceous", "weight": 10, "conditions": {"gender": "female"}},
       {"text": "stocky", "weight": 10}
     ]},
     "pick_nationality": {"nationalities": [
@@ -91,17 +90,26 @@
       {"text": "Indian", "weight": 4},
       {"text": "Australian", "weight": 4}
     ]},
-    "pick_hair_style": {"hair_styles": [
-      {"text": "with a feathered shag haircut", "weight": 10},
-      {"text": "with a classic afro", "weight": 10}
+    "female_hair_styles": {"list": [
+      {"text": "feathered hair with a center part", "weight": 10},
+      {"text": "a classic afro", "weight": 10}
     ]},
+    "male_hair_styles": {"list": [
+      {"text": "slicked-back hair with a side part", "weight": 10},
+      {"text": "a neat pompadour", "weight": 8}
+    ]},
+    "generate_hair_style": {"type": "conditional", "options": [
+      {"text": "#female_hair_styles#", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "#male_hair_styles#", "conditions": {"gender": {"$eq": "male"}}}
+    ]},
+
     "pick_facial_hair": {"facial_hair": [
       {"text": "with a bushy mustache", "weight": 10},
       {"text": "with long sideburns", "weight": 10}
     ]},
     "pick_makeup": {"makeup": [
-      {"text": "with bold, kohl-rimmed eyes", "weight": 10},
-      {"text": "with natural, rosy cheeks", "weight": 10}
+      {"text": "bold, kohl-rimmed eyes", "weight": 10},
+      {"text": "natural, rosy cheeks", "weight": 10}
     ]},
     "pick_direction": {"directions": [
       {"text": "facing the camera directly", "weight": 10}
@@ -119,16 +127,26 @@
       {"text": "made of silk", "weight": 10}
     ]},
     "pick_clothing_color": {"clothing_colors": [
-      {"text": "in avocado green", "weight": 8}
+      {"text": "in avocado green", "weight": 8},
+      {"text": "in royal blue", "weight": 8},
+      {"text": "in burgundy", "weight": 7},
+      {"text": "in mustard yellow", "weight": 5}
     ]},
     "pick_clothing_style": {"clothing_styles": [
-      {"text": "covered in sequins", "weight": 8}
+      {"text": "covered in sequins", "weight": 8},
+      {"text": "accented with velvet trim", "weight": 7},
+      {"text": "featuring metallic embroidery", "weight": 6},
+      {"text": "with paisley patterns", "weight": 5}
     ]},
     "pick_female_quirk": {"female_quirks": [
-      {"text": "wearing a pearl necklace", "weight": 10}
+      {"text": "wearing a pearl necklace", "weight": 10},
+      {"text": "carrying a beaded clutch", "weight": 8},
+      {"text": "sporting oversized sunglasses", "weight": 6}
     ]},
     "pick_male_quirk": {"male_quirks": [
-      {"text": "sporting a dapper mustache", "weight": 10}
+      {"text": "sporting a dapper mustache", "weight": 10},
+      {"text": "holding a vintage opera program", "weight": 8},
+      {"text": "wearing a silk cravat", "weight": 6}
     ]},
     "pick_female_footwear": {"female_footwear": [
       {"text": "platform heels", "weight": 10}
@@ -137,7 +155,12 @@
       {"text": "patent leather dress shoes", "weight": 10}
     ]},
     "pick_social_status": {"social_status": [
-      {"text": "a wealthy socialite", "weight": 15}
+      {"text": "a wealthy socialite", "weight": 7},
+      {"text": "an up-and-coming opera singer", "weight": 6},
+      {"text": "a renowned stage performer", "weight": 5},
+      {"text": "an avid opera patron", "weight": 6},
+      {"text": "a celebrated music critic", "weight": 4},
+      {"text": "a passionate arts benefactor", "weight": 5}
     ]},
     "pronoun_subj": {"type": "conditional", "options": [
       {"text": "She", "conditions": {"gender": {"$eq": "female"}}},
@@ -152,10 +175,14 @@
       {"text": "his", "conditions": {"gender": {"$eq": "male"}}}
     ], "fallback": "their"},
     "generate_attire_description": {"type": "conditional", "options": [
-      {"text": "#pick_gown_type# #pick_clothing_color#, #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "gown"}, "gender": {"$eq": "female"}}},
-      {"text": "#pick_tuxedo_type# #pick_clothing_color#, #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "tuxedo"}, "gender": {"$eq": "male"}}},
-      {"text": "#pick_jacket_type# #pick_clothing_color#, #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "jacket"}, "gender": {"$eq": "male"}}}
+      {"text": "#pick_gown_type# #pick_clothing_color#, #pick_fabric# and #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "gown"}, "gender": {"$eq": "female"}}},
+      {"text": "#pick_tuxedo_type# #pick_clothing_color#, #pick_fabric# and #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "tuxedo"}, "gender": {"$eq": "male"}}},
+      {"text": "#pick_jacket_type# #pick_clothing_color#, #pick_fabric# and #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "jacket"}, "gender": {"$eq": "male"}}}
     ], "fallback": "stylish attire"},
+    "generate_makeup_sentence": {"type": "conditional", "options": [
+      {"text": "#pronoun_subj# has #generate_makeup#.", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": ""},
     "generate_quirk": {"type": "conditional", "options": [
       {"text": "#pick_female_quirk#", "conditions": {"gender": {"$eq": "female"}}},
       {"text": "#pick_male_quirk#", "conditions": {"gender": {"$eq": "male"}}}
@@ -172,9 +199,10 @@
       {"text": "#pick_female_footwear#", "conditions": {"gender": {"$eq": "female"}}},
       {"text": "#pick_male_footwear#", "conditions": {"gender": {"$eq": "male"}}}
     ], "fallback": "stylish shoes"},
+    "generate_age_status": "#pick_age# #pick_social_status#",
     "generate_prompt": [
       {
-        "text": "1970s color photograph, character sheet style. A single #pick_nationality# #pick_gender# #pick_age#, #pick_social_status#, who is #pick_build#. #pronoun_subj# has #pick_hair_style# #generate_facial_hair#. #pronoun_subj# is wearing #generate_attire_description# #pick_fabric# and #generate_footwear#. #pronoun_subj# has #generate_makeup#. For a unique detail, the character is #generate_quirk#. Full-body shot from head to toe, #pick_direction#. The background is a solid, neutral gray color. Clean, even studio lighting.",
+        "text": "1970s color photograph, character sheet style. A single #pick_nationality# #pick_gender# #generate_age_status# who is #pick_build#. Sporting #generate_hair_style# #generate_facial_hair#, #pronoun_subj# is wearing #generate_attire_description# and #generate_footwear#. #generate_makeup_sentence# #pronoun_subj# is #generate_quirk#. Full-body shot from head to toe, #pick_direction#. The background is a solid, neutral gray color. Clean, even studio lighting.",
         "_meta": {"slot": "template"}
       }
     ],
