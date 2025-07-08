@@ -5,7 +5,7 @@ export const GENERATOR_FILES = [
   '/televangelist_generator.json',
   '/satanic_panic_generator.json',
   '/anachronisticTechPanel.json',
-  '/opera_character_generator.json'
+  '/opera_character_generator_v0.2.0.json'
 ];
 
 export const GENERATOR_LABELS = {

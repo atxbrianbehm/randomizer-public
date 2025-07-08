@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "name": "1970s Opera Character Prompt Generator",
+    "version": "0.2.0",
+    "description": "Generates descriptive 1970s opera attendee character sheet prompts with enhanced fashion details.",
+    "author": "Cascade-AI (refactor of legacy HTML/JS)",
+    "category": "creative",
+    "tags": ["portrait", "1970s", "opera", "character", "prompts", "creative writing"],
+    "displayMode": "rawOnly",
+    "lockableRules": [
+      "pick_nationality",
+      "pick_age",
+      "pick_build",
+      "pick_gender",
+      "pick_hair_style",
+      "pick_direction",
+      "pick_clothing_color",
+      "pick_clothing_style",
+      "pick_female_quirk",
+      "pick_male_quirk",
+      "pick_female_footwear",
+      "pick_male_footwear",
+      "pick_gown_type",
+      "pick_tuxedo_type",
+      "pick_jacket_type",
+      "pick_fabric",
+      "pick_makeup",
+      "pick_facial_hair",
+      "pick_social_status"
+    ]
+  },
+  "variables": {
+    "gender": {"type": "string", "default": "female", "description": "Prompt gender (female/male)."},
+    "attire_type": {"type": "string", "default": "gown", "description": "Core attire category chosen (gown, tuxedo, or jacket)."},
+    "fabric": {"type": "string", "default": "silk", "description": "Fabric of the attire."},
+    "social_status": {"type": "string", "default": "wealthy socialite", "description": "Social status of the character."}
+  },
+  "grammar": {
+    "pick_gender": {
+      "genders": [
+        {"text": "woman", "weight": 10, "actions": [{"set": {"gender": "female"}}, {"set": {"attire_type": "gown"}}]},
+        {"text": "man", "weight": 10, "actions": [{"set": {"gender": "male"}}, {"set": {"attire_type": "tuxedo"}}]}
+      ]
+    },
+    "pick_attire": {
+      "attire": [
+        {"text": "gown", "weight": 10, "conditions": {"gender": {"$eq": "female"}}, "actions": [{"set_variable_from_selected_text": "attire_type"}]},
+        {"text": "tuxedo", "weight": 10, "conditions": {"gender": {"$eq": "male"}}, "actions": [{"set_variable_from_selected_text": "attire_type"}]},
+        {"text": "jacket", "weight": 10, "conditions": {"gender": {"$eq": "male"}}, "actions": [{"set_variable_from_selected_text": "attire_type"}]}
+      ]
+    },
+    "pick_age": {"ages": [
+      {"text": "in their early 20s", "weight": 5},
+      {"text": "in their late 20s", "weight": 5},
+      {"text": "in their early 30s", "weight": 8},
+      {"text": "in their late 30s", "weight": 8},
+      {"text": "in their 40s", "weight": 15},
+      {"text": "in their 50s", "weight": 20},
+      {"text": "a wealthy student", "weight": 4},
+      {"text": "a young professional", "weight": 6},
+      {"text": "middle-aged", "weight": 15},
+      {"text": "a senior socialite", "weight": 18}
+    ]},
+    "pick_build": {"builds": [
+      {"text": "tall and slender", "weight": 10},
+      {"text": "short and stout", "weight": 10},
+      {"text": "of average height and build", "weight": 10},
+      {"text": "athletic", "weight": 10},
+      {"text": "willowy", "weight": 10},
+      {"text": "heavyset", "weight": 10},
+      {"text": "petite", "weight": 10},
+      {"text": "broad-shouldered", "weight": 10},
+      {"text": "lanky", "weight": 10},
+      {"text": "curvaceous", "weight": 10},
+      {"text": "stocky", "weight": 10}
+    ]},
+    "pick_nationality": {"nationalities": [
+      {"text": "American", "weight": 15},
+      {"text": "French", "weight": 12},
+      {"text": "Italian", "weight": 12},
+      {"text": "British", "weight": 12},
+      {"text": "German", "weight": 12},
+      {"text": "Japanese", "weight": 6},
+      {"text": "Brazilian", "weight": 4},
+      {"text": "Russian", "weight": 10},
+      {"text": "Spanish", "weight": 10},
+      {"text": "Canadian", "weight": 10},
+      {"text": "Swedish", "weight": 10},
+      {"text": "Argentinian", "weight": 5},
+      {"text": "Mexican", "weight": 4},
+      {"text": "Indian", "weight": 4},
+      {"text": "Australian", "weight": 4}
+    ]},
+    "pick_hair_style": {"hair_styles": [
+      {"text": "with a feathered shag haircut", "weight": 10},
+      {"text": "with a classic afro", "weight": 10}
+    ]},
+    "pick_facial_hair": {"facial_hair": [
+      {"text": "with a bushy mustache", "weight": 10},
+      {"text": "with long sideburns", "weight": 10}
+    ]},
+    "pick_makeup": {"makeup": [
+      {"text": "with bold, kohl-rimmed eyes", "weight": 10},
+      {"text": "with natural, rosy cheeks", "weight": 10}
+    ]},
+    "pick_direction": {"directions": [
+      {"text": "facing the camera directly", "weight": 10}
+    ]},
+    "pick_gown_type": {"gown_types": [
+      {"text": "an elegant halter gown", "weight": 10}
+    ]},
+    "pick_tuxedo_type": {"tuxedo_types": [
+      {"text": "a classic black-tie tuxedo", "weight": 10}
+    ]},
+    "pick_jacket_type": {"jacket_types": [
+      {"text": "a velvet smoking jacket", "weight": 10}
+    ]},
+    "pick_fabric": {"fabrics": [
+      {"text": "made of silk", "weight": 10}
+    ]},
+    "pick_clothing_color": {"clothing_colors": [
+      {"text": "in avocado green", "weight": 8}
+    ]},
+    "pick_clothing_style": {"clothing_styles": [
+      {"text": "covered in sequins", "weight": 8}
+    ]},
+    "pick_female_quirk": {"female_quirks": [
+      {"text": "wearing a pearl necklace", "weight": 10}
+    ]},
+    "pick_male_quirk": {"male_quirks": [
+      {"text": "sporting a dapper mustache", "weight": 10}
+    ]},
+    "pick_female_footwear": {"female_footwear": [
+      {"text": "platform heels", "weight": 10}
+    ]},
+    "pick_male_footwear": {"male_footwear": [
+      {"text": "patent leather dress shoes", "weight": 10}
+    ]},
+    "pick_social_status": {"social_status": [
+      {"text": "a wealthy socialite", "weight": 15}
+    ]},
+    "pronoun_subj": {"type": "conditional", "options": [
+      {"text": "She", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "He", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": "They"},
+    "pronoun_obj": {"type": "conditional", "options": [
+      {"text": "her", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "him", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": "them"},
+    "pronoun_poss": {"type": "conditional", "options": [
+      {"text": "her", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "his", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": "their"},
+    "generate_attire_description": {"type": "conditional", "options": [
+      {"text": "#pick_gown_type# #pick_clothing_color#, #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "gown"}, "gender": {"$eq": "female"}}},
+      {"text": "#pick_tuxedo_type# #pick_clothing_color#, #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "tuxedo"}, "gender": {"$eq": "male"}}},
+      {"text": "#pick_jacket_type# #pick_clothing_color#, #pick_clothing_style#", "conditions": {"attire_type": {"$eq": "jacket"}, "gender": {"$eq": "male"}}}
+    ], "fallback": "stylish attire"},
+    "generate_quirk": {"type": "conditional", "options": [
+      {"text": "#pick_female_quirk#", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "#pick_male_quirk#", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": "displaying an interesting demeanor"},
+    "generate_makeup": {"type": "conditional", "options": [
+      {"text": "#pick_makeup#", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": ""},
+    "generate_facial_hair": {"type": "conditional", "options": [
+      {"text": "", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "#pick_facial_hair#", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": ""},
+    "generate_footwear": {"type": "conditional", "options": [
+      {"text": "#pick_female_footwear#", "conditions": {"gender": {"$eq": "female"}}},
+      {"text": "#pick_male_footwear#", "conditions": {"gender": {"$eq": "male"}}}
+    ], "fallback": "stylish shoes"},
+    "generate_prompt": [
+      {
+        "text": "1970s color photograph, character sheet style. A single #pick_nationality# #pick_gender# #pick_age#, #pick_social_status#, who is #pick_build#. #pronoun_subj# has #pick_hair_style# #generate_facial_hair#. #pronoun_subj# is wearing #generate_attire_description# #pick_fabric# and #generate_footwear#. #pronoun_subj# has #generate_makeup#. For a unique detail, the character is #generate_quirk#. Full-body shot from head to toe, #pick_direction#. The background is a solid, neutral gray color. Clean, even studio lighting.",
+        "_meta": {"slot": "template"}
+      }
+    ],
+    "entry_prompt": "#generate_prompt#"
+  },
+  "entry_points": {
+    "default": "entry_prompt"
+  }
+}
