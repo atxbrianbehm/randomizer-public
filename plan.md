@@ -222,8 +222,13 @@
 - Large images optimized (lazy-load, explicit dimensions).
 - QA, accessibility, and polish tasks completed.
 
-## Current Goal
-Verify Opera generator now appears in dropdown and test UI/prompt generation (male & female, locked variables). After confirmation, bump generator version to 0.2.0 and commit.
+## Status Update (2025-07-08)
+Opera Character Generator v0.2.0 is fully integrated and verified:
+- Engine patched to support weighted options with actions.
+- Gender logic, attire, and pronouns confirmed working.
+- Commit `3538bcd` pushed to `main`.
+
+Next focus: address include-resolver warnings and UI clear-button bug, then resume broader roadmap items.
 
 ### 3. Verification & QA
 - [ ] Manual smoke-test scenarios
