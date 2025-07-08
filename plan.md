@@ -4,6 +4,13 @@
 - This plan consolidates all active and unfinished tasks from previous plans (including .codeium/windsurf/brain/0e859844-e41d-48b0-b8fa-524135974618/plan.md).
 - Integrated tasks and notes from other project plans; archived redundant/old plans.
 - Reflects current status of Randomizer refactor, build, and new generator integration.
+- 2025-07-07 CI & Housekeeping updates:
+  - Codecov integration fixed (v5 action, slug, token, .codecov.yml, vitest coverage output, `fail_ci_if_error: true`).
+  - Redundant `node-ci.yml` workflow removed; main `ci.yml` unified.
+  - Legacy Python prototype archived to `legacy-python/`.
+  - Obsolete artifacts deleted (`coverage/`, `dist/`, `__pycache__/`, demo zip, Lighthouse report).
+  - Documentation files and architecture diagram moved into `docs/`.
+  - Project root now clean; ready for next development phase.
 
 ## Optimized Plan (2025-07-07)
 
