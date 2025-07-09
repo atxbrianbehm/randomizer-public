@@ -58,41 +58,7 @@
 - [ ] Ensure dev bundle <200 KB gzip
 - [ ] Run Lighthouse a11y audit and hit ≥90 score
 
-### 6. Refactor Quick Wins
 
-> Quick, high-impact tech-debt pay-downs promoted from `docs/refactor_opportunities.md`.
-- [x] ResolveIncludes helper
-  - [x] Extract logic to `src/utils/resolveIncludes.js`
-  - [x] Update `generatorLoader.js` to import helper
-  - [x] Write dedicated unit tests (success, circular include guard)
-  - [x] Update docs
-- [x] AdvancedModal styles externalised
-  - [x] Create `src/styles/advancedModal.css` and move inline block
-  - [x] Import stylesheet in `advancedModal.js`
-  - [x] Add ESLint exception removal
-  - [x] Visual regression check
-- [x] Weighted-random shared util
-  - [x] Implement `src/utils/weightedRandom.js`
-  - [x] Mirror implementation in `python/` port (if present)
-  - [x] Unit tests for distribution sanity
-- [x] Lint rule: no inline styles
-  - [x] Add custom ESLint rule or plugin config
-  - [x] Run `eslint --fix` and address violations
-  - [x] CI passes
-- [x] Local bundle-size script
-  - [x] Add `npm run size` (uses `rollup-plugin-size` or `size-limit`)
-  - [x] Document usage in README
-- [x] Accessibility tweaks
-  - [x] Add `lang` attr & ARIA landmarks to `index.html`
-  - [x] Add `role="dialog"` / `aria-modal` to modal markup
-  - [x] Lighthouse a11y audit
-- [x] Test helper factory
-  - [x] Implement `tests/helpers/mockGenerator.js`
-  - [x] Refactor existing tests to use factory (legacy `stateHelpers.spec.js` excluded; refactored file added)
-- [x] UI Cleanup & Prompt UX
-  - [x] Remove System Architecture cell (HTML, CSS, JS)
-  - [x] Remove JSON viewer panel and associated code
-  - [x] Remove ugly scroll bar on generated output container
 
 ### Immediate Next Steps (2025-07-09)
 - Edge-case & error-handling tests for engine and generatorLoader
@@ -124,21 +90,6 @@
 - [ ] Codebase cleanup
   - [ ] Abstract lockable list into `constants.js`
   - [ ] Add JSDoc for all `RandomizerApp` methods
-
-- [x] New Generator • Anachronistic Tech Panel
-  - Phase 1 – Asset & Spec
-    - [x] Convert provided JSON → `generators/anachronisticTechPanel.json`.
-    - [ ] Optimise `previewImage` ≤150 KB.
-  - Phase 2 – Integration
-    - [x] Import in `generators/index.js` & dropdown label “Tech Panel (Retro-Future)”.
-  - Phase 3 – UI mapping
-    - [x] Add multi-select UI for `panelArchetype`, `aestheticInfluence`.
-    - [x] Display color-palette swatches.
-  - Phase 4 – Logic
-    - [x] Update `RandomizerEngine.generate()` for nested arrays.
-    - [x] Extend variable-lock rules to cover new categories.
-  - Phase 5 – Tests
-    - [x] Snapshot test sample prompt.
 
 - [ ] Advanced Options Modal UI Polish
   - [ ] Gray out conditional variable options in modal when not valid (e.g., gendered options when mismatched with locked selections)
@@ -199,9 +150,18 @@ All completed milestones up to v1.3.0 are documented in CHANGELOG and Git histor
     - [ ] Update README/LLM guide with Opera locking instructions and examples
     - [ ] Bump generator `version` and add CHANGELOG entry
 
-### 6. Milestone close-out
-- [x] Update `CHANGELOG.md`.
-- [x] Tag git release `v1.3.0`.
+
+### Documentation Overhaul (2025-07-09)
+- [ ] Expand slot taxonomy with 10 new slots in `docs/slot_taxonomy.md` and update rules/order.
+- [ ] Update `docs/LLM_Content_Development_Guide.md` with slot references and prompt diagram.
+- [ ] Update `docs/LLM_Generator_Assembly_Guide.md` with examples using new slots.
+- [ ] Revise `docs/advanced_modal.md` to show new slots in UI.
+- [ ] Extend `docs/grammar_inventory.md` with canonical variable names for new slots.
+- [ ] Refresh generator-specific docs (Opera, etc.) with slot-rich examples.
+- [ ] Add notes in `docs/FUTURE_DIRECTIONS.md` about semantic richness.
+- [ ] Prune completed items from `docs/refactor_opportunities.md` and add automation idea.
+- [ ] Update diagrams/images if needed in `docs/system_design_doc.md`.
+- [ ] Audit `docs/metadata_storage_decision.md` for outdated slot references.
 
 ---
 
