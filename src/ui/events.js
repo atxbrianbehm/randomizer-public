@@ -11,7 +11,7 @@ export default function bindEvents(app) {
         generateBtn.onclick = () => {
         const countInput = q('#generation-count');
         const count = countInput ? Math.max(1, parseInt(countInput.value, 10) || 1) : 1;
-        app.generateText(count);
+        app.generateText(count, { append: true });
     };
     }
 

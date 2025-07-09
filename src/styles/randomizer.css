@@ -860,8 +860,7 @@ select.form-control {
 
 .output-content {
   min-height: 300px;
-  max-height: 500px;
-  overflow-y: auto;
+  overflow-y: visible;
   padding: var(--space-16);
   background: var(--color-surface);
   border: 1px solid var(--color-border);

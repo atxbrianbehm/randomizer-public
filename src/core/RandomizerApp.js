@@ -205,6 +205,7 @@ export default class RandomizerApp {
             output.innerHTML = '';
         }
 
+        const MAX_HISTORY = 20;
         for (let i = 0; i < count; i++) {
             let promptText = '';
             try {
@@ -278,6 +279,22 @@ export default class RandomizerApp {
 
             card.appendChild(actions);
             output.appendChild(card);
+
+            // Trim history if exceeding MAX_HISTORY
+            while (output.children.length > MAX_HISTORY) {
+                output.removeChild(output.firstElementChild);
+            }
+        }
+    }
+
+    /**
+     * Clears all generated prompt cards from the output area.
+     */
+    clearOutput() {
+        if (typeof document === 'undefined') return;
+        const output = q('#output-area');
+        if (output) {
+            output.innerHTML = '';
         }
     }
 
