@@ -89,10 +89,10 @@
 - [x] Test helper factory
   - [x] Implement `tests/helpers/mockGenerator.js`
   - [x] Refactor existing tests to use factory (legacy `stateHelpers.spec.js` excluded; refactored file added)
-- [ ] UI Cleanup & Prompt UX
-  - [ ] Remove System Architecture cell (HTML, CSS, JS)
-  - [ ] Remove JSON viewer panel and associated code
-  - [ ] Remove ugly scroll bar on generated output container
+- [x] UI Cleanup & Prompt UX
+  - [x] Remove System Architecture cell (HTML, CSS, JS)
+  - [x] Remove JSON viewer panel and associated code
+  - [x] Remove ugly scroll bar on generated output container
 
 ### Immediate Next Steps (2025-07-09)
 - Edge-case & error-handling tests for engine and generatorLoader

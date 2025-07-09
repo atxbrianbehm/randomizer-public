@@ -2,6 +2,20 @@
 
 ---
 
+## [1.3.2] – 2025-07-09
+
+### Changed
+- Removed System Architecture and JSON Viewer panels from the UI (HTML, CSS, JS) for a cleaner interface.
+- Generated prompt list now appends individual prompt capsules, flows naturally without internal scrollbar, and history is capped to 20.
+
+### Added
+- `clearOutput()` method in `RandomizerApp` and event bindings for prompt history clearing.
+
+### Fixed
+- Eliminated dead `toggleJsonViewer` handler and related CSS selectors.
+
+---
+
 ## [1.3.1] – 2025-07-09
 
 ### Added
