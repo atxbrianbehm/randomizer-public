@@ -21,14 +21,14 @@
 ## Optimized Plan (2025-07-07)
 
 ### 1. Testing & Documentation Hardening
-- [ ] Increase unit test coverage to ≥90%
-- [ ] Add snapshot tests for prompt readability
+- [x] Increase unit test coverage to ≥90%
+- [x] Add snapshot tests for prompt readability
 - [x] Implement CI workflow: lint → test → build → size-budget check → upload coverage
 - [ ] Expand `LLM_Content_Development_Guide.md` with examples, modifier reference, persistence schema, and debug overlay tips
-- [ ] Update README badges (coverage, CI, bundle size)
-- [ ] Update CHANGELOG for v1.1.0
-- [ ] Add pre-commit hook for lint+tests
-- [ ] Add `npm run watch:test` script for TDD loop
+- [x] Update README badges (coverage, CI, bundle size)
+- [x] Update CHANGELOG for v1.1.0
+- [x] Add pre-commit hook for lint+tests
+- [x] Add `npm run watch:test` script for TDD loop
 
 ### 2. Documentation & Developer Experience
 - [ ] Audit and update README and developer guides
@@ -105,22 +105,22 @@
 - [x] Phase 5 – Debug Overlay / Expansion Tree
 
 - [ ] Phase 6 – Testing & Documentation Hardening
-  - [ ] Test coverage
-    - [ ] Bring unit test coverage to ≥90 %
-    - [ ] Add snapshot tests for prompt readability
+  - [x] Test coverage
+    - [x] Bring unit test coverage to ≥90 %
+    - [x] Add snapshot tests for prompt readability
   - [ ] Continuous Integration
     - [x] Add workflow: lint → test → build → size-budget check → upload coverage
   - [ ] Documentation
-    - [ ] Expand `LLM_Content_Development_Guide.md` with:
-      - [ ] Metadata spec & examples
-      - [ ] Modifier reference & writing custom modifiers
-      - [ ] Persistence schema & migration
-      - [ ] Debug overlay tips
-    - [ ] Update README badges (coverage, CI, size)
-    - [ ] Update CHANGELOG 1.1.0
+    - [x] Expand `LLM_Content_Development_Guide.md` with:
+      - [x] Metadata spec & examples
+      - [x] Modifier reference & writing custom modifiers
+      - [x] Persistence schema & migration
+      - [x] Debug overlay tips
+    - [x] Update README badges (coverage, CI, size)
+    - [x] Update CHANGELOG 1.1.0
   - [ ] Developer Experience
-    - [ ] Pre-commit hook for lint+tests
-    - [ ] NPM script `npm run watch:test` for TDD loop
+    - [x] Pre-commit hook for lint+tests
+    - [x] NPM script `npm run watch:test` for TDD loop
 - [ ] Phase 7 – Documentation & Developer Experience
   - [ ] Audit and update documentation (README, dev guides)
   - [ ] Write updated LLM guide for assembling new generators
