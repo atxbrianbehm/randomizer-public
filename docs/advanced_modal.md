@@ -2,6 +2,10 @@
 
 A modern, keyboard-friendly interface for locking grammar rules and fine-tuning generation parameters.
 
+![Advanced Modal Demo](img/advanced_modal_demo.gif)
+
+> Tip: Open/close the modal quickly using **Ctrl + Shift + L** (Cmd + Shift + L on macOS).
+
 ## Key Points
 
 • **Dynamic** – builds controls based on the selected generator’s `lockableRules` array.

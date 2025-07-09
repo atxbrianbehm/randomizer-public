@@ -94,6 +94,26 @@ These rules ensure generator packs integrate cleanly with the Randomizer’s dyn
   ```
 - Ensure subfiles are valid JSON arrays or objects as required.
 
+### Include Arrays & `_meta` Merge Pattern
+
+Sometimes you need both `_meta` information **and** to pull in large external data via `$include`. Use the two-element *array* pattern introduced in July 2025:
+
+```jsonc
+"platforms": [
+  { "_meta": { "uiLabel": "Platforms" } },
+  { "$include": "platforms.json" }
+]
+```
+
+When the loader encounters this pattern it merges the included array **immediately after** the `_meta` object, so metadata is preserved while all fetched values remain editable in place.
+
+Guidelines:
+• Keep the `_meta` object first in the array.
+• Append any additional hard-coded values *after* the `$include` entry to avoid confusion.
+• Avoid circular includes – the resolver detects and throws if a file eventually references itself (unit tests pending in `tests/generatorLoader_includes.test.js`).
+
+---
+
 ### Validating Modular Packs
 - Use the loader to check for missing or malformed subfiles.
 - Optionally, use a schema validator (if available).

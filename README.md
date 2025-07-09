@@ -1,8 +1,8 @@
 # 🎲 Randomizer Engine
 
 [![CI](https://github.com/atxbrianbehm/randomizer-public/actions/workflows/ci.yml/badge.svg)](https://github.com/atxbrianbehm/randomizer-public/actions/workflows/ci.yml)
-[![coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)](./coverage)  [![bundle](https://img.shields.io/badge/bundle%20size-%E2%89%A4200KB-blue)](#bundle-size-check)  
-[![codecov](https://codecov.io/gh/atxbrianbehm/randomizer-public/branch/main/graph/badge.svg)](https://codecov.io/gh/atxbrianbehm/randomizer-public)
+[![codecov](https://codecov.io/gh/atxbrianbehm/randomizer-public/branch/main/graph/badge.svg)](https://codecov.io/gh/atxbrianbehm/randomizer-public) [![bundle](https://img.shields.io/badge/bundle%20size-%E2%89%A4200KB-blue)](#bundle-size-check)
+
 
 A flexible, modular system for creating and executing probabilistic text generation based on JSON-defined decision trees. Build your own comedy generators, story prompters, or any procedural text content with sophisticated randomization logic.
 
@@ -64,6 +64,7 @@ randomizer/
 ├── src/              # application source code
 │   ├── ui/           # UI helpers & event wiring
 │   ├── services/     # data-fetch & engine adapters
+│   ├── styles/       # global stylesheets
 │   └── utils/        # misc utilities (e.g. logger)
 ├── generators/       # JSON generator bundles served statically
 ├── tests/            # Vitest test suites
@@ -81,14 +82,15 @@ randomizer/
 - **`system_design_doc.md`** - Complete technical specification
 
 ### Example Generators
-- **`televangelist_generator.json`** - Humorous televangelist money requests
-- **`satanic_panic_generator.json`** - 1980s moral panic headlines
-- **`randomization_schema.json`** - JSON schema for validation
+- **`televangelist_generator.json`** – Humorous televangelist money requests
+- **`satanic_panic_generator.json`** – 1980s moral panic headlines
+- **`opera_character_generator.json`** – 1970s Opera character prompts
+- **`randomization_schema.json`** – JSON schema for validation
 
 ### Demo & Usage
 - **`demo.py`** - Interactive command-line demonstration
 - **`usage_example.py`** - Simple usage examples
-- **`randomizer-engine-demo/`** - Web application demo
+
 
 ### Documentation
 - **`system_design_doc.md`** - Complete system documentation
@@ -346,7 +348,7 @@ This project is open source. Use it to create your own generators, modify the en
 
 ## 🔗 Links
 
-- [Live Demo](https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/2cedf96edb6dc31a07a9692d1545eda2/30396d72-8c2a-4862-aae9-c090a812687c/index.html)
+- [Live Demo](https://atxbrianbehm.github.io/randomizer-public/)
 - [System Design Document](system_design_doc.md)
 - [Architecture Diagram](randomizer_engine_architecture.png)
 

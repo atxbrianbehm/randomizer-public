@@ -31,9 +31,9 @@
 - [x] Add `npm run watch:test` script for TDD loop
 
 ### 2. Documentation & Developer Experience
-- [ ] Audit and update README and developer guides
+- [x] Audit and update README and developer guides
 - [ ] Write updated LLM guide for assembling generators
-- [ ] Identify further code-refactor opportunities and log in `docs/refactor_opportunities.md`
+- [x] Identify further code-refactor opportunities and log in `docs/refactor_opportunities.md`
 
 ### 3. Folder Restructure & Source Migration
 - [ ] `src/services/generatorLoader.js`
@@ -122,9 +122,9 @@
     - [x] Pre-commit hook for lint+tests
     - [x] NPM script `npm run watch:test` for TDD loop
 - [ ] Phase 7 – Documentation & Developer Experience
-  - [ ] Audit and update documentation (README, dev guides)
+  - [x] Audit and update documentation (README, dev guides)
   - [ ] Write updated LLM guide for assembling new generators
-  - [ ] Identify further code refactoring opportunities
+  - [x] Identify further code refactoring opportunities
 - [ ] Phase 8 – Visual Rule Graph (stretch)
   - [ ] Render grammar DOT graph with Viz.js for authors.
 
