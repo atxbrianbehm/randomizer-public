@@ -414,6 +414,10 @@ export default class RandomizerEngine {
         let totalWeight = 0;
 
         for (const option of options) {
+            // Skip metadata wrapper objects that do not represent selectable options
+            if (option && typeof option === 'object' && Object.prototype.hasOwnProperty.call(option, '_meta') && Object.keys(option).length === 1) {
+                continue;
+            }
             if (typeof option === 'string') {
                 weightedOptions.push({ text: option, weight: 1 });
                 totalWeight += 1;
