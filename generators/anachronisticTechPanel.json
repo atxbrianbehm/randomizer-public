@@ -25,47 +25,47 @@
   "grammar": {
     "panelArchetype": [
       { "_meta": { "slot": "subject", "connector": "", "priority": 1 } },
-      { "$include": "techPanel_generator/panel_archetypes.json" }
+      { "$include": "/techPanel_generator/panel_archetypes.json" }
     ],
     "aestheticInfluence": [
       { "_meta": { "slot": "theme", "connector": "styled in", "priority": 4 } },
-      { "$include": "techPanel_generator/aesthetic_influences.json" }
+      { "$include": "/techPanel_generator/aesthetic_influences.json" }
     ],
     "factionAlignment": [
       { "_meta": { "slot": "faction", "connector": "operating under", "priority": 2 } },
-      { "$include": "techPanel_generator/faction_alignments.json" }
+      { "$include": "/techPanel_generator/faction_alignments.json" }
     ],
     "wearLevel": [
       { "_meta": { "slot": "condition", "connector": "", "priority": 5 } },
-      { "$include": "techPanel_generator/wear_levels.json" }
+      { "$include": "/techPanel_generator/wear_levels.json" }
     ],
     "primaryColorPalette": [
       { "_meta": { "slot": "color_palettes", "connector": "with", "priority": 6 } },
-      { "$include": "techPanel_generator/primary_color_palettes.json" }
+      { "$include": "/techPanel_generator/primary_color_palettes.json" }
     ],
     "keyMaterials": [
       { "_meta": { "slot": "materials", "connector": "over", "priority": 7 } },
-      { "$include": "techPanel_generator/key_materials.json" }
+      { "$include": "/techPanel_generator/key_materials.json" }
     ],
     "screenType": [
       { "_meta": { "slot": "displays", "connector": "featuring", "priority": 8 } },
-      { "$include": "techPanel_generator/screen_types.json" }
+      { "$include": "/techPanel_generator/screen_types.json" }
     ],
     "dominantControls": [
       { "_meta": { "slot": "controls", "connector": "and", "priority": 9 } },
-      { "$include": "techPanel_generator/dominant_controls.json" }
+      { "$include": "/techPanel_generator/dominant_controls.json" }
     ],
     "greebleDensity": [
       { "_meta": { "slot": "density", "connector": "", "priority": 10 } },
-      { "$include": "techPanel_generator/greeble_densities.json" }
+      { "$include": "/techPanel_generator/greeble_densities.json" }
     ],
     "labelingStyle": [
       { "_meta": { "slot": "markings", "connector": "marked by", "priority": 11 } },
-      { "$include": "techPanel_generator/labeling_styles.json" }
+      { "$include": "/techPanel_generator/labeling_styles.json" }
     ],
     "panelLighting": [
       { "_meta": { "slot": "lighting", "connector": "bathed in", "priority": 12 } },
-      { "$include": "techPanel_generator/panel_lightings.json" }
+      { "$include": "/techPanel_generator/panel_lightings.json" }
     ],
     "techFunction": [
       { "_meta": { "slot": "purpose", "connector": "built for", "priority": 3 } },
