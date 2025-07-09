@@ -43,4 +43,21 @@ This document tracks potential refactors and tech-debt clean-ups discovered duri
 | 🟡 | Vite | Add **local bundle-size check** (`npm run size`) mirroring CI step to catch regressions earlier. |
 | 🟢 | ESLint | Introduce rule to forbid inline CSS in JS (`no-inline-styles`) to reinforce modal-style move. |
 
+## 6. Main App UI & Accessibility
+
+| Priority | Area | Opportunity |
+|---|---|---|
+| 🟢 | index.html | Add `lang` attribute, meta viewport, and ARIA landmarks for better a11y & SEO |
+| 🟢 | advancedModal.js | Supply `role="dialog"` and `aria-modal="true"`; focus trap when open |
+| 🟡 | randomizer.css | Prefer `rem` units over `px` for responsive scaling |
+| 🟡 | Keyboard Nav | Support arrow-key navigation in dropdowns & multi-select grids |
+
+## 7. Testing Utilities
+
+| Priority | Area | Opportunity |
+|---|---|---|
+| 🟢 | tests/helpers | Create `mockGenerator()` factory to DRY up unit tests |
+| 🟡 | Vitest | Introduce `vitest-axe` for accessibility assertions on the modal |
+| 🟡 | Snapshot | Use `pretty-format` plugin to stabilize JSON snapshot diff noise |
+
 Legend: 🟢 = quick win / high value · 🟡 = medium effort · 🔴 = larger redesign
