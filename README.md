@@ -337,10 +337,10 @@ Generates absurd moral panic headlines featuring:
 
 ## 🤝 Contributing
 
-1. **Create Generators**: Share your JSON generator files
+1. **Create Generators**: Follow the [LLM Generator Assembly Guide](docs/LLM_Generator_Assembly_Guide.md) to craft and share JSON generator files
 2. **Improve Engine**: Enhance the core processing logic
 3. **Add Features**: Implement new rule types or processing modes
-4. **Documentation**: Help improve guides and examples
+4. **Documentation**: Help improve guides and examples (including the assembly guide)
 
 ## 📜 License
 
