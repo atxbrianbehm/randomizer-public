@@ -20,21 +20,21 @@
 
 ## Optimized Plan (2025-07-07)
 
-### 1. Testing & Documentation Hardening
+### 1. Docs & Developer Experience
 - [ ] Expand `LLM_Content_Development_Guide.md` with examples, modifier reference, persistence schema, and debug overlay tips
 
-### 2. Documentation & Developer Experience
+
 - [ ] Write updated LLM guide for assembling generators
 
 
-### 4. New Generator – Anachronistic Tech Panel
+### 2. New Generator – Anachronistic Tech Panel
 - [ ] Convert provided JSON → `generators/anachronisticTechPanel.json`
 - [ ] Optimize preview image ≤150 KB
 - [ ] Import in `generators/index.js` & dropdown label "Tech Panel (Retro-Future)"
 - [ ] Extend variable-lock rules to cover new categories
 - [ ] Add README section with usage & example image
 
-### 5. Advanced Options Modal Refactor
+### 3. Advanced Options Modal Refactor
 - [ ] Add `getLockableRules(generatorName)` in `RandomizerEngine`
 - [ ] Compute dynamic `lockableRules` on generator select
 - [ ] Refactor modal builder to auto-generate UI
@@ -43,16 +43,48 @@
 - [ ] Unit tests for lockable rule detection & modal logic
 - [ ] Polish: alphabetical sort, search/filter, persist locks in `localStorage`
 
-### 6. Expand Existing Generators
+### 4. Expand Existing Generators
 - [ ] Generator A: +12 `possibleCharacters`; add `tone` grammar (6 moods)
 - [ ] Generator B: expand `adjectives` to 30 items; add `lighting` category
 - [ ] Generate new 512×512 thumbnails
 - [ ] Increment `version` & update CHANGELOG
 
-### 7. Verification & QA
-- [ ]  (prompts, theme toggle, variable lock)
+### 5. Verification & QA
+- [ ] Manual smoke-test scenarios (prompts, theme toggle, variable lock)
 - [ ] Ensure dev bundle <200 KB gzip
 - [ ] Run Lighthouse a11y audit and hit ≥90 score
+
+### 6. Refactor Quick Wins
+
+> Quick, high-impact tech-debt pay-downs promoted from `docs/refactor_opportunities.md`.
+- [ ] ResolveIncludes helper
+  - [ ] Extract logic to `src/utils/resolveIncludes.js`
+  - [ ] Update `generatorLoader.js` to import helper
+  - [ ] Write dedicated unit tests (success, circular include guard)
+  - [ ] Update docs
+- [ ] AdvancedModal styles externalised
+  - [ ] Create `src/styles/advancedModal.css` and move inline block
+  - [ ] Import stylesheet in `advancedModal.js`
+  - [ ] Add ESLint exception removal
+  - [ ] Visual regression check
+- [ ] Weighted-random shared util
+  - [ ] Implement `src/utils/weightedRandom.js`
+  - [ ] Mirror implementation in `python/` port (if present)
+  - [ ] Unit tests for distribution sanity
+- [ ] Lint rule: no inline styles
+  - [ ] Add custom ESLint rule or plugin config
+  - [ ] Run `eslint --fix` and address violations
+  - [ ] CI passes
+- [ ] Local bundle-size script
+  - [ ] Add `npm run size` (uses `rollup-plugin-size` or `size-limit`)
+  - [ ] Document usage in README
+- [ ] Accessibility tweaks
+  - [ ] Add `lang` attr & ARIA landmarks to `index.html`
+  - [ ] Add `role="dialog"` / `aria-modal` to modal markup
+  - [ ] Lighthouse a11y audit
+- [ ] Test helper factory
+  - [ ] Implement `tests/helpers/mockGenerator.js`
+  - [ ] Refactor existing tests to use factory
 
 ### Immediate Next Steps (2025-07-09)
 - [ ] Add edge-case & error-handling tests for engine and generatorLoader
@@ -103,14 +135,13 @@
 All completed milestones up to v1.3.0 are documented in CHANGELOG and Git history.
 
 
-### 3. Verification & QA
-- [ ] 
-  - [ ] Generate 5 prompts with default generator.
-  - [ ] Toggle theme and verify persistence.
-  - [ ] Lock variable and ensure new seed respects lock.
-- [ ] Performance budget
+
+
+
+
+
   - [ ] Keep dev bundle <200 KB gzip.
-- [ ] Accessibility
+
   - [ ] Run Lighthouse a11y audit and hit ≥90 score.
 
 ### 4. New Generator • Anachronistic Tech Panel
