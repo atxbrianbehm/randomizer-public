@@ -36,20 +36,20 @@
 - [x] Identify further code-refactor opportunities and log in `docs/refactor_opportunities.md`
 
 ### 3. Folder Restructure & Source Migration
-- [ ] `src/services/generatorLoader.js`
-  - [ ] Extract `fetchGeneratorSpec()` helper (wrap fetch/error-handling)
-  - [ ] Move registration logic into `registerGenerator()` util
-  - [ ] Add JSDoc comments & unit tests
-- [ ] `src/main.js` cleanup
-  - [ ] Abstract lockable list into `constants.js`
-  - [ ] Wrap DOM queries in `ui/query.js` helper
-  - [ ] Remove redundant code & unused event listeners
-  - [ ] Add/update JSDoc for all `RandomizerApp` methods
-- [ ] Asset moves
-  - [ ] Move `randomizer.css` → `src/styles/randomizer.css`
-  - [ ] Relocate preview images → `public/preview/`
-- [ ] Imports
-  - [ ] Update paths to use `@/` alias and run ESLint autofix
+- [x] `src/services/generatorLoader.js`
+  - [x] Extract `fetchGeneratorSpec()` helper (wrap fetch/error-handling)
+  - [x] Move registration logic into `registerGenerator()` util
+  - [x] Add JSDoc comments & unit tests
+- [x] `src/main.js` cleanup
+  - [x] Abstract lockable list into `constants.js`
+  - [x] Wrap DOM queries in `ui/query.js` helper
+  - [x] Remove redundant code & unused event listeners
+  - [x] Add/update JSDoc for all `RandomizerApp` methods
+- [x] Asset moves
+  - [x] Move `randomizer.css` → `src/styles/randomizer.css`
+  - [x] Relocate preview images → `public/preview/`
+- [x] Imports
+  - [x] Update paths to use `@/` alias and run ESLint autofix
 
 ### 4. New Generator – Anachronistic Tech Panel
 - [ ] Convert provided JSON → `generators/anachronisticTechPanel.json`
@@ -129,13 +129,13 @@
   - [ ] Render grammar DOT graph with Viz.js for authors.
 
 - [ ] Folder restructure & source migration
-  - [ ] `src/services/generatorLoader.js`
+  - [x] `src/services/generatorLoader.js`
     - [ ] Extract `fetchGeneratorSpec()` helper wrapping `fetch()`/error-handling.
-    - [ ] Move registration logic into `registerGenerator()` util.
-    - [ ] Add JSDoc comments & unit tests.
-  - [ ] `src/main.js` cleanup
+    - [x] Move registration logic into `registerGenerator()` util.
+    - [x] Add JSDoc comments & unit tests.
+  - [x] `src/main.js` cleanup
     - [ ] Abstract repetitive lockable list into `constants.js`.
-    - [ ] Wrap DOM queries in `ui/query.js` helper (e.g., `q('#id')`).
+    - [x] Wrap DOM queries in `ui/query.js` helper (e.g., `q('#id')`).
     - [x] Remove legacy global variables.
     - [x] Eliminate unused event listeners (`onGenerateClick`, `onHelpClick`) – none found.
     - [x] Extract `generateText` body to `services/textGenerator.js` (thin wrapper in class).
@@ -144,9 +144,9 @@
     - [x] Delete unused event listeners (`onGenerateClick`, `onHelpClick`).
     - [ ] Add JSDoc for all RandomizerApp class methods.
   - [ ] Source moves
-    - [ ] Move `randomizer.css` → `src/styles/randomizer.css`.
-    - [ ] Relocate preview images → `public/preview/`.
-  - [ ] Imports
+    - [x] Move `randomizer.css` → `src/styles/randomizer.css`.
+    - [x] Relocate preview images → `public/preview/`.
+  - [x] Imports
     - [ ] Update paths to use `@/` alias.
     - [ ] Run ESLint autofix to catch broken paths.
 
@@ -228,7 +228,13 @@ Opera Character Generator v0.2.0 is fully integrated and verified:
 - Gender logic, attire, and pronouns confirmed working.
 - Commit `3538bcd` pushed to `main`.
 
-Next focus: address include-resolver warnings and UI clear-button bug, then resume broader roadmap items.
+Recent progress (evening 2025-07-08):
+- Loader `$include` refactor complete: `resolveIncludes` extracted, circular guard added, meta+array pattern supported, full test coverage.
+- New shared helper utilities implemented (`fetchJsonCached`, `deepMergePreserveArrays`, `slugify`, `randomPickWeighted`, `flattenIncludes`, `validateGeneratorSpec`, `parseRulePlaceholders`) with tests and JSON schema.
+- Dev dependency upgrades: Vite 7 and AJV added; no regressions.
+- Documentation refreshed (README Helper Utilities section, CHANGELOG v1.2.0).
+
+Next focus: finalise expanded LLM Generator Assembly Guide, integrate Anachronistic Tech Panel generator, and continue modal UI auto-generation work.
 
 ### 3. Verification & QA
 - [ ] Manual smoke-test scenarios

@@ -58,6 +58,20 @@ const engine = new RandomizerEngine();
 </script>
 ```
 
+## 🔨 Helper Utilities
+
+The `src/utils/helpers.js` module aggregates small, focused helpers that many generators and tools can reuse. Highlights:
+
+| Helper | Purpose | Quick Example |
+| ------ | ------- | ------------- |
+| `fetchJsonCached(url)` | Fetch JSON once per session with a tiny in-memory cache | `const data = await fetchJsonCached('/my.json');` |
+| `deepMergePreserveArrays(a, b)` | Deep-merge objects but **replace** arrays | `const merged = deepMergePreserveArrays(defaults, overrides);` |
+| `slugify(text)` | Convert text → `kebab-case` for IDs, filenames | `slugify('My Cool Generator') // "my-cool-generator"` |
+| `randomPickWeighted(items)` | Weighted random select | `randomPickWeighted([{value:'x',weight:1},{value:'y',weight:3}])` |
+| `flattenIncludes(spec)` | Return unique list of all `$include` paths | `const paths = flattenIncludes(generatorJson);` |
+| `validateGeneratorSpec(spec)` | Validate against JSON Schema (`src/schema/generator.json`) | `if(!validateGeneratorSpec(json).ok) throw Error('Bad spec');` |
+| `parseRulePlaceholders(str)` | Tokenise grammar placeholders for tools/UIs | `parseRulePlaceholders('You {animal|1-3}!')` |
+
 ## 🗂️ Project Structure (key paths)
 ```
 randomizer/

@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file. The format 
 
 ---
 
+## [1.2.0] – 2025-07-08
+
+### Added
+- **Utility Helpers** (`src/utils/helpers.js`)
+  - `fetchJsonCached` – session-cached JSON fetch
+  - `deepMergePreserveArrays` – safe deep merge that keeps arrays intact
+  - `slugify` – lower-case dash slugs
+  - `randomPickWeighted` – weighted random selection
+  - `flattenIncludes` – static analysis helper listing all `$include` paths
+  - `validateGeneratorSpec` – AJV-powered JSON schema validator
+  - `parseRulePlaceholders` – grammar placeholder tokenizer
+- **JSON Schema** for generators at `src/schema/generator.json`.
+- **Unit Tests** covering all helpers (`tests/utils.helpers.test.js`).
+
+### Changed
+- Development dependency **Vite upgraded to 7.x**, fixing esbuild dev-server vulnerability.
+
+### Fixed
+- n/a
+
+---
+
 ## [1.1.0] – 2025-07-08
 
 ### Added
