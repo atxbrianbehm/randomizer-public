@@ -1,20 +1,6 @@
 import { JSDOM } from 'jsdom';
-import RandomizerEngine from '@/RandomizerEngine.js';
+import { loadEngineWithGenerator } from './helpers/mockGenerator.js';
 import { updateEntryPoints, updateVariablesDisplay } from '../src/ui/state.js';
-
-const mockGenerator = {
-  metadata: { name: 'mock' },
-  variables: {
-    adjective: { type: 'string', default: 'funny', description: 'An adjective' }
-  },
-  grammar: {
-    origin: ['This is a {{adjective}} test.']
-  },
-  entry_points: {
-    default: 'origin',
-    alternatives: ['origin']
-  }
-};
 
 function setupDom() {
   const dom = new JSDOM(`<!DOCTYPE html><body>
@@ -26,13 +12,22 @@ function setupDom() {
   global.window = dom.window;
 }
 
-describe('UI state helpers', () => {
+describe('UI state helpers (refactored)', () => {
   let app;
   beforeEach(async () => {
     setupDom();
-    const engine = new RandomizerEngine();
-    await engine.loadGenerator(mockGenerator);
-    engine.selectGenerator('mock');
+    const { engine } = await loadEngineWithGenerator({
+      variables: {
+        adjective: { type: 'string', default: 'funny', description: 'An adjective' }
+      },
+      grammar: {
+        origin: ['This is a {{adjective}} test.']
+      },
+      entry_points: {
+        default: 'origin',
+        alternatives: ['origin']
+      }
+    });
 
     app = {
       engine,

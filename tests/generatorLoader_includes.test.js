@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { resolveIncludes } from '@/services/generatorLoader.js';
+import { resolveIncludes } from '@/utils/resolveIncludes.js';
 
 // Helper to mock global fetch for each test
 function mockFetch(mapping) {

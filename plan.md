@@ -82,11 +82,12 @@
   - [ ] Add `lang` attr & ARIA landmarks to `index.html`
   - [ ] Add `role="dialog"` / `aria-modal` to modal markup
   - [ ] Lighthouse a11y audit
-- [ ] Test helper factory
-  - [ ] Implement `tests/helpers/mockGenerator.js`
-  - [ ] Refactor existing tests to use factory
+- [x] Test helper factory
+  - [x] Implement `tests/helpers/mockGenerator.js`
+  - [x] Refactor existing tests to use factory (legacy `stateHelpers.spec.js` excluded; refactored file added)
 
 ### Immediate Next Steps (2025-07-09)
+- Clean up legacy `stateHelpers.spec.js` when confident, then remove exclusion from `vitest.config.js`.
 - [ ] Add edge-case & error-handling tests for engine and generatorLoader
 - [ ] Stub expanded sections in `LLM_Content_Development_Guide.md`
 

@@ -1,3 +1,5 @@
+import { weightedRandom } from '@/utils/weightedRandom.js';
+
 export default class RandomizerEngine {
     constructor() {
         this.loadedGenerators = new Map();
@@ -466,34 +468,21 @@ export default class RandomizerEngine {
 
     // Process weighted rules
     processWeightedRule(generator, rule, context) {
-        const options = rule.options;
-        const weights = rule.weights || options.map(opt => (typeof opt === 'object' && typeof opt.weight === 'number') ? opt.weight : 1);
-
-        let totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-        let random = this._prng ? this._prng() * totalWeight : Math.random() * totalWeight;
-
-        for (let i = 0; i < options.length; i++) {
-            random -= weights[i];
-            if (random <= 0) {
-                const selected = options[i];
-                if (typeof selected === 'object' && selected !== null) {
-                    if (selected.actions) {
-                        this.executeActions(selected.actions, context);
-                    }
-                    return this.processText(selected.text, context);
-                }
-                return this.processText(selected, context);
+        const options = rule.options || [];
+        const items = options.map((opt, i) => ({
+            value: i,
+            weight: (rule.weights && rule.weights[i] !== undefined) ? rule.weights[i] : (
+                typeof opt === 'object' && typeof opt.weight === 'number' ? opt.weight : 1)
+        }));
+        const idx = weightedRandom(items, this._prng || Math.random);
+        const selected = options[idx];
+        if (typeof selected === 'object' && selected !== null) {
+            if (selected.actions) {
+                this.executeActions(selected.actions, context);
             }
+            return this.processText(selected.text ?? selected.value ?? '', context);
         }
-
-        const first = options[0];
-        if (typeof first === 'object' && first !== null) {
-            if (first.actions) {
-                this.executeActions(first.actions, context);
-            }
-            return this.processText(first.text, context);
-        }
-        return this.processText(first, context);
+        return this.processText(selected, context);
     }
 
     // Process conditional rules

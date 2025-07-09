@@ -10,7 +10,7 @@ This document tracks potential refactors and tech-debt clean-ups discovered duri
 
 | Priority | Area | Opportunity |
 |---|---|---|
-| 🟢 | generatorLoader.js | Extract **`resolveIncludes`** into its own module (e.g. `src/utils/resolveIncludes.js`) so it can be unit-tested in isolation and reused by other loaders. |
+| ✅ | generatorLoader.js | Extracted **`resolveIncludes`** into `src/utils/resolveIncludes.js` (unit-tested & reused). |
 | 🟡 | resolveIncludes | Add explicit **circular-include guard** (depth-limited or visited-set) – current implementation could recurse infinitely. Unit tests partially drafted in `tests/generatorLoader_includes.test.js`. |
 | 🟢 | Include pattern | Support asynchronous includes (e.g. network `fetch`) by returning `Promise` from resolver and awaiting in loader. |
 

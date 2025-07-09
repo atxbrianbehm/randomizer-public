@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { resolveIncludes } from '../src/services/generatorLoader.js';
+import { resolveIncludes } from '../src/utils/resolveIncludes.js';
 
 /**
  * Tests error-handling paths in resolveIncludes – specifically failed fetches and

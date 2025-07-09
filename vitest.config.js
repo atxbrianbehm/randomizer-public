@@ -7,6 +7,7 @@ const __dirname = dirname(__filename);
 
 export default defineConfig({
   test: {
+    exclude: ['tests/helpers/**'],
     environment: 'jsdom',
     globals: true,
     setupFiles: [],

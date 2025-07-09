@@ -9,6 +9,7 @@ import { loadState, clearState } from '@/services/persistence.js';
 
 // Main entry ignores browser bootstrap; this class can be imported in tests & UI
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
+import { weightedRandom } from '@/utils/weightedRandom.js';
 import * as GeneratorLoader from '@/services/generatorLoader.js';
 
 
@@ -16,7 +17,7 @@ import * as GeneratorLoader from '@/services/generatorLoader.js';
  * Core application logic for Randomizer. This class is environment-agnostic and can be
  * instantiated in both browser (via main.js) and Vitest/JSDOM tests.
  */
-export class RandomizerApp {
+export default class RandomizerApp {
     constructor() {
         // Load persisted state early
         this.persistedState = loadState() || null;
@@ -410,23 +411,10 @@ export class RandomizerApp {
             return this.Locked[ruleName];
         }
         const options = rule.options || [];
-        const weights = rule.weights || options.map(() => 1);
-        const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-        let random = Math.random() * totalWeight;
-        for (let i = 0; i < options.length; i++) {
-            random -= weights[i];
-            if (random <= 0) {
-                return this.processRuleContent(options[i], ruleName);
-            }
-        }
-        return this.processRuleContent(options[0], ruleName);
+        const idx = weightedRandom(options.map((opt, i) => ({ value: i, weight: (rule.weights && rule.weights[i] !== undefined) ? rule.weights[i] : (typeof opt === 'object' && typeof opt.weight === 'number' ? opt.weight : 1) })));
+        return this.processRuleContent(options[idx], ruleName);
     }
 
-    /**
-     * Evaluates a set of conditions for grammar rule selection.
-     * @param {Object} conditions - Conditions to evaluate.
-     * @returns {boolean} True if all conditions pass, false otherwise.
-     */
     evaluateConditions(conditions) {
         if (!conditions) return true;
 
@@ -551,4 +539,4 @@ export class RandomizerApp {
 }
 
 // Provide a default export for environments that import the class directly
-export default RandomizerApp;
+

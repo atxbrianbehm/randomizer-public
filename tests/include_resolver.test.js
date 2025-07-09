@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { resolveIncludes, deriveBasePath } from '../src/services/generatorLoader.js';
+import { resolveIncludes, deriveBasePath } from '../src/utils/resolveIncludes.js';
 
 // Helper to mock global fetch for include resolution
 function mockFetch(map) {

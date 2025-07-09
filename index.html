@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <!-- Header Section -->
-        <header class="header">
+        <header class="header" role="banner">
             <h1>Randomizer Engine Demo</h1>
             <p class="subtitle">A system for loading JSON-based text generators with complex randomization logic</p>
             <button id="dark-mode-toggle" class="btn btn--secondary btn--sm" style="margin-top:10px;">Toggle Dark Mode</button>
@@ -17,7 +17,7 @@
         </header>
 
         <!-- Main Content Grid -->
-        <div class="main-grid">
+        <main class="main-grid" role="main">
             <!-- Left Column -->
             <div class="left-column">
                 <!-- Generator Selection Panel -->
@@ -168,10 +168,10 @@
     </div>
 
     <!-- Advanced Modal -->
-    <div id="advanced-modal" class="modal">
+    <div id="advanced-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="advanced-modal-title">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Advanced Options</h2>
+                <h2 id="advanced-modal-title">Advanced Options</h2>
                 <span class="close-modal">&times;</span>
             </div>
             <div id="advanced-modal-body" class="modal-body">

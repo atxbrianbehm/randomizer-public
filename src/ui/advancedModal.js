@@ -1,38 +1,13 @@
 // Dynamic Advanced Options Modal helpers
 import { q } from '@/ui/query.js';
+import '@/styles/advancedModal.css';
 import paletteColors from '../../generators/techPanel_generator/palette_colors.json';
 // Build UI controls based on app.lockableRules determined by RandomizerEngine.
 // This replaces the previous hard-coded implementation.
 
+// Styles moved to external CSS (imported above)
 // --- Utility helpers -------------------------------------------------------
-let __advStylesInjected = false;
-function injectAdvStyles() {
-  if (typeof document === 'undefined' || __advStylesInjected) return;
-  const styleTag = document.createElement('style');
-  styleTag.textContent = `
-    .lock-button { background:none;border:none;font-size:1rem;cursor:pointer;color: var(--color-accent);vertical-align:middle;margin-left:4px; }
-    .lock-button.locked { color: var(--color-accent2); }
-    .modal-content { width: 96%; max-width: 760px; max-height: 80vh; overflow-y: auto; }
-    #advanced-modal-body { max-height: none; overflow: visible; }
-    
-    /* stage box */
-    .stage-box { background: var(--color-bg2); }
-    /* modal scrollbar */
-    .modal-content::-webkit-scrollbar { width: 10px; }
-    .modal-content::-webkit-scrollbar-track { background: var(--color-secondary); }
-    .modal-content::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 5px; }
-    .modal-content::-webkit-scrollbar-thumb:hover { background: var(--color-primary-hover); }
-    @supports (scrollbar-width: thin) {
-      .palette-swatch-wrap { display:inline-flex; align-items:center; gap:2px; margin-left:6px; }
-      .palette-swatch { width:14px; height:14px; border:1px solid #666; }
-      .modal-content { scrollbar-width: thin; scrollbar-color: var(--color-primary) var(--color-secondary); }
-    }
-  `;
-  if (document && document.head) {
-    document.head.appendChild(styleTag);
-  }
-  __advStylesInjected = true;
-}
+
 export function humanLabel(key, generator) {
   // 1) explicit override via _meta.uiLabel
   const meta = generator?.grammar?.[key]?._meta;
@@ -83,7 +58,7 @@ export function createLockBtn(key, app) {
 // --- Main builders ---------------------------------------------------------
 export function buildModal(app) {
   if (typeof document === 'undefined') return;
-  injectAdvStyles();
+
   // Ensure generatorSpec present
   if (!app?.generatorSpec) return;
 

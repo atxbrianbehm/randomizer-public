@@ -1,19 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import RandomizerEngine from '@/RandomizerEngine.js';
+import { describe, it, expect, vi } from 'vitest';
+import { loadEngineWithGenerator } from './helpers/mockGenerator.js';
 
-function load(engine, gen) {
-  return engine.loadGenerator(gen).then(name => {
-    engine.selectGenerator(name);
-    return name;
-  });
-}
+
 
 describe('RandomizerEngine grammar expansion suite', () => {
-  let engine;
-  beforeEach(() => {
-    engine = new RandomizerEngine();
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
-  });
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
 
   it('expands nested placeholders and modifier chain', async () => {
     const g = {
@@ -25,7 +16,7 @@ describe('RandomizerEngine grammar expansion suite', () => {
       },
       entry_points: { default: 'origin' }
     };
-    await load(engine, g);
+    const { engine } = await loadEngineWithGenerator(g);
     const txt = engine.generate();
     expect(txt).toBe('Spooky a ghost');
   });
@@ -45,7 +36,7 @@ describe('RandomizerEngine grammar expansion suite', () => {
       },
       entry_points: { default: 'origin' }
     };
-    await load(engine, g);
+    const { engine } = await loadEngineWithGenerator(g);
     expect(engine.generate()).toBe('one two & three');
   });
 
@@ -61,7 +52,7 @@ describe('RandomizerEngine grammar expansion suite', () => {
       },
       entry_points: { default: 'origin' }
     };
-    await load(engine, g);
+    const { engine } = await loadEngineWithGenerator(g);
     // set seed so prng deterministic (~0 value still picks index 2 with weights)
     engine.setSeed('force');
     const txt = engine.generate();
@@ -79,7 +70,7 @@ describe('RandomizerEngine grammar expansion suite', () => {
       },
       entry_points: { default: 'origin' }
     };
-    await load(engine, g);
+    const { engine } = await loadEngineWithGenerator(g);
     const res = engine.generate();
     expect(res).toContain('[CYCLIC RULE]');
   });

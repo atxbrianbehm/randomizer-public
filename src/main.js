@@ -5,7 +5,13 @@ import RandomizerApp from '@/core/RandomizerApp.js';
 // Main entry for Vite – initializes the Randomizer application
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
-        new RandomizerApp();
+        const app = new RandomizerApp();
+        // Expose for external scripts (e.g., Percy snapshot automation)
+        window.__randomizerApp__ = app;
+        if (location.hash === '#advanced-modal' && typeof app.showAdvancedModal === 'function') {
+            // Wait for modal to mount, then open it
+            setTimeout(() => app.showAdvancedModal(), 100);
+        }
     });
 }
 

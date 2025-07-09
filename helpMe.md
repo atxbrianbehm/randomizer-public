@@ -17,8 +17,8 @@ The `resolveIncludes` function in `generatorLoader.js` is designed to recursivel
 
 ## Technical Details
 
-- **Location:** `src/services/generatorLoader.js`
-- **Function:** `resolveIncludes`
+- **Location (updated):** `src/utils/resolveIncludes.js`
+- **Utility Function:** `resolveIncludes`
 - **Current Behavior:** Only handles `$include` as a direct property of an object
 - **Required Change:** Needs to support arrays containing `{_meta: ...}` and `{$include: ...}` entries
 

@@ -2,6 +2,20 @@
 
 ---
 
+## [1.3.1] – 2025-07-09
+
+### Added
+- Test helper factory (`tests/helpers/mockGenerator.js`) and corresponding helper-loading utility.
+
+### Changed
+- Refactored existing tests to use the helper; new file `tests/stateHelpers_refactored.spec.js` replaces legacy inline-generator tests.
+- `vitest.config.js` updated to exclude helper directory and legacy `stateHelpers.spec.js`.
+
+### Fixed
+- Removed repetitive inline generator JSON blobs from test suites, reducing duplication and improving maintainability.
+
+---
+
 ## [1.3.0] – 2025-07-09
 
 ### Added
@@ -9,6 +23,7 @@
   - Lockable rule UI integration and state persistence.
   - Arrays extracted to `/generators/includes/opera/*` and referenced via `$include` for modular maintenance.
 - Unit tests for locking UI and `$include` resolution now pass across full suite (104 tests).
+- **Anachronistic Tech Panel Generator v1.0** integrated with color-palette swatches, multi-select UI, lockable categories, snapshot tests, and placeholder preview image.
 
 ### Changed
 - `resolveIncludes` recursion performance optimized; generator loader fully supports nested `$include` patterns.

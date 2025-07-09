@@ -1,6 +1,8 @@
 import RandomizerEngine from '@/RandomizerEngine.js';
+import { loadEngineWithGenerator } from './helpers/mockGenerator.js';
 
-const mockGenerator = {
+// Removed inline mockGenerator; using helper factory instead.
+/* const mockGenerator = {
   metadata: { name: 'mock' },
   variables: {
     adjective: { default: 'funny' }
@@ -12,20 +14,17 @@ const mockGenerator = {
   entry_points: {
     default: 'origin'
   }
-};
+}; */
 
 describe('RandomizerEngine', () => {
   it('loads a generator without error', async () => {
-    const engine = new RandomizerEngine();
-    const name = await engine.loadGenerator(mockGenerator);
-    expect(name).toBe('mock');
+    const { engine, generatorName } = await loadEngineWithGenerator();
+    expect(generatorName).toBe('mock');
     expect(engine.loadedGenerators.size).toBe(1);
   });
 
   it('generate() returns text', async () => {
-    const engine = new RandomizerEngine();
-    await engine.loadGenerator(mockGenerator);
-    engine.selectGenerator('mock');
+    const { engine } = await loadEngineWithGenerator();
     const output = engine.generate();
     expect(typeof output).toBe('string');
     expect(output.length).toBeGreaterThan(0);

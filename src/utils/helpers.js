@@ -69,15 +69,11 @@ export function slugify(str) {
  * items: Array<{ value: any, weight: number }> (weight > 0)
  * returns value picked proportionally to weight.
  */
+import { weightedRandom } from '@/utils/weightedRandom.js';
+
 export function randomPickWeighted(items, rng = Math.random) {
-  const sum = items.reduce((acc, it) => acc + it.weight, 0);
-  const r = rng() * sum;
-  let acc = 0;
-  for (const it of items) {
-    acc += it.weight;
-    if (r < acc) return it.value;
-  }
-  return items[items.length - 1].value; // fallback due to float error
+  // Backward-compat wrapper.
+  return weightedRandom(items, rng);
 }
 
 // --- flattenIncludes ----------------------------------------------------
