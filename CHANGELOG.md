@@ -1,5 +1,23 @@
 # Changelog
 
+---
+
+## [1.3.0] – 2025-07-09
+
+### Added
+- **Opera Character Generator v0.3.0** with
+  - Lockable rule UI integration and state persistence.
+  - Arrays extracted to `/generators/includes/opera/*` and referenced via `$include` for modular maintenance.
+- Unit tests for locking UI and `$include` resolution now pass across full suite (104 tests).
+
+### Changed
+- `resolveIncludes` recursion performance optimized; generator loader fully supports nested `$include` patterns.
+
+### Fixed
+- Removed obsolete snapshot from `tests/opera_locking_snapshot.test.js` (flagged as obsolete by Vitest).
+
+---
+
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---

@@ -38,7 +38,34 @@ npm run lint     # ESLint static analysis
 npm test         # Vitest unit/integration tests
 ```
 
-### Feature Flags & Advanced Modal
+### Feature Flags & Advanced Modal & Locking Values
+The Advanced Options modal lets you *lock* specific grammar rules to fixed values before generating. This is handy when you want certain aspects (e.g. character gender or outfit colour) to stay constant while the rest randomises.
+
+1. Open the modal (gear icon ▶️ *Advanced Options*).
+2. Pick a value from any dropdown – the lock icon closes, indicating that rule is frozen.
+3. Generate again: the locked value persists, everything else varies.
+
+```js
+// Programmatic example using RandomizerEngine
+engine.setLockedValues('Opera Character Generator', {
+  pick_clothing_color: 'in burgundy',
+  pick_voice_type: 'dramatic baritone'
+});
+const prompt = engine.generateDetailed('Opera Character Generator');
+```
+
+Unlocked rules continue to randomise per-call.
+
+### Modular `$include` Files
+Large option lists are now split into JSON subfiles (e.g. `generators/includes/opera/clothing_colors.json`) and referenced via:
+
+```jsonc
+"pick_clothing_color": [
+  { "$include": "/includes/opera/clothing_colors.json" }
+]
+```
+
+The loader inlines them at runtime, keeping main generator files concise.
 The new keyboard-friendly Advanced Options modal is **on by default**. To temporarily revert to the legacy UI, add the following flag **before** the app is instantiated (e.g. in `index.html`):
 
 ```html

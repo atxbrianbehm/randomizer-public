@@ -21,19 +21,10 @@
 ## Optimized Plan (2025-07-07)
 
 ### 1. Testing & Documentation Hardening
-- [x] Increase unit test coverage to ≥90%
-- [x] Add snapshot tests for prompt readability
-- [x] Implement CI workflow: lint → test → build → size-budget check → upload coverage
 - [ ] Expand `LLM_Content_Development_Guide.md` with examples, modifier reference, persistence schema, and debug overlay tips
-- [x] Update README badges (coverage, CI, bundle size)
-- [x] Update CHANGELOG for v1.1.0
-- [x] Add pre-commit hook for lint+tests
-- [x] Add `npm run watch:test` script for TDD loop
 
 ### 2. Documentation & Developer Experience
-- [x] Audit and update README and developer guides
 - [ ] Write updated LLM guide for assembling generators
-- [x] Identify further code-refactor opportunities and log in `docs/refactor_opportunities.md`
 
 ### 3. Folder Restructure & Source Migration
 - [x] `src/services/generatorLoader.js`
@@ -223,6 +214,15 @@
 - QA, accessibility, and polish tasks completed.
 
 ## Status Update (2025-07-08)
+
+## Status Update (2025-07-09)
+Opera Character Generator milestone complete:
+- v0.3.0 released (locking UI, modular `$include` arrays).
+- Generator metadata bumped and CHANGELOG entry `[1.3.0]` added.
+- README updated with locking walkthrough and modular include note.
+- Full test suite (104 tests) passes with coverage ≥96 %.
+- Docs Phase 4 tasks finished; project ready for v1.3.0 tag.
+
 Opera Character Generator v0.2.0 is fully integrated and verified:
 - Engine patched to support weighted options with actions.
 - Gender logic, attire, and pronouns confirmed working.

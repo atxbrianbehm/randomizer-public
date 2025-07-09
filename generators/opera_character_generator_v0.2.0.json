@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "1970s Opera Character Prompt Generator",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Generates descriptive 1970s opera attendee character sheet prompts with enhanced fashion details.",
     "author": "Cascade-AI (refactor of legacy HTML/JS)",
     "category": "creative",
@@ -126,18 +126,12 @@
     "pick_fabric": {"fabrics": [
       {"text": "made of silk", "weight": 10}
     ]},
-    "pick_clothing_color": {"clothing_colors": [
-      {"text": "in avocado green", "weight": 8},
-      {"text": "in royal blue", "weight": 8},
-      {"text": "in burgundy", "weight": 7},
-      {"text": "in mustard yellow", "weight": 5}
-    ]},
-    "pick_clothing_style": {"clothing_styles": [
-      {"text": "covered in sequins", "weight": 8},
-      {"text": "accented with velvet trim", "weight": 7},
-      {"text": "featuring metallic embroidery", "weight": 6},
-      {"text": "with paisley patterns", "weight": 5}
-    ]},
+    "pick_clothing_color": [
+      { "$include": "/includes/opera/clothing_colors.json" }
+    ],
+    "pick_clothing_style": [
+      { "$include": "/includes/opera/clothing_styles.json" }
+    ],
     "pick_female_quirk": {"female_quirks": [
       {"text": "wearing a pearl necklace", "weight": 10},
       {"text": "carrying a beaded clutch", "weight": 8},
