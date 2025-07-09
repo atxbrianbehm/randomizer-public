@@ -9,7 +9,7 @@ A flexible, modular system for creating and executing probabilistic text generat
 ## 🚀 Quick Start
 
 ### Try the Interactive Demo
-Visit the [live demo](https://atxbrianbehm.github.io/randomizer-public/) to see the latest deployed version with example generators.
+Visit the [live demo](https://randomizer-public.vercel.app/) to see the latest deployed version with example generators.
 
 ### Run Locally (Python)
 ```bash
