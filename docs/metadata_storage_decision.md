@@ -56,3 +56,11 @@ Rationale:
 2. Loader must ignore unknown keys starting with `_`.
 3. Linter ensures each prompt-visible rule has `_meta.slot`.
 4. Future metadata fields should be documented in `LLM_Content_Development_Guide.md`.
+
+### Slot Taxonomy Alignment
+With the adoption of the **canonical slot taxonomy** (`docs/slot_taxonomy.md`) and the Smart Prompt Rewriter, `_meta.slot` values **must** reference one of the approved slot keys. This ensures:
+1. UI components map cleanly to grammar rules.
+2. Prompt Rewriter can reorder fragments deterministically.
+3. Analytics pipelines receive consistent slot data.
+
+Pack authors should consult the taxonomy table before assigning new slots.

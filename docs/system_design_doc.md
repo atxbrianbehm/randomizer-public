@@ -105,6 +105,14 @@ The Python engine can be initialized with a seed (string or int) or by calling `
 - **Python**: `load_generator` resolves `{"$include": "path"}` by attempting to read `generators/path`.
 - **JavaScript**: `loadGenerator` accepts an `options.includeResolver` function. This function `(path) => resolvedContent` is called to provide the content for any `$include` directives.
 
+### Slot Taxonomy & Smart Prompt Rewriter
+The engine now supports a **canonical slot taxonomy** (see `docs/slot_taxonomy.md`). Grammar rules may tag each option with `_meta.slot`, enabling:
+- Smart Prompt Rewriter to rearrange sentence fragments intelligently.
+- UI widgets (dropdowns, multi-selects) that map 1-to-1 with slots, letting users lock or tweak specific aspects of a prompt.
+- Consistent cross-generator analytics and future ML training.
+
+Both JavaScript and Python engines expose slot metadata after generation, and legacy generators without slot tags continue to function.
+
 ### Conditional Logic
 Supports MongoDB-style operators:
 - `$lt`, `$gt`: Less than, greater than
@@ -147,6 +155,7 @@ Supports MongoDB-style operators:
 - Generator marketplace/sharing
 - Real-time collaboration
 - Multi-language support
+- **Prompt Targeting System** (see `FUTURE_DIRECTIONS.md`) – map abstract grammar concepts to engine-specific templates for Midjourney, Imagen, Sora, etc.
 - Statistical analysis tools
 - Export to multiple formats
 

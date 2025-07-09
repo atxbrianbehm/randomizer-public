@@ -2,6 +2,23 @@
 
 ---
 
+## [1.4.0] – 2025-07-09
+
+### Added
+- Slot taxonomy integration across documentation.
+- New generator docs: Anachronistic Tech Panel, Deciduous Tree, Evergreen Tree, Satanic Panic, Televangelist.
+- System design doc updated with Slot Taxonomy & Prompt Targeting sections.
+- Metadata storage decision doc updated with Slot Taxonomy alignment guidance.
+
+### Changed
+- Refactor opportunities doc marks all high-priority items as completed.
+- Plan.md refreshed to reflect completion of documentation overhaul.
+
+### Fixed
+- n/a
+
+---
+
 ## [1.3.3] – 2025-07-09
 
 ### Added
