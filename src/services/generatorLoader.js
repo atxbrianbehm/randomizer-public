@@ -1,4 +1,6 @@
 // Service module responsible for loading JSON generator bundles into a RandomizerEngine instance.
+import { deriveBasePath, resolveIncludes } from '../utils/resolveIncludes.js';
+export { deriveBasePath, resolveIncludes }; // re-export for backward compatibility
 // New in v1.1: helper utilities `fetchGeneratorSpec` and `registerGenerator` extracted for easier
 // unit-testing and reuse across the app.
 // Keeping this logic separate keeps `RandomizerApp` cleaner and makes it reusable in tests.
@@ -16,27 +18,27 @@
  * @param {string} url Absolute path (served by Vite) to a generator JSON file.
  * @returns {Promise<object|null>} Parsed spec or `null` on failure.
  */
-// Derive a base path (directory) for resolving $include files based on the URL of
-// the main generator bundle.
+
+
+/*
 // With Vite we declare `publicDir: 'generators'`, which means every file inside
 // that folder is served at the site root with the `generators/` prefix stripped.
 // Therefore:
 //   '/televangelist_generator.json' (served from generators/)  → base '/televangelist_generator/'
 // so that $include paths like `platforms.json` will be resolved to
 //   '/televangelist_generator/platforms.json'
-export function deriveBasePath(url) {
-  const trimmed = url.startsWith('/') ? url.slice(1) : url;
-  const baseName = trimmed.replace(/\.json$/i, '');
-  // Files in the publicDir are served at site root, so the directory containing
-  // foo_generator.json will be available at /foo_generator/.
-  // Therefore strip the .json and add a trailing slash only.
-  return `/${baseName}/`;
-}
 
-// Recursively walk a generator spec and inline any objects of the form
-// { "$include": "foo.json", ... } by fetching the referenced JSON from the
+
+
+
+
+
+  
+
+
+
 // given basePath and merging it (preserving optional _meta).
-export async function resolveIncludes(node, basePath, visited = new Set()) {
+
   if (Array.isArray(node)) {
     const newArray = [];
     for (let i = 0; i < node.length; i++) {
@@ -116,7 +118,7 @@ export async function resolveIncludes(node, basePath, visited = new Set()) {
           }
           return { _meta: node._meta, ...resolvedIncluded };
         }
-        return resolvedIncluded;
+        
       } catch (e) {
         console.error('[resolveIncludes] failed', includePath, e);
         return node; // fallback to original node so generation can continue
@@ -131,9 +133,8 @@ export async function resolveIncludes(node, basePath, visited = new Set()) {
     return out;
   }
 
-  // Primitive value – return as-is.
-  return node;
-}
+  
+*/
 
 export async function fetchGeneratorSpec(url) {
   try {
