@@ -2,6 +2,23 @@
 
 ---
 
+## [1.5.0] – 2025-07-09
+
+### Added
+- Generator Import / Export pipeline with `GeneratorBundle` JSON schema (`src/schema/generatorBundle.json`).
+- AJV-based validator & helpers (`src/utils/validateGeneratorBundle.js`).
+- Vitest suite `tests/validator.bundle.test.js` (+3 cases).
+- Developer docs: `docs/generator_import_guide.md` & updated architecture diagram (`docs/design/architecture.md`).
+
+### Changed
+- `package.json` devDependencies: added `ajv-formats`.
+- `plan.md` import/export tasks completed.
+
+### Fixed
+- All tests pass (118); removed obsolete snapshot.
+
+---
+
 ## [1.4.0] – 2025-07-09
 
 ### Added
