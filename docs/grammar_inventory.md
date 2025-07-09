@@ -1,4 +1,6 @@
-# Grammar Inventory (generated 2025-06-26)
+# Grammar Inventory (generated 2025-07-09)
+
+> NOTE: This inventory lists *prompt-visible* grammar rules and their assigned **slots** (see `slot_taxonomy.md`). New slots added in July 2025—`texture`, `size`, `age`, `mood`, `sound`, `motion`, `background`, `provenance`, `style`, and `setting`—will appear automatically the next time this table is regenerated.
 
 | Generator | Prompt-visible Rules | Count |
 |-----------|----------------------|-------|
