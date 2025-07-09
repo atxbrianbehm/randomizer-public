@@ -24,6 +24,20 @@ This generator creates detailed portrait prompts of solo opera attendees in a 19
 1970s color photograph, character sheet style. A single French person a young professional, with short and stout. She has with long, straight hair and a center part. She is wearing a glamorous wrap dress in shocking pink, featuring a bold, geometric pattern and chunky-heeled pumps. For a unique detail, the character is wearing oversized, tinted sunglasses. Full-body shot from head to toe, looking over their shoulder at the camera. The background is a solid, neutral gray color. Clean, even studio lighting.
 ```
 
+## Slot Usage & UI Integration
+
+All rules that surface in the prompt map to canonical slots so the Smart Prompt Rewriter can arrange the sentence fluidly.
+
+| Rule | Slot | UI Control |
+|------|------|------------|
+| `attire_type` | style | dropdown (locked by default) |
+| `fabric` | texture | dropdown |
+| `colour` (derived) | colour | dropdown |
+| `age_status` | age | dropdown |
+| `quirk` | background elements | dropdown |
+
+The Advanced Options modal therefore exposes these categories for fine-tuning. Feel free to add additional texture or mood rules following the same pattern—just tag them with the appropriate `_meta.slot`.
+
 ## Engine Enhancements
 During integration, `RandomizerEngine` gained:
 * Support for plain-string rules.
