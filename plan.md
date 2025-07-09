@@ -40,8 +40,12 @@
 - [ ] Refactor modal builder to auto-generate UI
 - [ ] Sync dropdown states with `engine.lockedValues`
 - [ ] Remove legacy `LOCKABLE_FIELDS` logic
-- [ ] Unit tests for lockable rule detection & modal logic
+  - [ ] Maintain prompt history array in state; cap to last N (e.g., 20) and prune old nodes
+  - [ ] Provide clear-history button functionality & modal logic
 - [ ] Polish: alphabetical sort, search/filter, persist locks in `localStorage`
+- [ ] Refactor generated prompt container to flex-column flow
+- [ ] Render each prompt in its own capsule component (CSS card)
+- [ ] Append new prompt capsules at top (or bottom) without replacing existing ones
 
 ### 4. Expand Existing Generators
 - [ ] Generator A: +12 `possibleCharacters`; add `tone` grammar (6 moods)
@@ -85,6 +89,10 @@
 - [x] Test helper factory
   - [x] Implement `tests/helpers/mockGenerator.js`
   - [x] Refactor existing tests to use factory (legacy `stateHelpers.spec.js` excluded; refactored file added)
+- [ ] UI Cleanup & Prompt UX
+  - [ ] Remove System Architecture cell (HTML, CSS, JS)
+  - [ ] Remove JSON viewer panel and associated code
+  - [ ] Remove ugly scroll bar on generated output container
 
 ### Immediate Next Steps (2025-07-09)
 - Edge-case & error-handling tests for engine and generatorLoader
@@ -214,7 +222,6 @@ _Last updated: 2025-07-09 01:17 CT_
 
 ### HTML / CSS
 - [ ] Verify all IDs/classes referenced in JS exist in HTML.
-
 
 ### Verification
 - [ ] Run `npm run dev` and manually exercise UI to ensure no regressions.
