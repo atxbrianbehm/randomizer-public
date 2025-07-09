@@ -57,36 +57,39 @@
 ### 6. Refactor Quick Wins
 
 > Quick, high-impact tech-debt pay-downs promoted from `docs/refactor_opportunities.md`.
-- [ ] ResolveIncludes helper
-  - [ ] Extract logic to `src/utils/resolveIncludes.js`
-  - [ ] Update `generatorLoader.js` to import helper
-  - [ ] Write dedicated unit tests (success, circular include guard)
-  - [ ] Update docs
-- [ ] AdvancedModal styles externalised
-  - [ ] Create `src/styles/advancedModal.css` and move inline block
-  - [ ] Import stylesheet in `advancedModal.js`
-  - [ ] Add ESLint exception removal
-  - [ ] Visual regression check
-- [ ] Weighted-random shared util
-  - [ ] Implement `src/utils/weightedRandom.js`
-  - [ ] Mirror implementation in `python/` port (if present)
-  - [ ] Unit tests for distribution sanity
-- [ ] Lint rule: no inline styles
-  - [ ] Add custom ESLint rule or plugin config
-  - [ ] Run `eslint --fix` and address violations
-  - [ ] CI passes
-- [ ] Local bundle-size script
-  - [ ] Add `npm run size` (uses `rollup-plugin-size` or `size-limit`)
-  - [ ] Document usage in README
-- [ ] Accessibility tweaks
-  - [ ] Add `lang` attr & ARIA landmarks to `index.html`
-  - [ ] Add `role="dialog"` / `aria-modal` to modal markup
-  - [ ] Lighthouse a11y audit
+- [x] ResolveIncludes helper
+  - [x] Extract logic to `src/utils/resolveIncludes.js`
+  - [x] Update `generatorLoader.js` to import helper
+  - [x] Write dedicated unit tests (success, circular include guard)
+  - [x] Update docs
+- [x] AdvancedModal styles externalised
+  - [x] Create `src/styles/advancedModal.css` and move inline block
+  - [x] Import stylesheet in `advancedModal.js`
+  - [x] Add ESLint exception removal
+  - [x] Visual regression check
+- [x] Weighted-random shared util
+  - [x] Implement `src/utils/weightedRandom.js`
+  - [x] Mirror implementation in `python/` port (if present)
+  - [x] Unit tests for distribution sanity
+- [x] Lint rule: no inline styles
+  - [x] Add custom ESLint rule or plugin config
+  - [x] Run `eslint --fix` and address violations
+  - [x] CI passes
+- [x] Local bundle-size script
+  - [x] Add `npm run size` (uses `rollup-plugin-size` or `size-limit`)
+  - [x] Document usage in README
+- [x] Accessibility tweaks
+  - [x] Add `lang` attr & ARIA landmarks to `index.html`
+  - [x] Add `role="dialog"` / `aria-modal` to modal markup
+  - [x] Lighthouse a11y audit
 - [x] Test helper factory
   - [x] Implement `tests/helpers/mockGenerator.js`
   - [x] Refactor existing tests to use factory (legacy `stateHelpers.spec.js` excluded; refactored file added)
 
 ### Immediate Next Steps (2025-07-09)
+- Edge-case & error-handling tests for engine and generatorLoader
+- Expand `LLM_Content_Development_Guide.md` sections
+
 - Clean up legacy `stateHelpers.spec.js` when confident, then remove exclusion from `vitest.config.js`.
 - [ ] Add edge-case & error-handling tests for engine and generatorLoader
 - [ ] Stub expanded sections in `LLM_Content_Development_Guide.md`
