@@ -16,7 +16,7 @@ import process from 'process';
 const GENERATORS_DIR = path.resolve('generators');
 const REQUIRED_FIELDS = ['slot', 'priority']; // connector is optional but recommended
 
-function loadJson(filePath) {
+export function loadJson(filePath) {
   try {
     const contents = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(contents);
@@ -25,7 +25,7 @@ function loadJson(filePath) {
   }
 }
 
-function ruleHasMeta(rule) {
+export function ruleHasMeta(rule) {
   if (!rule) return false;
   if (Array.isArray(rule)) {
     // Look for object entry that has _meta
@@ -38,12 +38,12 @@ function ruleHasMeta(rule) {
   return false;
 }
 
-function validateMeta(meta) {
+export function validateMeta(meta) {
   if (!meta) return false;
   return REQUIRED_FIELDS.every((field) => Object.prototype.hasOwnProperty.call(meta, field));
 }
 
-function lintGenerator(filePath) {
+export function lintGenerator(filePath) {
   const errors = [];
   const generator = loadJson(filePath);
   const grammar = generator.grammar || {};
@@ -55,7 +55,7 @@ function lintGenerator(filePath) {
   return errors;
 }
 
-function main() {
+export function main() {
   const allFiles = fs.readdirSync(GENERATORS_DIR).filter((f) => f.endsWith('.json'));
   let allErrors = [];
   for (const file of allFiles) {
@@ -75,4 +75,6 @@ function main() {
   }
 }
 
-main();
+if (import.meta.url === process.argv[1]) {
+  main();
+}

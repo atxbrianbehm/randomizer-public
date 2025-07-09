@@ -61,4 +61,18 @@ describe('resolveIncludes', () => {
     // Should return node unchanged on error
     expect(result).toEqual(node);
   });
+
+  it('detects and breaks circular $include chains', async () => {
+    // /a.json -> /b.json -> /a.json
+    const fetchMap = {
+      '/a.json': { $include: '/b.json' },
+      '/b.json': { $include: '/a.json' }
+    };
+    mockFetch(fetchMap);
+
+    const node = { $include: '/a.json' };
+    const result = await resolveIncludes(node, '/');
+    // Because of circular detection, the deepest include should return original node
+    expect(result).toEqual({ $include: '/a.json' });
+  });
 });

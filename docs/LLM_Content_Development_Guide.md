@@ -181,7 +181,42 @@ When developing or troubleshooting generator content, the Randomizer application
 
 ---
 
-## 6. State Persistence API (Browser)
+## 6. Modifier Reference Table
+
+| Modifier | Purpose | Example Before | Example After |
+|----------|---------|----------------|---------------|
+| `capitalize` | Capitalizes first character | `hello` | `Hello` |
+| `upper` | Converts to UPPERCASE | `hello` | `HELLO` |
+| `lower` | Converts to lowercase | `HELLO` | `hello` |
+| `a_an` | Prepends correct indefinite article | `apple` | `an apple` |
+| `plural` | Naïve English pluralization | `cat` | `cats` |
+| `past` | Converts verb to simple past (heuristic) | `walk` | `walked` |
+| `possessive` | Adds `'s` | `dog` | `dog's` |
+| `trim` | Removes leading/trailing whitespace | `  text  ` | `text` |
+| `snake` | snake_case conversion | `Foo Bar` | `foo_bar` |
+| `kebab` | kebab-case conversion | `Foo Bar` | `foo-bar` |
+
+Custom modifiers can be registered via `engine.registerModifier(name, fn)` in JavaScript or `engine.register_modifier` in Python.
+
+---
+
+## 7. Persistence Schema Diagram
+
+![State Persistence Schema](https://raw.githubusercontent.com/atxbrianbehm/randomizer-public/main/docs/img/persistence_schema_v1.png)
+
+The diagram above visualises the JSON structure stored in `localStorage` (see Section 6.1). Keep new keys small and backwards-compatible; bump `version` only on breaking changes.
+
+---
+
+## 8. Debug Overlay GIF
+
+![Debug Overlay Demo](https://raw.githubusercontent.com/atxbrianbehm/randomizer-public/main/docs/img/debug_overlay_demo.gif)
+
+Use the GIF as a quick visual reference when onboarding new contributors.
+
+---
+
+## 9. State Persistence API (Browser)
 
 The Randomizer web app automatically stores a small snippet of user state in `localStorage` so that preferences survive a page reload.
 

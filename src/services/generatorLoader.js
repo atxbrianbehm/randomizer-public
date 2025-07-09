@@ -36,7 +36,7 @@ export function deriveBasePath(url) {
 // Recursively walk a generator spec and inline any objects of the form
 // { "$include": "foo.json", ... } by fetching the referenced JSON from the
 // given basePath and merging it (preserving optional _meta).
-export async function resolveIncludes(node, basePath) {
+export async function resolveIncludes(node, basePath, visited = new Set()) {
   if (Array.isArray(node)) {
     const newArray = [];
     for (let i = 0; i < node.length; i++) {
@@ -58,7 +58,15 @@ export async function resolveIncludes(node, basePath) {
           const resp = await fetch(includePath);
           if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status} for ${includePath}`);
           const includedJson = await resp.json();
-          const resolvedIncludedContent = await resolveIncludes(includedJson, basePath);
+          if (visited.has(includePath)) {
+            console.error(`[resolveIncludes] Circular include detected for ${includePath}`);
+            newArray.push(currentItem);
+            newArray.push(includeObj);
+            i++;
+            continue;
+          }
+          visited.add(includePath);
+          const resolvedIncludedContent = await resolveIncludes(includedJson, basePath, visited);
 
           newArray.push(metaObj); // Push the _meta object
           if (Array.isArray(resolvedIncludedContent)) {
@@ -93,7 +101,13 @@ export async function resolveIncludes(node, basePath) {
         const resp = await fetch(includePath);
         if (!resp.ok) throw new Error(`fetch ${includePath} → ${resp.status}`);
         const includedJson = await resp.json();
-        const resolvedIncluded = await resolveIncludes(includedJson, basePath);
+        // Detect circular includes
+        if (visited.has(includePath)) {
+          console.error(`[resolveIncludes] Circular include detected for ${includePath}`);
+          return node; // return original node to break the loop
+        }
+        visited.add(includePath);
+        const resolvedIncluded = await resolveIncludes(includedJson, basePath, visited);
         // Preserve any _meta key that co-exists with the $include object.
         if (node._meta) {
           if (Array.isArray(resolvedIncluded)) {
@@ -112,7 +126,7 @@ export async function resolveIncludes(node, basePath) {
     // Otherwise recurse into object properties
     const out = {};
     for (const [key, value] of Object.entries(node)) {
-      out[key] = await resolveIncludes(value, basePath);
+      out[key] = await resolveIncludes(value, basePath, visited);
     }
     return out;
   }

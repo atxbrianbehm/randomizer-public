@@ -340,6 +340,14 @@ export default class RandomizerEngine {
 
     // Core rule expansion logic
     expandRule(generator, ruleName, context) {
+        if (!this._ruleStack) this._ruleStack = [];
+        const occurrences = this._ruleStack.filter(r => r === ruleName).length;
+        if (occurrences >= 5) {
+            console.warn(`Cyclic rule detected: ${ruleName}`);
+            return '[CYCLIC RULE]';
+        }
+        this._ruleStack.push(ruleName);
+
         // If this rule is locked, immediately return the locked value
         if (this.lockedValues && Object.prototype.hasOwnProperty.call(this.lockedValues, ruleName)) {
             return this.lockedValues[ruleName];
@@ -397,9 +405,9 @@ export default class RandomizerEngine {
             context.segments[segmentIndex].text = expandedText;
         }
 
+        this._ruleStack.pop();
         return expandedText;
     }
-
     // Select from array (with optional weights)
     selectFromArray(options, context) {
         const weightedOptions = [];

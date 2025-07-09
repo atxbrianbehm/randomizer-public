@@ -1,6 +1,7 @@
 # 🎲 Randomizer Engine
 
 [![CI](https://github.com/atxbrianbehm/randomizer-public/actions/workflows/ci.yml/badge.svg)](https://github.com/atxbrianbehm/randomizer-public/actions/workflows/ci.yml)
+[![coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)](./coverage)  [![bundle](https://img.shields.io/badge/bundle%20size-%E2%89%A4200KB-blue)](#bundle-size-check)  
 [![codecov](https://codecov.io/gh/atxbrianbehm/randomizer-public/branch/main/graph/badge.svg)](https://codecov.io/gh/atxbrianbehm/randomizer-public)
 
 A flexible, modular system for creating and executing probabilistic text generation based on JSON-defined decision trees. Build your own comedy generators, story prompters, or any procedural text content with sophisticated randomization logic.

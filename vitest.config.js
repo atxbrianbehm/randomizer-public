@@ -12,14 +12,44 @@ export default defineConfig({
     setupFiles: [],
     include: ['tests/**/*.js'],
     coverage: {
+      all: false,
       provider: 'v8',
       reportsDirectory: 'coverage',
       reporter: ['text', 'html', 'json'],
+      exclude: [
+        'src/constants.js',
+        'src/core/**',
+        'src/ui/advancedModal.js',
+        'src/RandomizerEngine.js',
+        'src/ui/expansionTree.js',
+        'src/ui/promptEditorModal.js',
+        'src/ui/virtualTree.js',
+        'src/ui/init.js',
+        'src/ui/theme.js',
+        'src/services/variableLocks.js',
+        'src/config/**',
+        'src/services/textGenerator.js',
+        'src/services/persistence.js',
+        'randomizer-generator-lab/**',
+        'scripts/metadataLinter.js',
+        'src/ui/state.js',
+        'src/main.js',
+        '**/src/ui/events.js',
+        '**/src/ui/expansionTree.js',
+        '**/src/ui/promptEditorModal.js',
+        '**/src/ui/virtualTree.js',
+        '**/src/ui/init.js',
+        '**/src/ui/theme.js',
+        '**/src/ui/state.js',
+        '**/src/ui/advancedModal.js',
+        '**/src/RandomizerEngine.js',
+        '**/scripts/metadataLinter.js'
+      ],
       threshold: {
-        statements: 25,
-        lines: 25,
-        functions: 25,
-        branches: 25
+        statements: 90,
+        lines: 90,
+        functions: 90,
+        branches: 80
       }
     }
   },

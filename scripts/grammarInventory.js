@@ -21,7 +21,7 @@ import process from 'process';
 const GENERATORS_DIR = path.resolve(process.cwd(), 'generators');
 
 /** Recursively walk directory and collect .json files */
-function collectJsonFiles(dir, list = []) {
+export function collectJsonFiles(dir, list = []) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
@@ -34,7 +34,7 @@ function collectJsonFiles(dir, list = []) {
   return list;
 }
 
-function loadJson(filePath) {
+export function loadJson(filePath) {
   try {
     const raw = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(raw);
@@ -44,14 +44,14 @@ function loadJson(filePath) {
   }
 }
 
-function extractPromptVisibleRules(generatorJson) {
+export function extractPromptVisibleRules(generatorJson) {
   const grammarKeys = generatorJson.grammar ? Object.keys(generatorJson.grammar) : [];
   const variableKeys = generatorJson.variables ? Object.keys(generatorJson.variables) : [];
   // For now treat variables as rules too (they can appear via #var# tokens)
   return [...new Set([...grammarKeys, ...variableKeys])].sort();
 }
 
-function main() {
+export function main() {
   if (!fs.existsSync(GENERATORS_DIR)) {
     console.error('No generators directory found.');
     process.exit(1);
@@ -76,4 +76,7 @@ function main() {
   }
 }
 
-main();
+if (import.meta.url === process.argv[1] || import.meta.url.endsWith('grammarInventory.js')) {
+  // only run when executed via CLI
+  main();
+}
