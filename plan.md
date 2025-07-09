@@ -55,11 +55,11 @@
 - [ ] Convert provided JSON → `generators/anachronisticTechPanel.json`
 - [ ] Optimize preview image ≤150 KB
 - [ ] Import in `generators/index.js` & dropdown label "Tech Panel (Retro-Future)"
-- [ ] Add multi-select UI for `panelArchetype`, `aestheticInfluence`
-- [ ] Display color-palette swatches
-- [ ] Update `RandomizerEngine.generate()` for nested arrays
+- [x] Add multi-select UI for `panelArchetype`, `aestheticInfluence`
+- [x] Display color-palette swatches
+- [x] Update `RandomizerEngine.generate()` for nested arrays
 - [ ] Extend variable-lock rules to cover new categories
-- [ ] Snapshot test sample prompt & validate error handling
+- [x] Snapshot test sample prompt & validate error handling
 - [ ] Add README section with usage & example image
 
 ### 5. Advanced Options Modal Refactor
@@ -147,8 +147,8 @@
     - [x] Move `randomizer.css` → `src/styles/randomizer.css`.
     - [x] Relocate preview images → `public/preview/`.
   - [x] Imports
-    - [ ] Update paths to use `@/` alias.
-    - [ ] Run ESLint autofix to catch broken paths.
+    - [x] Update paths to use `@/` alias.
+    - [x] Run ESLint autofix to catch broken paths.
 
 - [ ] New Generator • Anachronistic Tech Panel
   - Phase 1 – Asset & Spec
@@ -157,13 +157,13 @@
   - Phase 2 – Integration
     - [ ] Import in `generators/index.js` & dropdown label “Tech Panel (Retro-Future)”.
   - Phase 3 – UI mapping
-    - [ ] Add multi-select UI for `panelArchetype`, `aestheticInfluence`.
-    - [ ] Display color-palette swatches.
+    - [x] Add multi-select UI for `panelArchetype`, `aestheticInfluence`.
+    - [x] Display color-palette swatches.
   - Phase 4 – Logic
-    - [ ] Update `RandomizerEngine.generate()` for nested arrays.
+    - [x] Update `RandomizerEngine.generate()` for nested arrays.
     - [ ] Extend variable-lock rules to cover new categories.
   - Phase 5 – Tests
-    - [ ] Snapshot test sample prompt.
+    - [x] Snapshot test sample prompt.
 
 ### Completed Phases (0–4)
 
@@ -253,13 +253,13 @@ Next focus: finalise expanded LLM Generator Assembly Guide, integrate Anachronis
 - **Phase 2 – Integration**
   - [ ] Import in `generators/index.js` & dropdown label “Tech Panel (Retro-Future)”.
 - **Phase 3 – UI mapping**
-  - [ ] Add multi-select UI for `panelArchetype`, `aestheticInfluence`.
-  - [ ] Display color-palette swatches.
+  - [x] Add multi-select UI for `panelArchetype`, `aestheticInfluence`.
+  - [x] Display color-palette swatches.
 - **Phase 4 – Logic**
-  - [ ] Update `RandomizerEngine.generate()` for nested arrays.
+  - [x] Update `RandomizerEngine.generate()` for nested arrays.
   - [ ] Extend variable-lock rules to cover new categories.
 - **Phase 5 – Tests**
-  - [ ] Snapshot test sample prompt.
+  - [x] Snapshot test sample prompt.
   - [ ] Validate error on invalid `grammar` entry.
 - **Phase 6 – Docs**
   - [ ] README section with usage & example image.
@@ -358,7 +358,7 @@ The goal is to replace the hard-coded lockable-fields modal with a generator-awa
 - Add/update JSDoc for all RandomizerApp class methods.
 
 ---
-_Last updated: 2025-06-25 10:52 CT_
+_Last updated: 2025-07-09 01:17 CT_
 
 ---
 
