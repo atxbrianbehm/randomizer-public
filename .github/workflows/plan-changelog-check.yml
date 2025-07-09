@@ -1,0 +1,46 @@
+# Workflow to ensure plan.md and CHANGELOG.md are updated (or at least acknowledged)
+# for every Pull Request targeting the main branch.
+# If neither file is modified, a bot comment is added to remind maintainers.
+# The job always succeeds so as not to block CI, but serves as a gentle nudge.
+
+name: Plan & Changelog Reminder
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+jobs:
+  remind-plan-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Detect changes to plan.md / CHANGELOG.md
+        id: diff
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            plan:
+              - 'plan.md'
+            changelog:
+              - 'CHANGELOG.md'
+
+      - name: Add PR comment if files not updated
+        if: steps.diff.outputs.plan == 'false' && steps.diff.outputs.changelog == 'false'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const body = `👋 **Heads up!**
+
+This PR does not include changes to **plan.md** or **CHANGELOG.md**.
+Please ensure the project plan and changelog are updated if this change warrants it.`;
+            await github.rest.issues.createComment({
+              issue_number: pr.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
