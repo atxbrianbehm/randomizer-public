@@ -81,8 +81,8 @@
 - [x] Remove unused helper imports in `src/core/RandomizerApp.js`
 
 ### 8. Milestone Close-Out
-- [ ] Update `CHANGELOG.md`
-- [ ] Tag git release `v1.1.0`
+- [x] Update `CHANGELOG.md`
+- [x] Tag git release `v1.3.0`
 
 ---
 
@@ -141,18 +141,18 @@
     - [x] Update paths to use `@/` alias.
     - [x] Run ESLint autofix to catch broken paths.
 
-- [ ] New Generator • Anachronistic Tech Panel
+- [x] New Generator • Anachronistic Tech Panel
   - Phase 1 – Asset & Spec
-    - [ ] Convert provided JSON → `generators/anachronisticTechPanel.json`.
+    - [x] Convert provided JSON → `generators/anachronisticTechPanel.json`.
     - [ ] Optimise `previewImage` ≤150 KB.
   - Phase 2 – Integration
-    - [ ] Import in `generators/index.js` & dropdown label “Tech Panel (Retro-Future)”.
+    - [x] Import in `generators/index.js` & dropdown label “Tech Panel (Retro-Future)”.
   - Phase 3 – UI mapping
     - [x] Add multi-select UI for `panelArchetype`, `aestheticInfluence`.
     - [x] Display color-palette swatches.
   - Phase 4 – Logic
     - [x] Update `RandomizerEngine.generate()` for nested arrays.
-    - [ ] Extend variable-lock rules to cover new categories.
+    - [x] Extend variable-lock rules to cover new categories.
   - Phase 5 – Tests
     - [x] Snapshot test sample prompt.
 
@@ -319,8 +319,8 @@ The goal is to replace the hard-coded lockable-fields modal with a generator-awa
     - [ ] Bump generator `version` and add CHANGELOG entry
 
 ### 6. Milestone close-out
-- [ ] Update `CHANGELOG.md`.
-- [ ] Tag git release `v1.1.0`.
+- [x] Update `CHANGELOG.md`.
+- [x] Tag git release `v1.3.0`.
 
 ---
 
