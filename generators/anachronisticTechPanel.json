@@ -7,7 +7,21 @@
     "author": "Gemini",
     "created": "2025-06-25",
     "category": "creative",
-    "tags": ["sci-fi", "retrofuturism", "art prompt", "world-building", "anachronistic"]
+    "tags": ["sci-fi", "retrofuturism", "art prompt", "world-building", "anachronistic"],
+    "lockableRules": [
+      "panelArchetype",
+      "aestheticInfluence",
+      "factionAlignment",
+      "wearLevel",
+      "primaryColorPalette",
+      "keyMaterials",
+      "screenType",
+      "dominantControls",
+      "greebleDensity",
+      "labelingStyle",
+      "panelLighting",
+      "techFunction"
+    ]
   },
   "assets": {},
   "variables": {
