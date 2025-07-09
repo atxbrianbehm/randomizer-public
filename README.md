@@ -126,6 +126,7 @@ randomizer/
 - **`televangelist_generator.json`** – Humorous televangelist money requests
 - **`satanic_panic_generator.json`** – 1980s moral panic headlines
 - **`opera_character_generator.json`** – 1970s Opera character prompts
+- **`anachronisticTechPanel.json`** – Retro-futuristic technology panel prompts ![](public/preview/anachro_pack_thumb.png)
 - **`randomization_schema.json`** – JSON schema for validation
 
 ### Demo & Usage
