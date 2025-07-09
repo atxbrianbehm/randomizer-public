@@ -82,12 +82,12 @@
 - [ ] Ensure dev bundle <200 KB gzip
 - [ ] Run Lighthouse a11y audit and hit ≥90 score
 
-### Immediate Next Steps (2025-07-07)
+### Immediate Next Steps (2025-07-09)
 - [ ] Add edge-case & error-handling tests for engine and generatorLoader
-- [ ] Increase overall coverage to ≥50 % on way to 90 %
-- [ ] Add `npm run watch:test` and pre-commit lint+test hook
+- [x] Maintain coverage ≥90 %
+- [x] Add `npm run watch:test` and pre-commit lint+test hook
 - [ ] Stub expanded sections in `LLM_Content_Development_Guide.md`
-- [ ] Decide fate of unused helpers in `src/core/RandomizerApp.js` (delete or keep for refactor)
+- [x] Remove unused helper imports in `src/core/RandomizerApp.js`
 
 ### 8. Milestone Close-Out
 - [ ] Update `CHANGELOG.md`
