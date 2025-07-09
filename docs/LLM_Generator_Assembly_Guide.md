@@ -122,6 +122,22 @@ Additional highlights:
 * **Color palette** – Tech-Panel includes a `palette` category with hex values for UI swatches.
 
 
+### 2.5 Assigning Slots for the Prompt Rewriter
+
+Every grammar rule that contributes a *chip* to the final sentence is mapped to a **slot**—see `docs/slot_taxonomy.md` for the canonical list and order.
+
+If your rule name clearly matches a slot (e.g. `colour`, `materials`) the engine infers it automatically. Otherwise, pin the slot explicitly via `_meta.slot`:
+
+```jsonc
+"weatherMood": [
+  { "_meta": { "slot": "mood" } },
+  "sun-drenched optimism",
+  "foreboding thunderclouds"
+]
+```
+
+When inventing a brand-new slot, add it to `slot_taxonomy.md` first, then reference it here.
+
 ---
 
 ## 4. Advanced Topics
