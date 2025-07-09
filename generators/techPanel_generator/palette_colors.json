@@ -1,0 +1,14 @@
+{
+  "Dark Grays & Muted Blues (Warning Accents)": ["#2B2B2B", "#4A637D", "#FFA500"],
+  "Dark Grays & Muted Blues with Warning Accents": ["#2B2B2B", "#4A637D", "#FFA500"],
+  "Military Greens, Browns & Khaki": ["#556B2F", "#8B4513", "#C3B091"],
+  "Cream, Chrome & Pastel Highlights (e.g., Turquoise, Coral)": ["#F5F5DC", "#C0C0C0", "#40E0D0"],
+  "Cream, Chrome & Pastel Highlights": ["#F5F5DC", "#C0C0C0", "#40E0D0"],
+  "Beige, Off-White & Orange/Brown Accents": ["#F5F5DC", "#FFF8E1", "#D2691E"],
+  "Industrial Grays (Yellow/Red Safety Markings)": ["#5D5D5D", "#FFD700", "#B22222"],
+  "Industrial Grays with Yellow & Red Safety Markings": ["#5D5D5D", "#FFD700", "#B22222"],
+  "Polished Metallics (Brass, Copper, Steel) & Dark Woods/Bakelite": ["#B5A642", "#B87333", "#4682B4"],
+  "Polished Metallics & Dark Woods/Bakelite": ["#B5A642", "#B87333", "#4682B4"],
+  "Monochromatic (shades of one color, e.g., green on green)": ["#006400", "#228B22", "#8FBC8F"],
+  "Monochromatic (e.g., green on green)": ["#006400", "#228B22", "#8FBC8F"]
+}

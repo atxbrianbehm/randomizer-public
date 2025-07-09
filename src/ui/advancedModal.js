@@ -1,5 +1,6 @@
 // Dynamic Advanced Options Modal helpers
 import { q } from '@/ui/query.js';
+import paletteColors from '../../generators/techPanel_generator/palette_colors.json';
 // Build UI controls based on app.lockableRules determined by RandomizerEngine.
 // This replaces the previous hard-coded implementation.
 
@@ -22,6 +23,8 @@ function injectAdvStyles() {
     .modal-content::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 5px; }
     .modal-content::-webkit-scrollbar-thumb:hover { background: var(--color-primary-hover); }
     @supports (scrollbar-width: thin) {
+      .palette-swatch-wrap { display:inline-flex; align-items:center; gap:2px; margin-left:6px; }
+      .palette-swatch { width:14px; height:14px; border:1px solid #666; }
       .modal-content { scrollbar-width: thin; scrollbar-color: var(--color-primary) var(--color-secondary); }
     }
   `;
@@ -196,6 +199,26 @@ export function buildModal(app) {
       }
     }
     field.appendChild(select);
+    // If this is the primaryColorPalette, add live color swatches
+    if (ruleKey === 'primaryColorPalette') {
+      const wrap = document.createElement('span');
+      wrap.className = 'palette-swatch-wrap';
+      const render = () => {
+        wrap.innerHTML = '';
+        const selectedLabel = select.options[select.selectedIndex]?.textContent;
+        const hexes = paletteColors[select.value] || paletteColors[selectedLabel] || [];
+        if (hexes.length === 0) { wrap.textContent = select.value; return; }
+        hexes.forEach(hex => {
+          const box = document.createElement('span');
+          box.className = 'palette-swatch';
+          box.style.background = hex;
+          wrap.appendChild(box);
+        });
+      };
+      render();
+      select.addEventListener('change', render);
+      field.appendChild(wrap);
+    }
     container.appendChild(field);
   });
 }

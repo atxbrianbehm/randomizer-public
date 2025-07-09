@@ -1,5 +1,5 @@
-import { q } from './query.js';
-import { createVirtualTree } from './virtualTree.js';
+import { q } from '@/ui/query.js';
+import { createVirtualTree } from '@/ui/virtualTree.js';
 
 const VIRTUALIZATION_THRESHOLD = 100; // Number of nodes to trigger virtualization
 

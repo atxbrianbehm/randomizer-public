@@ -136,6 +136,14 @@ export { deriveBasePath, resolveIncludes }; // re-export for backward compatibil
   
 */
 
+/**
+ * Fetch a generator specification JSON, resolve all $include directives, and return
+ * the fully-inlined spec object.  Any network or parsing errors are caught and logged; in that
+ * scenario `null` is returned so that upstream workflows can continue loading other generators.
+ *
+ * @param {string} url Absolute path (served by Vite) to a generator JSON file.
+ * @returns {Promise<object|null>} Parsed and resolved spec, or `null` on failure
+ */
 export async function fetchGeneratorSpec(url) {
   try {
     console.log('[generatorLoader] fetching', url);
@@ -163,16 +171,8 @@ export async function fetchGeneratorSpec(url) {
  * @param {object} spec Parsed generator JSON
  * @returns {Promise<string|null>} Name under which the generator was registered.
  */
-export async function registerGenerator(engine, spec) {
-  if (!spec) return null;
-  try {
-    const name = await engine.loadGenerator(spec, spec?.metadata?.name);
-    return name;
-  } catch (err) {
-    console.error('[generatorLoader] register failed', spec?.metadata?.name, err);
-    return null;
-  }
-}
+import { registerGenerator } from '@/services/registerGenerator.js';
+export { registerGenerator };
 
 /**
  * Fetches each JSON file, loads it into the provided RandomizerEngine, and returns
@@ -180,6 +180,13 @@ export async function registerGenerator(engine, spec) {
  * @param {RandomizerEngine} engine The engine instance to load generators into.
  * @param {string[]} files List of file paths to fetch. Should begin with `/` so that Vite serves them from project root.
  * @returns {Promise<string[]>} names of loaded generators
+ */
+/**
+ * Load multiple generator JSON files into an engine instance.
+ *
+ * @param {import('../engine/RandomizerEngine.js').RandomizerEngine} engine Engine instance
+ * @param {string[]} files Absolute paths to JSON files (begin with `/`)
+ * @returns {Promise<string[]>} Array of successfully-registered generator names
  */
 export async function loadGenerators(engine, files) {
   const loadedNames = [];
@@ -198,6 +205,12 @@ export async function loadGenerators(engine, files) {
 /**
  * Convenience helper that loads the project’s two default generator bundles.
  * @param {RandomizerEngine} engine
+ */
+/**
+ * Convenience helper that loads the project’s four default generator bundles.
+ *
+ * @param {import('../engine/RandomizerEngine.js').RandomizerEngine} engine
+ * @returns {Promise<string[]>} Names of the generators that were successfully loaded
  */
 export async function loadDefaultGenerators(engine) {
   const defaultFiles = [

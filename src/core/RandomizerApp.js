@@ -1,16 +1,16 @@
 import RandomizerEngine from '@/RandomizerEngine.js';
 import bindEvents from '@/ui/events.js';
-import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay, updateGeneratorStructure as uiUpdateGeneratorStructure } from '@/ui/state.js';
+import { updateEntryPoints as uiUpdateEntryPoints, updateVariablesDisplay as uiUpdateVariablesDisplay } from '@/ui/state.js';
 import { setupModal as setupAdvancedModal, buildModal as rebuildAdvancedModal } from '@/ui/advancedModal.js';
 import { createLockObjects } from '@/services/variableLocks.js';
 import { q } from '@/ui/query.js';
 import { openPromptEditor } from '@/ui/promptEditorModal.js';
-import { saveState, loadState, clearState } from '@/services/persistence.js';
+import { loadState, clearState } from '@/services/persistence.js';
 
 // Main entry ignores browser bootstrap; this class can be imported in tests & UI
 import { GENERATOR_FILES, GENERATOR_LABELS } from '@/config/generatorIndex.js';
 import * as GeneratorLoader from '@/services/generatorLoader.js';
-import { renderExpansionTree } from '@/ui/expansionTree.js';
+
 
 /**
  * Core application logic for Randomizer. This class is environment-agnostic and can be
@@ -150,6 +150,12 @@ export class RandomizerApp {
         }
     }
 
+    /**
+     * Handles user selection of a generator from the dropdown.
+     * Fetches & loads the generator spec, refreshes related UI, and persists the choice.
+     * @public
+     * @param {string} name - Display name of the generator to activate.
+     */
     selectGenerator(name) {
         this.engine.selectGenerator(name);
         const genObj = this.engine.loadedGenerators.get(name);
@@ -180,6 +186,14 @@ export class RandomizerApp {
 
     // Generate one or more prompts and append cards to #output-area
     // Uses RandomizerEngine.generateDetailed to obtain readable prompts.
+    /**
+     * Generates new prompt(s) using the currently selected generator.
+     * Renders the output to the UI and updates persisted state.
+     * @public
+     * @param {number} [count=1] - Number of prompts to generate.
+     * @param {object} [options={}] - Additional engine options.
+     * @returns {Promise<void>} Resolves when generation and UI updates complete.
+     */
     generateText(count = 1, options = {}) {
         if (typeof document === 'undefined') return;
         const output = q('#output-area');
@@ -275,6 +289,11 @@ export class RandomizerApp {
 
     /**
      * Resets locks and persisted settings to defaults.
+     */
+    /**
+     * Restores the application to its initial state: clears persisted data,
+     * reloads default generator, and resets UI.
+     * @public
      */
     resetToDefaults() {
         this.engine.lockedValues = {};
@@ -477,6 +496,12 @@ export class RandomizerApp {
      * Gets a shallow copy of the current variables object.
      * @returns {Object} Copy of variables.
      */
+    /**
+     * Returns a shallow copy of the engine's current variable map.
+     * Useful for debugging and external integrations.
+     * @public
+     * @returns {Record<string, any>} Key/value pairs of current variables.
+     */
     getCurrentVariables() {
         return { ...this.variables };
     }
@@ -486,12 +511,23 @@ export class RandomizerApp {
      * @param {string} id - Generator ID.
      * @returns {Object} Generator info object.
      */
+    /**
+     * Retrieves basic metadata for a given generator.
+     * @public
+     * @param {string} id - Generator identifier.
+     * @returns {{ id: string, name: string, variables: string[] }} Info object.
+     */
     getGeneratorInfo(id) {
         return this.engine.getGeneratorInfo(id);
     }
 
     /**
      * Shows the advanced modal and synchronizes its state with current locks and variables.
+     */
+    /**
+     * Exposes the advanced-options modal.
+     * Primarily a thin wrapper around UI helper logic.
+     * @public
      */
     showAdvancedModal() {
         if (typeof document === 'undefined') return;
@@ -501,6 +537,10 @@ export class RandomizerApp {
 
     /**
      * Hides the advanced modal dialog.
+     */
+    /**
+     * Closes the advanced-options modal if open.
+     * @public
      */
     hideAdvancedModal() {
         if (typeof document === 'undefined') return;

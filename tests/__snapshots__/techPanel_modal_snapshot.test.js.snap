@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Tech Panel modal rendering > renders palette swatches (snapshot) 1`] = `"<h3></h3><div style="display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); column-gap: 1.5rem; row-gap: 0.75rem;"><div class="advanced-row"><label class="adv-label">Primary Color Palette:<button type="button" class="lock-button" aria-label="Lock primaryColorPalette" title="Lock primaryColorPalette" style="margin-left: 6px;">🔓</button></label><select id="adv-primaryColorPalette" name="primaryColorPalette"></select><span class="palette-swatch-wrap"></span></div></div>"`;

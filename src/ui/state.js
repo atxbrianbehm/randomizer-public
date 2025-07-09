@@ -1,7 +1,9 @@
 // State & UI helper functions extracted from main.js
+import { LOCKABLE_FIELDS } from '@/constants.js';
+import { q } from '@/ui/query.js';
 
 export function updateEntryPoints(app) {
-    const select = document.getElementById('entry-point');
+    const select = q('#entry-point');
     select.innerHTML = '<option value="default">Default</option>';
 
     if (app.currentGeneratorId) {
@@ -26,12 +28,12 @@ export function updateEntryPoints(app) {
 
 export function updateVariablesDisplay(app) {
     // Also update advanced modal if open
-    const advModal = document.getElementById('advanced-modal');
+    const advModal = q('#advanced-modal');
     if (advModal && advModal.style.display !== 'none') {
         app.syncAdvancedModal();
     }
 
-    const container = document.getElementById('variables-table');
+    const container = q('#variables-table');
 
     if (!app.currentGeneratorId) {
         container.innerHTML = '<p class="text-secondary">Select a generator to view variables</p>';
@@ -52,7 +54,7 @@ export function updateVariablesDisplay(app) {
 
     const variables = app.engine.getCurrentVariables();
     const variableConfigs = generator.variables || {};
-    const lockable = ['preacher_name', 'platforms', 'mediaContexts', 'divine_title'];
+    const lockable = LOCKABLE_FIELDS;
     app.engine.lockedValues = app.engine.lockedValues || {};
 
     if (Object.keys(variables).length === 0) {
@@ -108,7 +110,7 @@ export function updateVariablesDisplay(app) {
 }
 
 export function updateGeneratorDropdown(app) {
-    const select = document.getElementById('generator-select');
+    const select = q('#generator-select');
     if (!select) return;
     select.innerHTML = '';
     const generatorList = app.engine.listGenerators();
@@ -121,13 +123,13 @@ export function updateGeneratorDropdown(app) {
 }
 
 export function updateGenerateButton(app) {
-    const generateBtn = document.getElementById('generate-btn');
+    const generateBtn = q('#generate-btn');
     if (!generateBtn) return;
     generateBtn.disabled = !app.currentGeneratorId;
 }
 
 export function updateGeneratorStructure(app) {
-    const container = document.getElementById('generator-structure');
+    const container = q('#generator-structure');
 
     if (!app.currentGeneratorId) {
         container.innerHTML = '<p class="text-secondary">Select a generator to view its structure</p>';

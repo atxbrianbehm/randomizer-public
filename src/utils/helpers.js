@@ -112,7 +112,7 @@ export function flattenIncludes(node, out = new Set()) {
 
 // --- validateGeneratorSpec ---------------------------------------------
 import Ajv from 'ajv';
-import schema from '../schema/generator.json' assert { type: 'json' };
+import schema from '../schema/generator.json';
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateFn = ajv.compile(schema);
 
@@ -149,4 +149,4 @@ export function parseRulePlaceholders(str) {
 }
 
 // re-export deriveBasePath for convenience
-export { deriveBasePath } from './resolveIncludes.js';
+export { deriveBasePath } from '@/utils/resolveIncludes.js';

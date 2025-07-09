@@ -1,10 +1,11 @@
 // Simple theme toggle utility
+import { q } from '@/ui/query.js';
 // Flips the `data-color-scheme` attribute between "light" and "dark" on <html>
 const STORAGE_KEY = 'randomizer-theme';
 
 function updateToggleIcon() {
   if (typeof document === 'undefined') return;
-  const btn = document.getElementById('dark-mode-toggle');
+  const btn = q('#dark-mode-toggle');
   if (!btn) return;
   const scheme = document.documentElement.getAttribute('data-color-scheme');
   // Show the opposite icon to indicate the action

@@ -12,12 +12,14 @@
  *   openPromptEditor({ segments, rawText, onSave })
  */
 
+import { q } from '@/ui/query.js';
+
 const modalId = 'prompt-editor-modal';
 let dragSrcEl = null;
 
 function ensureModalExists() {
     if (typeof document === 'undefined') return;
-    if (document.getElementById(modalId)) return; // already built
+    if (q(`#${modalId}`)) return; // already built
 
     const modal = document.createElement('div');
     modal.id = modalId;
@@ -126,7 +128,7 @@ function attachDnD(listEl, segments, previewEl) {
 
 export function openPromptEditor({ segments, rawText, onSave }) {
     ensureModalExists();
-    const modal = document.getElementById(modalId);
+    const modal = q(`#${modalId}`);
     const previewEl = modal.querySelector('#pem-preview');
     const listEl = modal.querySelector('#pem-token-list');
 

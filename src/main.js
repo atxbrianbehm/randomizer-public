@@ -1,6 +1,6 @@
 import '@/styles/randomizer.css';
 // eslint-disable-next-line import/no-named-as-default
-import RandomizerApp from './core/RandomizerApp.js';
+import RandomizerApp from '@/core/RandomizerApp.js';
 
 // Main entry for Vite – initializes the Randomizer application
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
