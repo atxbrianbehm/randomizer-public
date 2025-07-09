@@ -94,7 +94,7 @@ These rules ensure generator packs integrate cleanly with the Randomizer’s dyn
   ```
 - Ensure subfiles are valid JSON arrays or objects as required.
 
-### Include Arrays & `_meta` Merge Pattern
+### Include Arrays, `_meta` Merge Pattern & Error-Handling
 
 Sometimes you need both `_meta` information **and** to pull in large external data via `$include`. Use the two-element *array* pattern introduced in July 2025:
 
@@ -107,10 +107,37 @@ Sometimes you need both `_meta` information **and** to pull in large external da
 
 When the loader encounters this pattern it merges the included array **immediately after** the `_meta` object, so metadata is preserved while all fetched values remain editable in place.
 
+#### Error-handling & validation rules
+* If the included file fails to fetch (`404`/network), or its JSON is malformed, the original `$include` node is preserved so the author can spot the issue in generated output.
+* Non-JSON responses (wrong MIME) are treated the same as malformed JSON.
+* `$include` values must be strings; other types trigger a warning and the node is left unchanged.
+* Multiple `$include` entries inside one array are flattened in order of appearance.
+* The depth cap of 20 ensures pathological chains don’t blow the stack.
+* Relative paths are resolved against the generator root ("/pack.json" → "/pack/").
+
 Guidelines:
 • Keep the `_meta` object first in the array.
 • Append any additional hard-coded values *after* the `$include` entry to avoid confusion.
-• Avoid circular includes – the resolver detects and throws if a file eventually references itself (unit tests pending in `tests/generatorLoader_includes.test.js`).
+• Avoid circular includes – the resolver logs the full include-chain and aborts gracefully when a cycle is detected. Unit tests covering 2- and 3-file cycles live in `tests/generatorLoader_includes.test.js` and `tests/generatorLoader_circular.test.js`. The resolver also applies a hard recursion depth cap (20) to guard against excessively deep chains.
+
+---
+
+## 3. Slot Taxonomy Overview
+
+The Smart Prompt Rewriter stitches grammar *chips* into natural-language prompts according to the slot order defined in `docs/slot_taxonomy.md`.
+
+```
+subject → style → condition → size → age → purpose → materials → colour → texture → controls → displays → lighting → sound → motion → background → markings → density → provenance → setting → view
+```
+
+Key points:
+• Each chip carries an implicit or explicit `_meta.slot` value so the rewriter can sequence it correctly.
+• Connectors are either auto-selected from defaults in the taxonomy table or overridden per-chip via `_meta.connector`.
+• Missing slots are skipped; duplicate slots are deduped in order of appearance.
+
+When adding **new categories** to a generator, pick an appropriate slot from the list (e.g. `mood` falls under *mood/ambience*). If none fits, update `slot_taxonomy.md` first and then reference the new slot here.
+
+> Tip: run `npm run dev` and enable the debug overlay to see each chip’s slot and connector in real time.
 
 ---
 
