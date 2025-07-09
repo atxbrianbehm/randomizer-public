@@ -1,4 +1,5 @@
 // Dynamic Advanced Options Modal helpers
+import { q } from '@/ui/query.js';
 // Build UI controls based on app.lockableRules determined by RandomizerEngine.
 // This replaces the previous hard-coded implementation.
 
@@ -57,7 +58,7 @@ export function createLockBtn(key, app) {
   btn.onclick = () => {
     const newState = !app.LockState[key];
     app.LockState[key] = newState;
-    const sel = document.getElementById(`adv-${key}`);
+    const sel = q(`#adv-${key}`);
     if (newState) {
       // capture current selection as locked value
       if (sel) {
@@ -85,7 +86,7 @@ export function buildModal(app) {
 
   const { grammar, lockableRules, name } = app.generatorSpec;
 
-  const modalBody = document.getElementById('advanced-modal-body');
+  const modalBody = q('#advanced-modal-body');
   if (!modalBody) return; // Modal not present
   modalBody.innerHTML = '';
 
@@ -159,16 +160,22 @@ export function buildModal(app) {
     field.appendChild(label);
 
     const select = document.createElement('select');
+    const isMulti = Array.isArray(app.generatorSpec.uiConfig?.multiSelect) && app.generatorSpec.uiConfig.multiSelect.includes(ruleKey);
+    if (isMulti) {
+      select.multiple = true;
+      select.size = Math.min(options.length, 6);
+    }
     select.id = `adv-${ruleKey}`;
     select.name = ruleKey;
     // always enabled; on change auto-lock
     // Disable the select when the rule is already locked, otherwise keep it interactive
     select.disabled = app.LockState[ruleKey];
     select.onchange = () => {
+      const value = isMulti ? Array.from(select.selectedOptions).map(o => o.value).join(', ') : select.value;
       app.LockState[ruleKey] = true;
-      app.Locked[ruleKey] = select.value;
+      app.Locked[ruleKey] = value;
       app.engine.lockedValues = app.engine.lockedValues || {};
-      app.engine.lockedValues[ruleKey] = select.value;
+      app.engine.lockedValues[ruleKey] = value;
       lockBtn.classList.add('locked');
       lockBtn.textContent = '🔒';
       lockBtn.setAttribute('aria-label', 'Unlock ' + ruleKey);
@@ -180,7 +187,14 @@ export function buildModal(app) {
       o.textContent = opt;
       select.appendChild(o);
     });
-    if (app.Locked[ruleKey]) select.value = app.Locked[ruleKey];
+    if (app.Locked[ruleKey]) {
+      if (isMulti) {
+        const vals = Array.isArray(app.Locked[ruleKey]) ? app.Locked[ruleKey] : app.Locked[ruleKey].split(/,\s*/);
+        Array.from(select.options).forEach(optEl => { optEl.selected = vals.includes(optEl.value); });
+      } else {
+        select.value = app.Locked[ruleKey];
+      }
+    }
     field.appendChild(select);
     container.appendChild(field);
   });
@@ -188,12 +202,12 @@ export function buildModal(app) {
 
 export function showModal(app) {
   if (typeof document === 'undefined') return;
-  const modal = document.getElementById('advanced-modal');
+  const modal = q('#advanced-modal');
   try {
     buildModal(app);
   } catch (err) {
     console.error('[advancedModal] build failed', err);
-    const body = document.getElementById('advanced-modal-body');
+    const body = q('#advanced-modal-body');
     if (body) {
       body.innerHTML = '<p style="color:var(--color-error)">Advanced options failed to load.</p>';
     }
@@ -226,7 +240,7 @@ export function showModal(app) {
 
 export function hideModal() {
   if (typeof document === 'undefined') return;
-  const modal = document.getElementById('advanced-modal');
+  const modal = q('#advanced-modal');
   if (!modal) return;
   modal.style.display = 'none';
   if (modal.__trapHandler) {
@@ -241,7 +255,7 @@ export function applyModal(app) {
   app.engine.lockedValues = app.engine.lockedValues || {};
   app.lockableRules.forEach(key => {
     if (app.LockState[key]) {
-      const sel = document.getElementById(`adv-${key}`);
+      const sel = q(`#adv-${key}`);
       if (sel) {
         app.engine.lockedValues[key] = sel.value;
         app.Locked[key] = sel.value;
@@ -263,12 +277,12 @@ export function applyModal(app) {
 
 export function setupModal(app) {
   if (typeof document === 'undefined') return;
-  const applyBtn = document.getElementById('apply-advanced');
+  const applyBtn = q('#apply-advanced');
   if (applyBtn) applyBtn.onclick = () => applyModal(app);
-  const cancelBtn = document.getElementById('cancel-advanced');
+  const cancelBtn = q('#cancel-advanced');
   if (cancelBtn) cancelBtn.onclick = hideModal;
   const closeModal = document.querySelector('#advanced-modal .close-modal');
   if (closeModal) closeModal.onclick = hideModal;
-  const modal = document.getElementById('advanced-modal');
+  const modal = q('#advanced-modal');
   if (modal) modal.style.display = 'none';
 }
