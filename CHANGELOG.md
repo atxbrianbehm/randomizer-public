@@ -2,6 +2,21 @@
 
 ---
 
+## [1.3.3] – 2025-07-09
+
+### Added
+- Comprehensive edge-case unit tests for `$include` resolver covering malformed JSON, multiple include items, depth cap, non-string values, relative paths, and circular chains (2- and 3-file).
+- New test file `tests/resolveIncludes_edgecases.test.js` and `tests/generatorLoader_circular.test.js`.
+
+### Changed
+- `resolveIncludes` now logs full circular include chains, flattens multi-include arrays, enforces depth cap, validates `$include` value type, and handles non-JSON responses gracefully.
+- README and `docs/LLM_Content_Development_Guide.md` updated with detailed error-handling guidelines.
+
+### Fixed
+- Potential crash when `$include` value is non-string.
+
+---
+
 ## [1.3.2] – 2025-07-09
 
 ### Changed
